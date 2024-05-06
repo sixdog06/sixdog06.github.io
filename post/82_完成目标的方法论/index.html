@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="PunchCode">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://xqt01.github.io/front.png">
+    <meta property="twitter:image" content="https://xqt01.github.io/front.png" />
+    
+
+    
+    <meta name="title" content="完成目标的方法论" />
+    <meta property="og:title" content="完成目标的方法论" />
+    <meta property="twitter:title" content="完成目标的方法论" />
+    
+
+    
+    <meta name="description" content="Software Engineer">
+    <meta property="og:description" content="Software Engineer" />
+    <meta property="twitter:description" content="Software Engineer" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="Harry, 小拳头">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>完成目标的方法论 | 以终为始</title>
+
+    <link rel="canonical" href="/post/82_%E5%AE%8C%E6%88%90%E7%9B%AE%E6%A0%87%E7%9A%84%E6%96%B9%E6%B3%95%E8%AE%BA/">
+
+    
+    
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hugo-theme-cleanwhite.min.css">
+
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+
+    
+    <link href="https://cdn.jsdelivr.net/gh/FortAwesome/Font-Awesome@5.15.1/css/all.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    
+    <script src="/js/jquery.min.js"></script>
+
+    
+    <script src="/js/bootstrap.min.js"></script>
+
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+
+</head>
+
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">PunchCode</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">All Posts</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/tech">tech</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0">学习笔记</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/%E6%9D%82%E8%B0%88">杂谈</a>
+                        </li>
+                        
+                    
+                    
+		    
+                        <li><a href="/top/archive/">ARCHIVE</a></li>
+                    
+                        <li><a href="/top/about/">ABOUT</a></li>
+                    
+
+                    
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/front.png')
+    }
+</style>
+
+<header class="intro-header" >
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/%E7%94%9F%E6%B4%BB" title="生活">
+                            生活
+                        </a>
+                        
+                    </div>
+                    <h1>完成目标的方法论</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        
+                            Posted by 
+                            
+                                小拳头
+                             
+                            on 
+                            Sunday, September 11, 2022
+                            
+                            
+                            
+                            
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <p>从3月开始的上海封城, 我的博客就停止了, 现在上海疫情恢复, 我又作为次密接住进了隔离酒店, 但我已调整好状态继续输出. 今天不谈技术, 仅谈谈完成目标的方法论.</p>
+<p>最近2年, 我完成了两件人生中两件比较重要的事情, 一是在半年的时间限制下找到满意的工作, 二是1年多时间减重将近50斤. 在我完成目标的方法论下, 秉持着以终为始的原则, 这两个目标被我一步一步完成. 坦率讲, 这两件事从难度上来讲并不像科学研究或是极限运动, 需要突破人类智商极限和身体极限, 但是仍然有很多人没有做到, 到最后甚至放弃目标. 可我却完成了, 那么我是如何制定目标并且完成目标的呢?</p>
+<p>首先是制定一个<strong>合理</strong>的目标. 我们很容易混淆目标和做事的区别, 比如找工作并不是目标, 找到某公司的某某岗位才是目标. 减重不是目标, 减重到具体几斤才是目标, 也就是说目标应该具体的, 可以被量化并完成的. 还有<strong>目标一定要有deadline</strong>, 否则就谈不上完成. 举例来说, 在找工作前, 我给自己定的目标是找到互联网公司的Java后端开发岗位, 并且公司员工数要在5000人以上, 还要保证双休. 满足我意向岗位的公司成千上万, 所以需要我对公司规模进行了限制, 来缩小达成目标的范围. 相对来说, 减重的目标就很简单了: 1年内减重到79公斤. 这两个目标对我来说是合理的, 在能力范围内也是可以完成的, 而合理性的判断, 就引出了制定目标前很重要的步骤: 前期调研与分析. 下面就是我针对自己的情况, 对这两件事的调研与分析.</p>
+<p><strong>找工作</strong></p>
+<p>在网上看意向岗位应届生工作的jd, 了解企业需要怎样的人才, 需要什么技能才能通过面试. 因为我是春招应届生, 所以还了解了秋招的招聘情况, 评估我的竞争力, 并且做总结.</p>
+<ul>
+<li>我的优势: 熟练的英语阅读能力, 让我的知识总能从优质的材料中获取. 本科4年的C语言嵌入式开发经验, 硕士2年的数据科学与机器学习的开发经验, 让我对编程非常熟悉, 并且了解基本的计算机科学知识. 我还有本科各种电子大赛比赛经历和硕士优秀毕业生对我个人背景做一个兜底, 让面试官能对我产生信任感. 对编程本身, 我也是发自内心喜欢的, 这让我可以在编程中获得正反馈, 不至于在刷算法题的过程中产生厌恶感.</li>
+<li>我的限制条件: 只有半年时间做准备, 时间紧张不能做到面面俱到, 需要有的放矢. 我的背景和后端开发关联并不高, 没有相关实习经历, 没有做过任何后端开发项目, 除本科做过小的安卓项目外, 没有接触过Java, 需要做大量相关知识的补充. 并且我身边朋友没有任何人是目标相同的, 那么我的信息来源就只有网络, 所以需要花很多时间在信息筛选上.</li>
+</ul>
+<p><strong>减重</strong></p>
+<p>减重是工作之后我给自己定的目标, 我看了b站和油管很多视频, 去了解基础的健身和营养学的知识, 避免走入歪门邪道, 或者以不健康的方式减重, 让自己完成目标的代价过大.</p>
+<ul>
+<li>我的优势: 从小接受专业的游泳训练, 让我可以给自己定合理的游泳训练计划.</li>
+<li>我的限制条件: 工作时间较长, 不能抽出大量时间运动. 不自己做饭, 饮食不能做到营养均衡.</li>
+</ul>
+<p>这样分析过后, 我的目标就显得合理了. 去最大化发挥优势, 并且通过限制条件了解自己的不足. 我并不会在找工作时要求找到年薪百万的工作, 也不会在减重时要求我1个月瘦10斤, 这种不合理的目标只会增加我们的挫败感, 让我们放弃目标. 多说一句, 在这里我想矫情地抠个字眼, 限制条件并不能完全称作劣势, 在完成目标的过程中, 去弥补限制条件只是为了扩展边界, 而不是真正地突破限制条件, 否则限制条件就不能称为限制条件. 用我减重的限制条件举例, 因为工作时间长, 不能抽出大量时间运动, 那么解决办法就是缩短运动时间, 而不可能是放弃正常工作去运动. 不自己做饭, 饮食不能做到营养均衡, 那么就在限制条件下, 点菜时大致估计好热量, 尽量营养均衡, 保证有一个长期的热量缺口. 如果缺少维生素, 就针对性地吃一点水果. 我也并不会牺牲休息时间, 在工作日自己做饭. 简而言之, 限制条件会让我们知道自己的边界在哪里, 不去把精力放在对完成目标没有价值的事情上.</p>
+<p>在制定合理的目标之后, 完成目标就显得容易了许多. 首先我们要<strong>拆分目标</strong>. 把一步到位, 追逐目标这种让人绝望的马拉松, 拆分成让人兴奋的短跑, 让我们不断得获得正反馈. 还是用减重这件事举例, 我根据学习到的知识, 推算出一个月减4斤是比较合理的短期目标, 那么把减重的总斤数拆分到每个月中, 12个月就可以减48斤, 而我制定的目标只需要在一年内减40斤, 又反过来验证了我对目标合理性的判断是准确的. 我会每天早晨称空腹体重, 来尽可能准确得监控体重的变化趋势, 并在出每个月评估目标的完成度怎么样. 人体重因为种种原因会产生上下浮动, 所以不必为了两三天的体重变化而焦虑, 反过来也不要因为短时间的体重少了几斤而自我感动, 始终记住我们的目标是在deadline的限制下, 达到终极目标. 当然计划赶不上变化, 一味地通过坚持, 想要每天完美地执行精确的计划是不符合人性的, 我们达成目标的过程中要拥抱变化. 如果中午多吃了, 晚上就少吃点; 周末要和朋友聚餐, 那么游泳就加练一点; 如果第一天多吃了, 那么第二天就少吃一点. 这种动态的调整过程是无法别精确记录的, 但是却让我们不至于偏离目标太远, 也是非常重要的.</p>
+<p>拆分好目标后就是<strong>执行计划</strong>, 去不断完成拆分后的小目标. 我们制定的大目标, 也只是人生路上的小目标, 我们做一切的事情都是为了追逐人生的幸福, 并创造社会价值. 所以在执行目标的时候不能忘记制定这个目标的起因是什么. 比如在找工作前, 我给自己定了半年的学习计划, 把目标拆分成了知识点, 在执行过程中, 我会始终记住我产生目标的起因是我希望职场生涯有一个好的起点, 让我能长期保证一个较高的生活质量. 所以在我准备面试的过程中, 对一些面试要考的关键基础知识, 比如网络通信原理, 我是真正动手做试验去理解的. 而对于暂时无关紧要的, 比如语言的历史, 各种语言的对比, 甚至像是面向对象设计模式这种对工程非常重要, 但是需要长期才能真正理解的东西, 我都是浅尝辄止(浅尝也得尝, 得知道是干嘛的). 让我的效率最大化. 减重也是一样, 我制定目标的起因是希望拥有健康的身体, 那么在减重过程中我并不会走歪门邪道, 交智商税吃减肥药或是一开始就做高强度训练, 去单纯追求体重秤上的数字. 而是循序渐进, 流水不争先, 争的是滔滔不绝.</p>
+<p>好好地执行计划, 最后就会迎来完成目标或者未完成目标两种结果. 如果完成了目标, 我认为有必要要形式主义得奖励自己, 找到满意的工作后, 我奖励自己出去旅游了一圈. 减重成功后, 我奖励自己吃了顿泰餐. 这种形式会让我们获得极大的成就感, 让信心倍增. 如果没有完成目标, 首先要想目标是否合理了, 我们有没有自我欺骗, 高估自己的能力. 或者是执行的计划太严格了, 过于反人性让我们无法执行. 虽然没有完成目标, 但是看看自己在过程中有什么收获, 在现有基础上能不能延长时间完成目标, 如果觉得目标太难永远无法完成, 说明我们之前的努力是白费的, 应该及时放弃, 减少沉没成本.</p>
+<p>总结一下, 我完成目标的方法论分为以下5个部分.</p>
+<ol>
+<li>前期调研与分析</li>
+<li>制定目标</li>
+<li>拆分目标(进一步评估目标核心性)</li>
+<li>执行计划</li>
+<li>复盘</li>
+</ol>
+
+
+                
+
+                
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/post/81_java_concurrency_in_practice_chapter6/" data-toggle="tooltip" data-placement="top" title="Java Concurrency in Practice Chapter6-Task Execution">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/post/83_java_concurrency_in_practice_chapter7/" data-toggle="tooltip" data-placement="top" title="Java Concurrency in Practice Chapter7-Cancellation and Shutdown">Next
+                            Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+                
+
+                
+
+
+<div id="disqus-comment"></div>
+<div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "xqt01" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+            </div>
+
+            
+            
+            <div class="
+                col-lg-2 col-lg-offset-0
+                visible-lg-block
+                sidebar-container
+                catalog-container">
+                <div class="side-catalog">
+                    <hr class="hidden-sm hidden-xs">
+                    <h5>
+                        <a class="catalog-toggle" href="#">CATALOG</a>
+                    </h5>
+                    <ul class="catalog-body"></ul>
+                </div>
+            </div>
+            
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/java" title="java">
+                            java
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/jvm" title="jvm">
+                            jvm
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/spring" title="spring">
+                            spring
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E5%89%8D%E7%AB%AF" title="前端">
+                            前端
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F" title="操作系统">
+                            操作系统
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93" title="数据库">
+                            数据库
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95" title="数据结构与算法">
+                            数据结构与算法
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B" title="网络编程">
+                            网络编程
+                        </a>
+                        
+                        
+                    </div>
+                </section>
+                
+
+                
+                
+                <section>
+                    <hr>
+                    <h5>FRIENDS</h5>
+                    <ul class="list-inline">
+                        
+                        <li><a target="_blank" href="https://fan-bu-fan.github.io/">FELL &amp; ENJOY</a></li>
+                        
+                    </ul>
+                </section>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">                  
+                    
+                    <li>
+                        <a href="mailto:huanruiz@foxmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		           
+                    
+                    
+                    
+                    
+
+		            
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/xqt01">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		            
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+            
+            
+            
+           
+                   <li>
+                       <a href='' rel="alternate" type="application/rss+xml" title="PunchCode" >
+                           <span class="fa-stack fa-lg">
+                               <i class="fas fa-circle fa-stack-2x"></i>
+                               <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                           </span>
+                       </a>
+                   </li>
+            
+             </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; PunchCode 2024
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function loadAsync(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        loadAsync("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    loadAsync("https://cdn.jsdelivr.net/npm/fastclick@1.0.6/lib/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+    function generateCatalog(selector) {
+
+        
+        
+        
+        
+            _containerSelector = 'div.post-container'
+        
+
+        
+        var P = $(_containerSelector), a, n, t, l, i, c;
+        a = P.find('h1,h2,h3,h4,h5,h6');
+
+        
+        $(selector).html('')
+
+        
+        a.each(function () {
+            n = $(this).prop('tagName').toLowerCase();
+            i = "#" + $(this).prop('id');
+            t = $(this).text();
+            c = $('<a href="' + i + '" rel="nofollow">' + t + '</a>');
+            l = $('<li class="' + n + '_nav"></li>').append(c);
+            $(selector).append(l);
+        });
+        return true;
+    }
+
+    generateCatalog(".catalog-body");
+
+    
+    $(".catalog-toggle").click((function (e) {
+        e.preventDefault();
+        $('.side-catalog').toggleClass("fold")
+    }))
+
+    
+
+
+    loadAsync("\/js\/jquery.nav.js", function () {
+        $('.catalog-body').onePageNav({
+            currentClass: "active",
+            changeHash: !1,
+            easing: "swing",
+            filter: "",
+            scrollSpeed: 700,
+            scrollOffset: 0,
+            scrollThreshold: .2,
+            begin: null,
+            end: null,
+            scrollChange: null,
+            padding: 80
+        });
+    });
+</script>
+
+
+
+
+
+
+</body>
+</html>

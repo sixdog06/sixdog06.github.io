@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tech on PunchCode</title>
+    <link>https://xqt01.github.io/categories/tech/</link>
+    <description>Recent content in Tech on PunchCode</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Sun, 03 Mar 2024 00:00:00 +0000</lastBuildDate><atom:link href="https://xqt01.github.io/categories/tech/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>重读Java多线程</title>
+      <link>https://xqt01.github.io/post/89_%E9%87%8D%E8%AF%BBjava%E5%A4%9A%E7%BA%BF%E7%A8%8B/</link>
+      <pubDate>Sun, 03 Mar 2024 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/89_%E9%87%8D%E8%AF%BBjava%E5%A4%9A%E7%BA%BF%E7%A8%8B/</guid>
+      <description>在上半年我完成了《Java并发编程的艺术》的学习, 尽管一直没有写博客总结. 在这篇文章中, 我将挑战用一篇文章横扫Java多线程中, 我们必须了解</description>
+    </item>
+    
+    <item>
+      <title>plantUML画架构图</title>
+      <link>https://xqt01.github.io/post/88_plantuml%E7%94%BB%E6%9E%B6%E6%9E%84%E5%9B%BE/</link>
+      <pubDate>Sat, 04 Nov 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/88_plantuml%E7%94%BB%E6%9E%B6%E6%9E%84%E5%9B%BE/</guid>
+      <description>写文档总是要画各种图, 不管是软件工程师需要的流程图/架构图, PM的甘特图等等. 市面上也有很多工具支持, 微软的Visio, 集成在conflue</description>
+    </item>
+    
+    <item>
+      <title>几行代码解释Java的虚拟线程并不是万能解药</title>
+      <link>https://xqt01.github.io/post/86_%E5%87%A0%E8%A1%8C%E4%BB%A3%E7%A0%81%E8%A7%A3%E9%87%8Ajava%E7%9A%84%E8%99%9A%E6%8B%9F%E7%BA%BF%E7%A8%8B%E5%B9%B6%E4%B8%8D%E6%98%AF%E4%B8%87%E8%83%BD%E8%A7%A3%E8%8D%AF/</link>
+      <pubDate>Wed, 03 May 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/86_%E5%87%A0%E8%A1%8C%E4%BB%A3%E7%A0%81%E8%A7%A3%E9%87%8Ajava%E7%9A%84%E8%99%9A%E6%8B%9F%E7%BA%BF%E7%A8%8B%E5%B9%B6%E4%B8%8D%E6%98%AF%E4%B8%87%E8%83%BD%E8%A7%A3%E8%8D%AF/</guid>
+      <description>在JEP 444中, 对虚拟线程进行了第一次正式的介绍, 并且提供了preview api. 虚拟线程在JDK19中已经被发布, 并且预计在JDK21中发布最</description>
+    </item>
+    
+    <item>
+      <title>Java中toMap与asList的坑</title>
+      <link>https://xqt01.github.io/post/72_java%E4%B8%ADtomap%E4%B8%8Easlist%E7%9A%84%E5%9D%91/</link>
+      <pubDate>Thu, 30 Dec 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/72_java%E4%B8%ADtomap%E4%B8%8Easlist%E7%9A%84%E5%9D%91/</guid>
+      <description>工作中遇到了两个坑, 讲述一下心路历程. toMap 写stream的时候有时会用到toMap来把某个实体的两个字段做一个映射关系. 简单的模拟如下, 没有任</description>
+    </item>
+    
+    <item>
+      <title>ajax的发post请求的坑</title>
+      <link>https://xqt01.github.io/post/63_ajax%E7%9A%84%E5%8F%91post%E8%AF%B7%E6%B1%82%E7%9A%84%E5%9D%91/</link>
+      <pubDate>Mon, 20 Sep 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/63_ajax%E7%9A%84%E5%8F%91post%E8%AF%B7%E6%B1%82%E7%9A%84%E5%9D%91/</guid>
+      <description>在前端通过ajax请求向服务端发送请求是非常常见的场景, 在Java Web开发中, 通常用SpringMVC去取得请求体的数据. 而用ajax做p</description>
+    </item>
+    
+    <item>
+      <title>润一润我们的Java代码</title>
+      <link>https://xqt01.github.io/post/62_%E6%B6%A6%E4%B8%80%E6%B6%A6%E6%88%91%E4%BB%AC%E7%9A%84java%E4%BB%A3%E7%A0%81/</link>
+      <pubDate>Sun, 15 Aug 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/62_%E6%B6%A6%E4%B8%80%E6%B6%A6%E6%88%91%E4%BB%AC%E7%9A%84java%E4%BB%A3%E7%A0%81/</guid>
+      <description>作为一个代码强迫症加代码外貌协会, 写代码的时候总会想提高代码可读性, 不管性能怎么样, 至少要长得好看. 后来又看到有推友的mentor说: &amp;ld</description>
+    </item>
+    
+    <item>
+      <title>Java String</title>
+      <link>https://xqt01.github.io/post/19_java_string/</link>
+      <pubDate>Thu, 11 Mar 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/19_java_string/</guid>
+      <description>在面试中遇到了一个问题: Java String是线程安全的吗? 我刚开始回答它是不安全的, 因为方法都没有加synchronized, 后来被面试官引导到</description>
+    </item>
+    
+    <item>
+      <title>LRU与LFU</title>
+      <link>https://xqt01.github.io/post/16_lru%E4%B8%8Elfu/</link>
+      <pubDate>Tue, 16 Feb 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/16_lru%E4%B8%8Elfu/</guid>
+      <description>146. LRU缓存机制 双向链表(存储结构) + 哈希表(快速索引). key为node的一部分, 也是用来索引的标志. class LRUCache { HashMap&amp;lt;Integer, Node&amp;gt; map; DoubleList cache; int capacity; public LRUCache(int capacity) { this.capacity = capacity; map</description>
+    </item>
+    
+    <item>
+      <title>数据结构与算法-并查集</title>
+      <link>https://xqt01.github.io/post/15_%E5%B9%B6%E6%9F%A5%E9%9B%86/</link>
+      <pubDate>Mon, 15 Feb 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/15_%E5%B9%B6%E6%9F%A5%E9%9B%86/</guid>
+      <description>框架 照搬的参考3. class UF { private int count; //记录连通分量个数 private int[] parent; //存储若干棵树 private int[] size; //记录树的大小 public UF(int n) { this.count = n; parent = new int[n]; size = new int[n]; for (int i = 0; i &amp;lt; n;</description>
+    </item>
+    
+    <item>
+      <title>数据结构与算法-位运算</title>
+      <link>https://xqt01.github.io/post/14_%E4%BD%8D%E8%BF%90%E7%AE%97/</link>
+      <pubDate>Sun, 17 Jan 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/14_%E4%BD%8D%E8%BF%90%E7%AE%97/</guid>
+      <description>面试题05.07. 配对交换 提取奇数位左移1位, 或上偶数位右移1位. class Solution { public int exchangeBits(int num) { return (((num &amp;amp; 0x55555555) &amp;lt;&amp;lt; 1) | ((num &amp;amp; 0xaaaaaaaa) &amp;gt;&amp;gt; 1)); } } 参考 labuladong算法 L</description>
+    </item>
+    
+    <item>
+      <title>数据结构与算法-贪心算法</title>
+      <link>https://xqt01.github.io/post/13_%E8%B4%AA%E5%BF%83%E7%AE%97%E6%B3%95/</link>
+      <pubDate>Fri, 15 Jan 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/13_%E8%B4%AA%E5%BF%83%E7%AE%97%E6%B3%95/</guid>
+      <description>贪心算法是动态规划的特殊情况, 因为贪心的每一步都需要选择最优解. 满足贪心选择性质, 就可以用贪心. 区间调度问题 435. 无重叠区间 按右边界从小到大排序</description>
+    </item>
+    
+    <item>
+      <title>数据结构与算法-字符串</title>
+      <link>https://xqt01.github.io/post/12_%E5%AD%97%E7%AC%A6%E4%B8%B2/</link>
+      <pubDate>Wed, 13 Jan 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/12_%E5%AD%97%E7%AC%A6%E4%B8%B2/</guid>
+      <description>参考 labuladong算法 LeetCode提高班第一期——Week5字符串处理专题 leetcode acwing</description>
+    </item>
+    
+    <item>
+      <title>数据结构与算法-哈希表</title>
+      <link>https://xqt01.github.io/post/11_%E5%93%88%E5%B8%8C%E8%A1%A8/</link>
+      <pubDate>Tue, 12 Jan 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/11_%E5%93%88%E5%B8%8C%E8%A1%A8/</guid>
+      <description>1. 两数之和 class Solution { public int[] twoSum(int[] nums, int target) { HashMap&amp;lt;Integer, Integer&amp;gt; map = new HashMap&amp;lt;&amp;gt;(); for (int i = 0; i &amp;lt; nums.length; i++) { if (map.containsKey(target - nums[i])) return new int[]{map.get(target - nums[i]), i}; map.put(nums[i], i); } return new int[2]; } } 顺便把3Sum, 4Sum也总结了. 15. 三数之</description>
+    </item>
+    
+    <item>
+      <title>数据结构与算法-数学系列</title>
+      <link>https://xqt01.github.io/post/10_%E6%95%B0%E5%AD%A6%E7%B3%BB%E5%88%97/</link>
+      <pubDate>Sat, 09 Jan 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/10_%E6%95%B0%E5%AD%A6%E7%B3%BB%E5%88%97/</guid>
+      <description>这部分来自于&amp;lt;LeetCode提高班第三期——Week3数学专题&amp;gt;, 有的题不需要数学方法, 用动态规划或者利用数据结构做更容易想象</description>
+    </item>
+    
+    <item>
+      <title>DFS与BFS</title>
+      <link>https://xqt01.github.io/post/9_dfs%E4%B8%8Ebfs/</link>
+      <pubDate>Fri, 08 Jan 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/9_dfs%E4%B8%8Ebfs/</guid>
+      <description>回溯 DFS很多情况下会和回溯结合起来, 先通过全排列问题来构建回溯问题的框架. 我的理解中, 回溯实际上就是一种剪枝的技巧. 算法的本质依然是遍历.</description>
+    </item>
+    
+    <item>
+      <title>Java Collection</title>
+      <link>https://xqt01.github.io/post/18_java%E9%9B%86%E5%90%88%E7%B1%BB/</link>
+      <pubDate>Fri, 08 Jan 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/18_java%E9%9B%86%E5%90%88%E7%B1%BB/</guid>
+      <description>Collection Framework 首先根据图片感受一下整个collection的架构. Iterator Interface Collection接口扩展了Iterable接口, 目的还是为了操作其中的Ite</description>
+    </item>
+    
+    <item>
+      <title>数据结构与算法-数组系列</title>
+      <link>https://xqt01.github.io/post/8_%E6%95%B0%E7%BB%84%E7%B3%BB%E5%88%97/</link>
+      <pubDate>Mon, 04 Jan 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/8_%E6%95%B0%E7%BB%84%E7%B3%BB%E5%88%97/</guid>
+      <description>naive双指针 26. 删除排序数组中的重复项 快慢指针, fast != slow就可以把slow的下一个重复的值删掉. class Solution { public int removeDuplicates(int[] nums) { if (nums.length == 0) return 0; int slow = 0, fast =</description>
+    </item>
+    
+    <item>
+      <title>栈队列堆</title>
+      <link>https://xqt01.github.io/post/7_%E6%A0%88%E9%98%9F%E5%88%97%E5%A0%86/</link>
+      <pubDate>Mon, 28 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/7_%E6%A0%88%E9%98%9F%E5%88%97%E5%A0%86/</guid>
+      <description>先用leetcode专题进行练习. 队列实现 622. 设计循环队列 利用循环队列节省空间, 可以复用申请的空间. class MyCircularQueue { private int[] queue; private int capacity; private int head; private int count; public MyCircularQueue(int k) { queue =</description>
+    </item>
+    
+    <item>
+      <title>二分法</title>
+      <link>https://xqt01.github.io/post/6_%E4%BA%8C%E5%88%86%E6%B3%95/</link>
+      <pubDate>Sun, 27 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/6_%E4%BA%8C%E5%88%86%E6%B3%95/</guid>
+      <description>先用leetcode专题进行练习. 只要遇到了排了序的数组, 实际上都可以考虑能否用二分法加速. 704. 二分查找 首先做最基本的二分查找. class Solution { public int search(int[] nums,</description>
+    </item>
+    
+    <item>
+      <title>动态规划</title>
+      <link>https://xqt01.github.io/post/5_%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/</link>
+      <pubDate>Sat, 26 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/5_%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/</guid>
+      <description>简单题 509. 斐波那契数/剑指Offer10-I. 斐波那契数列 没有用数列存储, 因为转台转移过程只与前两个值有关. class Solution { public int fib(int n) { if (n == 0) return 0; if (n ==</description>
+    </item>
+    
+    <item>
+      <title>数据结构-链表</title>
+      <link>https://xqt01.github.io/post/4_%E9%93%BE%E8%A1%A8/</link>
+      <pubDate>Sat, 19 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/4_%E9%93%BE%E8%A1%A8/</guid>
+      <description>翻转链表 迭代实现较为容易, 一般要用dummy做一个虚拟头指针, 因为头结点可能会变, 这里主要用来理解递归的方向来做. 我把base条件叫做终极情</description>
+    </item>
+    
+    <item>
+      <title>数据结构-树</title>
+      <link>https://xqt01.github.io/post/3_%E6%A0%91/</link>
+      <pubDate>Tue, 15 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/3_%E6%A0%91/</guid>
+      <description>二叉树 前中后序遍历是树的基础, 关于树的题目首先要想好到底是用哪种遍历的思想, 遍历通常有三种实现方式, 以前序遍历举例. 递归实现 最常用的方式. class</description>
+    </item>
+    
+    <item>
+      <title>排序算法总结</title>
+      <link>https://xqt01.github.io/post/2_%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95%E6%80%BB%E7%BB%93/</link>
+      <pubDate>Sat, 12 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/2_%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95%E6%80%BB%E7%BB%93/</guid>
+      <description>总结几大排序算法. 主要对比时间复杂度和空间复杂度. 下图是排序算法属性的总结. (表格中希尔排序的部分存疑) 算法 平均时间复杂度 最坏情况 空间复杂度</description>
+    </item>
+    
+    <item>
+      <title>Java如何自定义排序</title>
+      <link>https://xqt01.github.io/post/17_java%E5%A6%82%E4%BD%95%E8%87%AA%E5%AE%9A%E4%B9%89%E6%8E%92%E5%BA%8F/</link>
+      <pubDate>Wed, 14 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/17_java%E5%A6%82%E4%BD%95%E8%87%AA%E5%AE%9A%E4%B9%89%E6%8E%92%E5%BA%8F/</guid>
+      <description>Comparable接口 自定义的类自定义排序需要implementsComparable并且重写public int compareTo(Object o) String等包装类实现了</description>
+    </item>
+    
+  </channel>
+</rss>

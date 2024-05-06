@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>数据库 on PunchCode</title>
+    <link>https://xqt01.github.io/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/</link>
+    <description>Recent content in 数据库 on PunchCode</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Tue, 17 Nov 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://xqt01.github.io/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>MySQL-高级</title>
+      <link>https://xqt01.github.io/post/42_mysql_%E9%AB%98%E7%BA%A7/</link>
+      <pubDate>Tue, 17 Nov 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/42_mysql_%E9%AB%98%E7%BA%A7/</guid>
+      <description>回顾 性能下降原因 查询写的不好 索引失效(单值, 符合) 关联查询过多join 服务器调优和参数设置不合适 SQL解析顺序 几种join 注意这种公有部分没</description>
+    </item>
+    
+    <item>
+      <title>MySQL-基础</title>
+      <link>https://xqt01.github.io/post/41_mysql_%E5%9F%BA%E7%A1%80/</link>
+      <pubDate>Thu, 12 Nov 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/41_mysql_%E5%9F%BA%E7%A1%80/</guid>
+      <description>MySQL的常见命令 查看当前所有的数据库: show databases; 打开指定的库: use 库名 查看当前库的所有表: show tables; 查看其它库的所有表: show tables from 库名; 创建表: create table 表名(</description>
+    </item>
+    
+  </channel>
+</rss>

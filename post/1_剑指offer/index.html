@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="PunchCode">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://xqt01.github.io/front.png">
+    <meta property="twitter:image" content="https://xqt01.github.io/front.png" />
+    
+
+    
+    <meta name="title" content="剑指offer" />
+    <meta property="og:title" content="剑指offer" />
+    <meta property="twitter:title" content="剑指offer" />
+    
+
+    
+    <meta name="description" content="Software Engineer">
+    <meta property="og:description" content="Software Engineer" />
+    <meta property="twitter:description" content="Software Engineer" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="Harry, 小拳头">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>剑指offer | 以终为始</title>
+
+    <link rel="canonical" href="/post/1_%E5%89%91%E6%8C%87offer/">
+
+    
+    
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hugo-theme-cleanwhite.min.css">
+
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+
+    
+    <link href="https://cdn.jsdelivr.net/gh/FortAwesome/Font-Awesome@5.15.1/css/all.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    
+    <script src="/js/jquery.min.js"></script>
+
+    
+    <script src="/js/bootstrap.min.js"></script>
+
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+
+</head>
+
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">PunchCode</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">All Posts</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/tech">tech</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0">学习笔记</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/%E6%9D%82%E8%B0%88">杂谈</a>
+                        </li>
+                        
+                    
+                    
+		    
+                        <li><a href="/top/archive/">ARCHIVE</a></li>
+                    
+                        <li><a href="/top/about/">ABOUT</a></li>
+                    
+
+                    
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/front.png')
+    }
+</style>
+
+<header class="intro-header" >
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95" title="数据结构与算法">
+                            数据结构与算法
+                        </a>
+                        
+                    </div>
+                    <h1>剑指offer</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        
+                            Posted by 
+                            
+                                小拳头
+                             
+                            on 
+                            Friday, December 11, 2020
+                            
+                            
+                            
+                            
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <p>这是剑指offer第二版的刷题小总结, 对应leetcode上剑指Offer专题的题目. 括号内的数字对应主站中题目的序号, 没有注明的复杂度都是指时间复杂度.</p>
+<h2 id="树">树</h2>
+<p><strong>07.重建二叉树</strong>: 构建二叉树, 用前序遍历. <code>preorder</code>确定根节点的值, <code>inorder</code>确定左子树的大小, 就能根据index的大小来构建树. 复杂度<code>O(n)</code>.</p>
+<p><strong>26.树的子结构</strong>: 两层遍历, 第一层遍历A的所有节点, 再以这些节点为根, 与B比较.</p>
+<p><strong>27.二叉树的镜像(226)</strong>: 前序后序都可以, 交换二叉树的左右子树.</p>
+<p><strong>28.对称的二叉树(101)</strong>: 遍历, 从左右子树两个方向一起走, 必须保证值相等, 直到左右同时到达null.</p>
+<p><strong>32-I.从上到下打印二叉树</strong>: BFS.</p>
+<p><strong>32-II.从上到下打印二叉树II(102)</strong>: BFS.</p>
+<p><strong>32-III.从上到下打印二叉树III</strong>: 在上题的基础上加一个<code>boolean turn</code>来判断每一层正着添加还是倒着添加.</p>
+<p><strong>33.二叉搜索树的后序遍历序列</strong>: 最后一个结点是根节点, 由此判断大小关系, 分隔数组, 并在下一个递归继续判断. 复杂度$O(n^{2})$. 这道题的序列只是可能是二叉搜索树的后序遍历结果, 因为不同的数树可能有同样的遍历结果.</p>
+<p><strong>36.二叉搜索树与双向链表(426)</strong>: 二叉搜索树自然需要中序遍历. 需要记录当前遍历的节点<code>cur</code>和前驱节点<code>pre</code>, 每次连接即可. 注意<code>pre</code>和<code>head</code>的值要存下来, 最后把最后的<code>pre</code>(最大的节点)和<code>head</code>(最小的节点)连接起来.</p>
+<p><strong>37.序列化二叉树(297)</strong>: 前序遍历或后序遍历都可以. 序列化时, 没有子节点的节点则加入<code>null</code>到数组(LinkedList也可以). 反序列化就是遍历序列化的那个String/数组/LinkedList.</p>
+<p><strong>54.二叉搜索树的第k大节点</strong>: 按右中左的顺序中序遍历, 把k当成<code>class Solution</code>的属性, 就不需要额外的变量保存遍历的次数了.</p>
+<p><strong>55-I.二叉树的深度(104)</strong>: 前序遍历, 或者递归思想直接返回左子树和右子树较大的那个高度.</p>
+<p><strong>55-II.平衡二叉树(110)</strong>: 在上一题的基础上比较深度, 要求左右子树深度差小于等于1, 并且所有子树都满足条件, 时间复杂度$O(nlogn)$(每层执行复杂度 * 层数复杂度). 而后序遍历的复杂度是$O(n)$, 从往上算高度, 一旦不满足条件则可以返回<code>-1</code>, 表示该树不平衡.</p>
+<p><strong>68-I.二叉搜索树的最近公共祖先(235)</strong>: 根据大小判断两个节点在左子树还是右子树, 如果一大一小则该节点是最近公共祖先.</p>
+<p><strong>68-II.二叉树的最近公共祖先(236)</strong>: 后序遍历, 没找到就返回null, 否则返回<code>p</code>, <code>q</code>. 当<code>left</code>, <code>right</code>都不为<code>null</code>时, <code>root</code>就是答案.</p>
+<h2 id="链表">链表</h2>
+<p><strong>06.从尾到头打印链表</strong>: 用ArrayList遍历再反过来填到数组中, 复杂度$O(n)$.</p>
+<p><strong>18.删除链表的节点</strong>: 用<code>dummy</code>虚拟指针简化操作, 返回时直接返回<code>dummy.next</code>.</p>
+<p><strong>22.链表中倒数第k个节点</strong>: 双指针.</p>
+<p><strong>24.反转链表</strong>: 迭代较为简单, 递归可以想象为二叉树的后序遍历, 先遍历到最后的<code>newHead</code>, 再层层翻转.</p>
+<p><strong>25.合并两个排序的链表(21)</strong>: 迭代较为简单, 递归可以想象为二叉树的前序遍历, 函数的作用是返回合并后的链表, 所以只要让<code>head.next = mergeTwoLists(l1, l2)</code>即可.</p>
+<p><strong>35.复杂链表的复制</strong>: 用HashMap的key保存原结点, value保存新的结点. 通过源节点的指针构建新的链表, 复杂度$O(n)$.</p>
+<p><strong>52.两个链表的第一个公共节点(160)</strong>: 两个链表拼起来总长度一样, 所以遍历一遍一定会在中间相交, 除非没有相交节点. 复杂度$O(m+n)$.</p>
+<h2 id="动态规划">动态规划</h2>
+<p><strong>10-I.斐波那契数列</strong>: 不断由两个数相加得到下一个数, 每个状态只与前两个数有关, 所以只用保存两个数字即可, 空间复杂度$O(1)$.</p>
+<p><strong>10-II.青蛙跳台阶问题</strong>: 和上一道题一样, 但是初始条件改变, 跳上第0级台阶的方法数为1, 也就是不跳.</p>
+<p><strong>14-I.剪绳子(343)</strong>: <code>dp[i] = max(dp[i], max(dp[i - j] * j, (i - j) * j))</code>, 复杂度$O(n^{2})$, 也可以贪心<a href="https://leetcode-cn.com/problems/integer-break/solution/tan-xin-xuan-ze-xing-zhi-de-jian-dan-zheng-ming-py/">贪心</a>的去做, 复杂度O(n).</p>
+<p><strong>19.正则表达式匹配(10)</strong>: 类似编辑距离, 用二维数组<code>boolean[][] dp = new boolean[s.length() + 1][p.length() + 1];</code>解双序列问题, 数组的含义是前<code>s</code>的前i个字符和<code>p</code>的前j个字符是否匹配. 在<code>charAt</code>的时候要减一, 因为我们增加了两个序列都为空的初始状态.</p>
+<p><strong>42.连续子数组的最大和(53)</strong>: <code>nums[i] = Math.max(nums[i], nums[i - 1] + nums[i]);</code>, 每一轮都要看是否超过了之前的最大值. 这个方法默认抛弃了和为负的连续子数组.</p>
+<p><strong>46.把数字翻译成字符串</strong>: 符合要求<code>dp[i] = dp[i - 1] + dp[i - 2]</code>, 否则<code>dp[i] = dp[i - 1]</code>.</p>
+<p><strong>47.礼物的最大价值</strong>: 选左边和上面最贵的礼物.</p>
+<p><strong>49.丑数(264)</strong>: <code>dp[0] = 1</code>, 用三个指针指向它, 分别代表乘2, 3, 5. 每次选乘积最小的那一个并移动指针.</p>
+<p><strong>60.n个骰子的点数</strong>: 一个一个骰子逐层计算, 每一个都是在上一个的基础上, 6个乘1/6.</p>
+<p><strong>63.股票的最大利润</strong>: 只买卖一次, 所以只用计算当前值减去前面出现过的最小值即可, <code>res = Math.max(res, price - minprice);</code>.</p>
+<h2 id="二分法">二分法</h2>
+<p><strong>11.旋转数组的最小数字(154)</strong>: 把right和mid作比较, 从而知道当前mid在大的那一边还是小的那一边, 如果相等则right&ndash;(因为可能有重复的数字).</p>
+<p><strong>53-I.在排序数组中查找数字I(34)</strong>: 先找到数字, 再向左右扩展查找. 复杂度$logn$.</p>
+<p><strong>53-II.0～n-1中缺失的数字</strong>: <code>mid == nums[mid]</code>说明缺失的数字在右边. 否则缺失的数字在左边. 最后返回<code>left</code>.</p>
+<h2 id="堆栈队列">堆/栈/队列</h2>
+<p><strong>09.用两个栈实现队列</strong>: stack1专门用来执行<code>deleteHead</code>操作, 当stack1为空时需要先把stack2中的元素全移动到stack1, stack2只用来执行<code>appendTail</code>操作.</p>
+<p><strong>30.包含min函数的栈(155)</strong>: 用辅助栈把最小的元素入栈, 如果这个元素被主栈pop了, 在虚拟栈中也要pop.</p>
+<p><strong>31.栈的压入, 弹出序列(946)</strong>: 题目中说<code>pushed</code>是<code>popped</code>的排列并且没有重复值, 所以直接用栈模拟这个过程即可, 每次循环都push一个元素, 并且当栈顶与<code>popped</code>当前元素相等时就出栈. 最后判断栈是否为空得到答案.</p>
+<p><strong>41.数据流中的中位数(295)</strong>: 用大顶堆小顶堆解决. 大顶堆存较小的数, 小顶堆存较大的数. 当两个堆大小不同的时候, 添加数字往大顶堆添加, 而中位数就是小顶堆的顶. 否则往小顶堆添加, 中位数是两个堆顶的平均数, 这里出除法要除以<code>2.0</code>, 否则是整除. 添加数字的复杂度是<code>log(n)</code>, 而查找中位数的复杂度是$O(1)$.</p>
+<p><strong>59-I.滑动窗口的最大值(239)</strong>: 双端的单调队列, 保证队首永远是最大的数字, 每次也把队首添加进结果数组, 复杂度O(n).</p>
+<p><strong>59-II.队列的最大值</strong>: 方法同上, 用<code>Queue</code>保存元素, <code>Deque</code>的单调队列保存最大值. 注意这里会用到Integer比较, 所以用<code>.equals()</code>.</p>
+<h2 id="数组">数组</h2>
+<p><strong>04.二维数组中的查找(240)</strong>: 从左下的结点开始搜索, 向上走数字减小, 向右走数字变大, 复杂度$O(m+n)$, m和n指数组的行数和列数.</p>
+<p><strong>21.调整数组顺序使奇数位于偶数前面</strong>: 头尾双指针, 用<code>left</code>找前面的偶数, <code>right</code>找后面的奇数, 然后交换.</p>
+<p><strong>29.顺时针打印矩阵(54)</strong>: 将上下左右边界逐渐收缩, 直到<code>(left &gt; right || up &gt; down)</code>.</p>
+<p><strong>57.和为s的两个数字</strong>: 左右双指针.</p>
+<p><strong>57-II.和为s的连续正数序列</strong>: 滑动窗口, Java可以用<code>list.toArray(new int[list.size()][]);</code>来转换List到int数组.</p>
+<p><strong>66.构建乘积数组</strong>: 把<code>a</code>展开成二维数组(二维数组是虚拟的, 我们只在意每一列的值), 1就位于对角线上, 也就是那个没有被乘的数字. 那么只要按顺序计算下三角和上三角乘积即可.</p>
+<h2 id="dfs与bfs">DFS与BFS</h2>
+<p><strong>12.矩阵中的路径(79)</strong>: 对每个起始节点回溯, 如果有一个点成功就返回true.</p>
+<p><strong>13.机器人的运动范围</strong>: DFS/BFS都可以, 用DFS可以用回溯框架. 返回值是<code>1 + backtrack() + backtrack() + ...</code>, 避免设置类的设置属性.</p>
+<p><strong>34.二叉树中和为某一值的路径(113)</strong>: 套着树外壳的回溯题. 这里在添加路径之后不能直接return, 因为还没有做回溯的操作. 求sum的回溯可以直接算<code>sum - root.val</code>, 减少变量, 这个减操作会放在判断<code>sum == 0</code>之前, 目的是去重, 所以进入了递归结束的功能区之后, 添加了一个<code>path</code>需要手动地<code>path.removeLast()</code>才能返回. 复杂度$O(n)$.</p>
+<p><strong>38.字符串的排列</strong>: 相当于没有重复值的全排列问题, 复杂度$O(N!)$.</p>
+<h2 id="数学系列">数学系列</h2>
+<p><strong>16.数值的整数次方(50)</strong>: 快速幂, 注意<code>n</code>可能是负数, 所以<code>x</code>可能需要取倒数, <code>n</code>可能需要取相反数, 而<code>int</code>型最小的$2^{-31}$取相反数超出了<code>int</code>范围, 所以要用long来存. 复杂度$O(logn)$.</p>
+<p><strong>17.打印从1到最大的n位数</strong>: 关键点在解决大数问题, 需要用<code>String</code>来表示数字, 从而转化为全排列问题<a href="https://leetcode-cn.com/problems/da-yin-cong-1dao-zui-da-de-nwei-shu-lcof/solution/mian-shi-ti-17-da-yin-cong-1-dao-zui-da-de-n-wei-2/">链接</a>. 通过9的数量用来进位, 通过设立左边界, 确定位数的范围.</p>
+<p><strong>43.1～n整数中1出现的次数(233)</strong>: 分三位<code>cur</code>, <code>low</code>, <code>high</code>, 分别计算每一位中1出现的次数. 如果<code>cur==0</code>, 则只由高位决定; 如果<code>cur==1</code>, 则由高位和低位造成的当前多出现的那些1决定; 若果<code>cur&gt;1</code>, 相当于上一个基础上又多跑了一个高位的数字. 复杂度<code>logn</code>, 底为10.</p>
+<p><strong>44.数字序列中某一位的数字(400)</strong>: 1位的数字有9个(0除外), 2位有90个, 由此判断该数字是第几位, 进而判断数字是多少, <code>n</code>对应的该数字第几位. 复杂度<code>logn</code>, 底为10.</p>
+<p><strong>61.扑克牌中的顺子</strong>: 转换思路, 等价于除0外没有重复数字的情况下, 最大的数和最小的数之差是否小于2.</p>
+<p><strong>62.圆圈中最后剩下的数字</strong>: 约瑟夫环, 这题是从0开始的序列, 数字本身就是index. 根据最后剩下的数字反推, 最后剩下一个人数字, index为0. 正向看, 每次删除都是向前移动m个位置, 倒推的时候, 就每次补上m个位置再与当前长度<code>i</code>取模, 推出当前目标数字的index, 直到<code>i == n</code>.</p>
+<h2 id="哈希表">哈希表</h2>
+<p><strong>03.数组中重复的数字</strong>: HashSet存储, 复杂度$O(n)$.</p>
+<p><strong>39.数组中出现次数超过一半的数字(169)</strong>: 直接统计即可, 空间复杂度$O(n)$. 用摩尔投票法可以把空间复杂度降到$O(1)$.</p>
+<p><strong>50.第一个只出现一次的字符</strong>: <code>HashMap&lt;Character, Boolean&gt; map = new HashMap&lt;&gt;();</code>遍历添加, 最后遍历数组找到第一个符合要求的key, 没有则返回空. 那么上一轮的位置就是<code>(0 + m) % 2</code>. 2位倒数第二轮的数组长度. 一直递推到长度为n的数字序列, 就能知道最后这个数字所在的位置.</p>
+<h2 id="字符串">字符串</h2>
+<p><strong>05.替换空格</strong>: 用StringBuilder解决, 复杂度$O(n)$.</p>
+<p><strong>48.最长不含重复字符的子字符串(3)</strong>: 双指针, 开始时左右指针同时指向0, 用HashSet保存当前字母. 若重复, 则左指针向右移动, 否则右指针向右移动, 当前长度加1. 时间复杂度$O(n)$.</p>
+<p><strong>58-I.翻转单词顺序</strong>: 分隔再倒序, 用<code>trim()</code>去除收尾空格.</p>
+<p><strong>58-II.左旋转字符串</strong>: 用n切片, 再拼接. <code>substring()</code>是线性的, 所以复杂度是<code>O(n)</code>.</p>
+<p><strong>67.把字符串转换成整数</strong>: 遍历即可, <code>str = str.trim();</code>去首尾空格.</p>
+<h2 id="贪心算法">贪心算法</h2>
+<p><strong>14-II.剪绳子II(343)</strong>: 不能像I题一样了, 否则越界. 用贪心做, 中间过程取模. 尽量每次都拆3出来, 剩下的再相乘.</p>
+<h2 id="位运算">位运算</h2>
+<p><strong>15.二进制中1的个数(191)</strong>: n不断无符号右移, 并与1, 结果为1, 则当前位为1. 终止条件是<code>n != 0</code>, 不能是<code>n &gt; 0</code>, 否则符号位移动后会出问题.</p>
+<p><strong>56-I.数组中数字出现的次数</strong>: 数组中的数字互相异或, 那么剩下的一定是两个不同数字的异或<code>a</code>. 通过<code>a</code>可以知道这个两个数字哪一位不相等(为1的位), 用为1的这一位可以把原数组分成两组, 再把这两组分别异或, 最终的结果就是两个数字.</p>
+<p><strong>56-II.数组中数字出现的次数II</strong>: 统计每一位的1数量, 这个数字除以3余1的那一位就是唯一数字的答案.</p>
+<h2 id="排序">排序</h2>
+<p><strong>40.最小的k个数</strong>: 快排, 每次partition的时候进行判断, 如果<code>p + 1 &gt; k</code>, 那么只用对左边排序, 反之对右边排序, 如果相等则数组的前k个最小.</p>
+<p><strong>45.把数组排成最小的数</strong>: 自定义排序, 比较字符串情况下的<code>a + b</code>和<code>b + a</code>的大小.</p>
+<p><strong>51.数组中的逆序对</strong>: 归并排序, 每次右数组大于左数组时, <code>count += mid - i + 1</code>. 复杂度$O(nlogn)$.</p>
+<blockquote>
+<p><code>String</code>, <code>Integer</code>等类型比较要用<code>.equals()</code></p>
+</blockquote>
+<h2 id="其他">其他</h2>
+<p><strong>64.求1+2+…+n</strong>: 通过短路<code>x = n &gt; 1 &amp;&amp; sumNums(n - 1) &gt; 0;</code>, 前面的<code>x = n &gt; 1</code>不满足就不会执行后面的语句.</p>
+<h2 id="参考">参考</h2>
+<ol>
+<li>剑指Offer</li>
+<li><a href="https://leetcode-cn.com/problemset/lcof/">leetcode剑指Offer</a></li>
+</ol>
+
+
+                
+
+                
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/post/46_java%E5%A4%9A%E7%BA%BF%E7%A8%8B%E9%AB%98%E7%BA%A7/" data-toggle="tooltip" data-placement="top" title="Java多线程-高级">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/post/2_%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95%E6%80%BB%E7%BB%93/" data-toggle="tooltip" data-placement="top" title="排序算法总结">Next
+                            Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+                
+
+                
+
+
+<div id="disqus-comment"></div>
+<div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "xqt01" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+            </div>
+
+            
+            
+            <div class="
+                col-lg-2 col-lg-offset-0
+                visible-lg-block
+                sidebar-container
+                catalog-container">
+                <div class="side-catalog">
+                    <hr class="hidden-sm hidden-xs">
+                    <h5>
+                        <a class="catalog-toggle" href="#">CATALOG</a>
+                    </h5>
+                    <ul class="catalog-body"></ul>
+                </div>
+            </div>
+            
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/java" title="java">
+                            java
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/jvm" title="jvm">
+                            jvm
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/spring" title="spring">
+                            spring
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E5%89%8D%E7%AB%AF" title="前端">
+                            前端
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F" title="操作系统">
+                            操作系统
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93" title="数据库">
+                            数据库
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95" title="数据结构与算法">
+                            数据结构与算法
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B" title="网络编程">
+                            网络编程
+                        </a>
+                        
+                        
+                    </div>
+                </section>
+                
+
+                
+                
+                <section>
+                    <hr>
+                    <h5>FRIENDS</h5>
+                    <ul class="list-inline">
+                        
+                        <li><a target="_blank" href="https://fan-bu-fan.github.io/">FELL &amp; ENJOY</a></li>
+                        
+                    </ul>
+                </section>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">                  
+                    
+                    <li>
+                        <a href="mailto:huanruiz@foxmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		           
+                    
+                    
+                    
+                    
+
+		            
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/xqt01">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		            
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+            
+            
+            
+           
+                   <li>
+                       <a href='' rel="alternate" type="application/rss+xml" title="PunchCode" >
+                           <span class="fa-stack fa-lg">
+                               <i class="fas fa-circle fa-stack-2x"></i>
+                               <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                           </span>
+                       </a>
+                   </li>
+            
+             </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; PunchCode 2024
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function loadAsync(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        loadAsync("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    loadAsync("https://cdn.jsdelivr.net/npm/fastclick@1.0.6/lib/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+    function generateCatalog(selector) {
+
+        
+        
+        
+        
+            _containerSelector = 'div.post-container'
+        
+
+        
+        var P = $(_containerSelector), a, n, t, l, i, c;
+        a = P.find('h1,h2,h3,h4,h5,h6');
+
+        
+        $(selector).html('')
+
+        
+        a.each(function () {
+            n = $(this).prop('tagName').toLowerCase();
+            i = "#" + $(this).prop('id');
+            t = $(this).text();
+            c = $('<a href="' + i + '" rel="nofollow">' + t + '</a>');
+            l = $('<li class="' + n + '_nav"></li>').append(c);
+            $(selector).append(l);
+        });
+        return true;
+    }
+
+    generateCatalog(".catalog-body");
+
+    
+    $(".catalog-toggle").click((function (e) {
+        e.preventDefault();
+        $('.side-catalog').toggleClass("fold")
+    }))
+
+    
+
+
+    loadAsync("\/js\/jquery.nav.js", function () {
+        $('.catalog-body').onePageNav({
+            currentClass: "active",
+            changeHash: !1,
+            easing: "swing",
+            filter: "",
+            scrollSpeed: 700,
+            scrollOffset: 0,
+            scrollThreshold: .2,
+            begin: null,
+            end: null,
+            scrollChange: null,
+            padding: 80
+        });
+    });
+</script>
+
+
+
+
+
+
+</body>
+</html>

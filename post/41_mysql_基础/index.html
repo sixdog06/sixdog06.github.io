@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="PunchCode">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://xqt01.github.io/front.png">
+    <meta property="twitter:image" content="https://xqt01.github.io/front.png" />
+    
+
+    
+    <meta name="title" content="MySQL-基础" />
+    <meta property="og:title" content="MySQL-基础" />
+    <meta property="twitter:title" content="MySQL-基础" />
+    
+
+    
+    <meta name="description" content="Software Engineer">
+    <meta property="og:description" content="Software Engineer" />
+    <meta property="twitter:description" content="Software Engineer" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="Harry, 小拳头">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>MySQL-基础 | 以终为始</title>
+
+    <link rel="canonical" href="/post/41_mysql_%E5%9F%BA%E7%A1%80/">
+
+    
+    
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hugo-theme-cleanwhite.min.css">
+
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+
+    
+    <link href="https://cdn.jsdelivr.net/gh/FortAwesome/Font-Awesome@5.15.1/css/all.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    
+    <script src="/js/jquery.min.js"></script>
+
+    
+    <script src="/js/bootstrap.min.js"></script>
+
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+
+</head>
+
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">PunchCode</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">All Posts</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/tech">tech</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0">学习笔记</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/%E6%9D%82%E8%B0%88">杂谈</a>
+                        </li>
+                        
+                    
+                    
+		    
+                        <li><a href="/top/archive/">ARCHIVE</a></li>
+                    
+                        <li><a href="/top/about/">ABOUT</a></li>
+                    
+
+                    
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/front.png')
+    }
+</style>
+
+<header class="intro-header" >
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93" title="数据库">
+                            数据库
+                        </a>
+                        
+                    </div>
+                    <h1>MySQL-基础</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        
+                            Posted by 
+                            
+                                小拳头
+                             
+                            on 
+                            Thursday, November 12, 2020
+                            
+                            
+                            
+                            
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <h2 id="mysql的常见命令">MySQL的常见命令</h2>
+<ul>
+<li>查看当前所有的数据库: <code>show databases;</code></li>
+<li>打开指定的库: <code>use 库名</code></li>
+<li>查看当前库的所有表: <code>show tables;</code></li>
+<li>查看其它库的所有表: <code>show tables from 库名;</code></li>
+<li>创建表:</li>
+</ul>
+<pre><code>create table 表名(
+	列名 列类型,
+	列名 列类型
+);
+</code></pre><ul>
+<li>查看表结构: <code>desc 表名;</code></li>
+<li>查看服务器的版本
+<ul>
+<li>登录到mysql服务端: <code>select version();</code></li>
+<li>没有登录到mysql服务端: <code>mysql --version</code></li>
+</ul>
+</li>
+</ul>
+<h2 id="mysql的语法规范">MySQL的语法规范</h2>
+<ol>
+<li><strong>不区分大小写</strong>, 但建议关键字大写, 表名/列名小写</li>
+<li>每条命令最好用分号结尾</li>
+<li>注释
+<ul>
+<li>单行注释：<code># 注释文字</code></li>
+<li>单行注释：<code>-- 注释文字</code></li>
+<li>多行注释：<code>/* 注释文字 */</code></li>
+</ul>
+</li>
+</ol>
+<h2 id="sql的语言分类">SQL的语言分类</h2>
+<ul>
+<li>DQL(Data Query Language): 数据查询语言 select</li>
+<li>DML(Data Manipulate Language): 数据操作语言, insert/update/delete</li>
+<li>DDL(Data Define Languge): 数据定义语言, 操作库create/drop/alter</li>
+<li>TCL(Transaction Control Language): 事务控制语言commit/rollback</li>
+</ul>
+<h2 id="dql语言的学习">DQL语言的学习</h2>
+<h3 id="基础查询">基础查询</h3>
+<pre><code>SELECT 要查询的东西
+FROM 表名;
+</code></pre><h3 id="条件查询">条件查询</h3>
+<p>根据条件过滤原始表的数据, 查询到想要的数据. 常量就是选什么出什么, 列的数量手机原列长. 函数包括之前的<code>VERSION()</code>, <code>LENGTH()</code>等. 可以用<code>as</code>起别名(做题的时候基本都要别名), <code>DISTINCT</code>去重.</p>
+<pre><code>SELECT 
+	要查询的字段|表达式|常量值|函数
+FROM 
+	表
+WHERE 
+	条件;
+</code></pre><ul>
+<li>条件表达式: <code>salary&gt;10000</code>. 条件运算符有<code>&gt; &lt; &gt;= &lt;= = != &lt;&gt;</code>. 用<code>IS</code>可以判断<code>NULL</code>或<code>NOT NULL</code>.</li>
+<li>逻辑表达式: <code>salary  &gt;10000 &amp;&amp; salary&lt;20000</code>. 逻辑运算符有<code>AND(&amp;&amp;) OR(||) NOT(!)</code>.</li>
+</ul>
+<blockquote>
+<p><code>+</code>号只能进行数值运算, 字符能转就转, 否则为0. 连接字符用<code>CONCAT(A, B, C)</code>. 如果某一项为<code>NULL</code>, 可以用<code>ISNULL(A, 0)</code>, 用<code>0</code>替换<code>NULL</code>.</p>
+</blockquote>
+<p>条件查询包括模糊查询比如<code>last_name LIKE '_a%'</code>. 其中的<code>%</code>表示0个或多个字符, <code>_</code>表示一个字符. 可以用<code>\</code>转义, 也可以在后面加<code>ESCAPE </code>转义, 比如<code>ESCAPE $</code>, 代表<code>$</code>替代<code>\</code>代表转义字符.</p>
+<p>用<code>WHERE BETWEEN 100 and 120</code>, 相当于大于等于左边的值, 小于等于右边的值, 所以这两个值顺序不能颠倒.</p>
+<p>用<code>IN (IT_PROT, AD_VP)</code>代表判断字段的值是否属于列表的某一项.</p>
+<h3 id="排序查询">排序查询</h3>
+<pre><code>SELECT
+	要查询的东西
+FROM
+	表
+WHERE 
+	条件
+ORDER BY 排序的字段|表达式|函数|别名 ASC|DESC
+</code></pre><p>这里如果不写<code>ASC</code>或<code>DESC</code>就默认升序. <code>ORDER BY</code>放在最后, <code>LIMIT</code>之前.</p>
+<h3 id="常见函数">常见函数</h3>
+<h4 id="单行函数">单行函数</h4>
+<ol>
+<li>字符函数: concat拼接, substr截取子串, upper转换成大写, lower转换成小写, trim去前后指定的空格和字符, trim去左边空格, rtrim去右边空格, replace替换, lpad左<strong>填充</strong>(不是添加), rpad右填充, instr返回子串第一次出现的索引, length获取字节个数.</li>
+<li>数学函数: round四舍五入, rand随机数, floor向下取整, ceil向上取整, mod取余, truncate截断, 参数指保留小数点的位数.</li>
+<li>日期函数, now当前系统日期+时间, curdate当前系统日期, curtime当前系统时间, str_to_date将字符转换成日期
+, date_format将日期转换成字符. 取月份: <code>MONTH(NOW())</code>, 系统时间<code>NOW()</code>, 判断日期差<code>SELECT DATEDIFF(NOW(), '1995-1-1');</code>.</li>
+<li>流程控制函数: if处理双分支, <code>IF(条件, 真, 假)</code>, case处理多分支(可以直接放条件的值). <code>SELECT salary CASE WHEN salary&gt;20000 THEN 'A' ... ELSE...ß END</code>.</li>
+<li>其他: version版本, database当前库, user当前连接用户.</li>
+</ol>
+<h4 id="分组函数">分组函数</h4>
+<p>sum求和, max最大值, min最小值, avg平均值, count计数.</p>
+<blockquote>
+<p>这五个分组函数都忽略null值，除了count(*)/sum/avg一般用于处理数值. max/min/count可以处理任何数据类型. 都可以搭配distinct使用, 统计去重后的结果.
+count支持字段/*/常量值, 一般放1(但一般用*)</p>
+</blockquote>
+<h3 id="分组查询">分组查询</h3>
+<pre><code>select 查询的字段, 分组函数
+from 表
+group by 分组的字段
+</code></pre><ol>
+<li>可以按单个字段分组</li>
+<li>和分组函数一同查询的字段最好是分组后的字段</li>
+<li>分组筛选: 分组前筛选: <code>原始表 group by的前面 where</code> , 分组后筛选: <code>分组后的结果集 group by的后面 having</code>, <code>having</code>的东西本来就不在表中, 所以不能用<code>where</code>替代.</li>
+<li>可以按多个字段分组, 字段之间用逗号隔开</li>
+<li>可以支持排序</li>
+<li>having后可以支持别名</li>
+</ol>
+<h3 id="多表连接查询">多表连接查询</h3>
+<h4 id="通过join关键字实现连接">通过join关键字实现连接</h4>
+<p>其中<code>cross</code>是全连接, 连接也可用<code>where</code>直接写条件, 但是推荐用<code>join</code>.</p>
+<pre><code>select 字段, ...
+from 表1
+[inner|left outer|right outer|cross] join 表2 on 连接条件
+[inner|left outer|right outer|cross] join 表3 on 连接条件
+[where 筛选条件]
+[group by 分组字段]
+[having 分组后的筛选条件]
+[order by 排序的字段或表达式]
+</code></pre><h4 id="自连接">自连接</h4>
+<p>比如查询员工名和直接上级的名称, 利用别名把一个表当成两个表操作.</p>
+<pre><code>	SELECT e.last_name,m.last_name
+	FROM employees e
+	JOIN employees m ON e.`manager_id`=m.`employee_id`;
+</code></pre><h3 id="子查询">子查询</h3>
+<p>在一条查询语句中又嵌套了另一条完整的select语句, 其中被嵌套的select语句就是子查询或内查询. 而在外面的查询语句叫主查询或外查询.</p>
+<p>特点:</p>
+<ol>
+<li>子查询都放在小括号内.</li>
+<li>子查询可以放在from后/select后/where后/having后, 一般放在条件的右侧. 对于<code>from</code>来说, 相当于直接从新的表中进行选择, 所以必须要用这个表的话, 必须用别名.</li>
+<li>子查询优先于主查询执行, 主查询使用了子查询的执行结果.</li>
+<li>放在<code>exists</code>后也叫<strong>相关子查询</strong>, 一般和主查询有关, 加到<code>where</code>后面做进一步筛选.</li>
+</ol>
+<h3 id="进阶8分页查询">进阶8：分页查询</h3>
+<pre><code>select 字段|表达式,...
+from 表
+[where 条件]
+[group by 分组字段]
+[having 条件]
+[order by 排序的字段]
+limit [起始的条目索引, ] 条目数;
+</code></pre><ol>
+<li>起始条目索引从0开始</li>
+<li>limit子句放在查询语句的最后</li>
+</ol>
+<h3 id="进阶9联合查询">进阶9：联合查询</h3>
+<pre><code>select 字段|常量|表达式|函数 [from 表] [where 条件] union [all]
+select 字段|常量|表达式|函数 [from 表] [where 条件] union [all]
+select 字段|常量|表达式|函数 [from 表] [where 条件] union [all]
+.....
+select 字段|常量|表达式|函数 [from 表] [where 条件]
+</code></pre><ol>
+<li>多条查询语句的查询的列数必须一致, 列的类型<strong>最好</strong>相同(不同也不会报错), 列名默认是第一条查询</li>
+<li><code>union</code>代表去重, <code>union all</code>代表不去重</li>
+</ol>
+<h2 id="dml语言">DML语言</h2>
+<h3 id="插入">插入</h3>
+<p><code>insert into 表名(字段名1, 字段名2, ...) values(值1, 值2, ...);</code></p>
+<ol>
+<li>字段类型和值类型一致或兼容, 而且一一对应</li>
+<li>为空的字段, 可以不写字段名, 或用null填充</li>
+<li>不可以为空的字段, 必须插入值</li>
+<li>value可以有多个, 用逗号隔开</li>
+<li>如果省略字段就会但默认使用所有字段, 并且顺序和表中的存储顺序一致</li>
+</ol>
+<h3 id="修改">修改</h3>
+<p>修改单表语法:</p>
+<pre><code>update 表名 set 字段=新值, 字段=新值
+[where 条件];
+</code></pre><p>修改多表语法:</p>
+<pre><code>update 表1 别名1, 表2 别名2
+[表1 join 表2 on ...]
+set 字段=新值, 字段=新值
+where 连接条件
+and 筛选条件;
+</code></pre><h3 id="删除">删除</h3>
+<h4 id="delete语句">delete语句</h4>
+<p>单表:</p>
+<pre><code>delete from 表名 [where 筛选条件];
+</code></pre><p>多表:</p>
+<pre><code>delete 别名1, 别名2
+from 表1 别名1, 表2 别名2[join on]
+where 连接/筛选条件
+and 筛选条件;
+</code></pre><h4 id="truncate语句">truncate语句</h4>
+<pre><code>truncate table 表名
+</code></pre><ol>
+<li>truncate不能加where</li>
+<li>truncate删除带自增长的列的表后, 如果再插入数据, 数据从1开始</li>
+<li>delete删除带自增长列的表后, 如果再插入数据(即使全删除), 数据从上一次的断点处开始</li>
+<li>delete有返回值, truncate没有返回值</li>
+<li>事务中, truncate删除不能回滚, delete删除可以回滚</li>
+</ol>
+<h2 id="ddl语句">DDL语句</h2>
+<h3 id="库的管理">库的管理</h3>
+<ol>
+<li>创建库: <code>create database 库名(if not exsits 库名)</code>.</li>
+<li>删除库: <code>drop database 库名</code>.</li>
+<li>重命名: <code>rename database 库名 to 新库名</code>.</li>
+<li>更改字符集: <code>alter database 库名 character set 字符集名</code>.</li>
+</ol>
+<h3 id="表的管理">表的管理</h3>
+<h4 id="创建表">创建表</h4>
+<pre><code>CREATE TABLE employee(
+    id INT,
+    name VARCHAR(20),
+    gender CHAR,
+    birthday DATETIME
+);
+</code></pre><h4 id="修改表">修改表</h4>
+<ol>
+<li>修改列名: <code>ALTER TABLE studentinfo CHANGE COLUMN sex gender CHAR;</code>, 要加类型约束</li>
+<li>修改表名: <code>ALTER TABLE stuinfo RENAME [TO] studentinfo;</code></li>
+<li>修改列类型和列级约束: <code>ALTER TABLE studentinfo MODIFY COLUMN birthday DATE;</code></li>
+<li>添加字段:<code>ALTER TABLE studentinfo ADD COLUMN email VARCHAR(20);</code></li>
+<li>删除字段: <code>ALTER TABLE studentinfo DROP COLUMN email;</code></li>
+</ol>
+<h4 id="删除表">删除表</h4>
+<p><code>DROP TABLE [IF EXISTS] studentinfo;</code></p>
+<h4 id="复制表">复制表</h4>
+<p>复制表结构: <code>CREATE TABLE copy LIKE author;</code>, 复制结构加数据<code>CREATE TABLE copy LIKE author SELECT * FROM1 author;</code>, 也可以加<code>where</code>限制, 复制部分数据. 如果用<code>where 0</code>, 则可以复制部分列的结构, 但是不带数据</p>
+<h2 id="常见类型">常见类型</h2>
+<ol>
+<li>整型: Tinyint(1)/Smallint(2)/Int, Integer(4)/Bigint(8)</li>
+<li>小数: float(M, D) (4)/double(M, D) (8)/decimal(M, D). M是总长度, D是小数部分(都可省略). 超过范围插入临界值. 如果省略, 对于<code>decimal</code>的M, D默认为0, 10. 而其他两个根据数值精度来确认.</li>
+<li>字符型: char(M) (固定, M默认为1)/varchar(M) (可变, M不能省略)/text/blob(较大的二进制)</li>
+<li>日期型: date(4)/datetime(8)/timestamp(4, 受时区影响)/time(3)/year(1).</li>
+<li>Blob类型</li>
+</ol>
+<h2 id="常见约束">常见约束</h2>
+<ul>
+<li>NOT NULL: 非空(id, 姓名等)</li>
+<li>DEFAULT: 字段默认的值</li>
+<li>UNIQUE: 唯一, 可以为空(座位号)</li>
+<li>CHECK: 检查约束, 语法支持, MySQL没有效果</li>
+<li>PRIMARY KEY: 主键, 唯一且非空, <code>CONSTRAINT PRIMARY KEY(id, name)</code>表示两个字段的组合唯一(id)</li>
+<li>FOREIGN KEY: 外键, 字段来自于主表关联的列的值, 用于引用主表某个值, 一般引用primary key和unique值.</li>
+</ul>
+<p>创建表时添加约束:</p>
+<pre><code>CREATE TABLE student(
+	id INT PRIMARY KEY,
+	name VARCHAR(20) NOT NULL,
+	gender CHAR(1) CHECK (gender='male' OR gender='female'),
+	age INT DEFAULT 18,
+	majorid INT REFERENCES major(id)
+);
+
+CREATE TABLE major(
+	id INT PRIMARY KEY
+);
+</code></pre><p>也可以使用表级约束</p>
+<pre><code>CREATE TABLE student(
+	id INT,
+	name VARCHAR(20) NOT NULL,
+	gender CHAR(1) CHECK (gender='male' OR gender='female'),
+	age INT DEFAULT ,
+	majorid INT,
+
+	CONSTRAINT PRIMARY KEY(id),
+	CONSTRAINT FOREIGN KEY(majorid) REFERENCES major(id)
+);
+</code></pre><p>修改表时添加约束, <code>ALTER TABLE student MODIFY COLUMN name VARCHAR(20) NOT NULL</code>. 或表级约束<code>ALTER TABLE student ADD UNIQUE(name))</code>.</p>
+<p>删除约束, 同样用<code>ALTER</code>, 不加约束就好, 如果是<code>NOT NULL</code>, 则改为<code>NULL</code>. 删除键用<code>DROP</code>.</p>
+<p>标识列: <code>AUTO_INCREMENT</code>, 默认起始值为1, 自增长, 必须被索引, 一个表只能有一个. 起始值可以通过第一个插入的值来计算.</p>
+<h2 id="数据库事务">数据库事务</h2>
+<h3 id="含义">含义</h3>
+<p><strong>事务</strong>通过一组逻辑操作单元(一个或多个SQL语句), 他们相互依赖. <code>innodb</code>支持事务, 但不是所有存储引擎支持事务.</p>
+<h3 id="特点">特点</h3>
+<p>ACID</p>
+<ul>
+<li>原子性(Atomicity): 要么都发生, 要么都回滚, 事务是最小的单位</li>
+<li>一致性(Consistency):  执行事务后, 事务必须使数据库从一个一致性状态到另外一个一致性状态</li>
+<li>隔离性(Isolation): 多个事务同时操作相同数据库的同一个数据时, 一个事务的执行不受另外一个事务的干扰, 各并发事务之间数据库是独立的</li>
+<li>持久性(Durability): 一个事务一旦提交, 改变就是永久的, 即使数据库发生故障也不应该对其有任何影响</li>
+</ul>
+<h3 id="事务的分类">事务的分类</h3>
+<p><strong>隐式事务</strong>没有明显的开启和结束事务的标志. 比如<code>insert/update/delete</code>语句本身就是一个事务. <strong>显式事务</strong>具有明显的开启和结束事务的标志. 显式事务步骤如下:</p>
+<ol>
+<li>开启事务: 取消自动提交事务的功能. <code>set autocommit=0;</code>. 可选<code>start transaction;</code>, 因为<code>set autocommit=0;</code>默认开启了事务.</li>
+<li>编写事务的一组逻辑操作单元(多条SQL语句). 如<code>insert/update/delete</code>.</li>
+<li>结束事务(提交/回滚): <code>commit</code>(提交)/<code>rollback</code>(撤销修改).</li>
+</ol>
+<h3 id="隔离级别">隔离级别</h3>
+<p>并发事务带来的问题:</p>
+<ul>
+<li>脏读: 一个事务读取到了另外一个事务<strong>更新但是未提交</strong>的数据</li>
+<li>不可重复读: 同一个事务中, 多次读取到的数据不一致, 原因是另一个事务对数据进行了进行了<strong>更新</strong></li>
+<li>幻读: 一个事务读取数据时, 另外一个事务进行<strong>插入</strong>了新的数据, 这个事务再次读取就会发现多了原本没有的记录</li>
+</ul>
+<p>避免事务的并发问题, 可以设置事务的隔离级别:</p>
+<ol>
+<li><code>READ UNCOMMITTED(读取未提交)</code>都不可避免</li>
+<li><code>READ COMMITTED(读取已提交)</code>可以避免脏读(Oracle默认)</li>
+<li><code>REPEATABLE READ(可重复读)</code> 可以避免脏读, 不可重复读(MySQL默认)</li>
+<li><code>SERIALIZABLE(可串行化)</code>可以避免脏读, 不可重复读和幻读(阻塞新的插入), 效率低. 但是完全符合ACID.</li>
+</ol>
+<ul>
+<li>设置隔离级别: <code>set session|global transaction isolation level 隔离级别名;</code></li>
+<li>查看隔离级别: <code>select @@tx_isolation;</code></li>
+<li>设置保存点<code>SAVEPOINT a</code>, 回滚到保存点<code>ROLLBACK TO a</code>.</li>
+</ul>
+<blockquote>
+<p>InnoDB在<code>REPEATABLE-READ</code>下使用的是Next-Key Lock锁算法, 所以也可以避免幻读. 达到了SQL标准的<code>SERIALIZABLE</code>隔离级别</p>
+</blockquote>
+<h2 id="视图">视图</h2>
+<p>一张虚拟的表, <strong>只</strong>包含使用时动态检索数据的查询. 与表的使用方式完全相同, 但是不占用实际的物理空间. 使用视图的原因: 重用SQL语句/简化复杂的SQL操作/使用表的组成部分而不是整个表/保护数据/更改数据格式和表示.</p>
+<h3 id="视图的操作">视图的操作</h3>
+<h4 id="创建">创建</h4>
+<pre><code>CREATE VIEW 视图名
+AS
+查询语句;
+</code></pre><h4 id="修改-1">修改</h4>
+<pre><code>CREATE OR REPLACE VIEW 视图名
+AS
+查询语句;
+</code></pre><pre><code>ALTER VIEW 视图名
+AS
+查询语句;
+</code></pre><h4 id="删除-1">删除</h4>
+<p><code>DROP VIEW 视图名1, 视图名2;</code></p>
+<h4 id="查看">查看</h4>
+<p><code>SHOW CREATE view vieweg;</code>, 当然<code>desc</code>也行.</p>
+<h4 id="视图的增删改查">视图的增删改查</h4>
+<ol>
+<li>查看视图的数据: <code>SELECT * FROM vieweg;</code></li>
+<li>插入视图的数据: <code>INSERT INTO vieweg(last_name,department_id) VALUES('a', 90);</code></li>
+<li>修改视图的数据: <code>UPDATE vieweg SET last_name ='a' WHERE last_name='b';</code></li>
+<li>删除视图的数据: <code>DELETE FROM vieweg WHERE last_name='b';</code></li>
+</ol>
+<p>但是一般不更新视图. 并且很多视图不允许改, 比如加了<code>distinct</code>/<code>groupby</code>等, 则增删改视图会报错.</p>
+<h2 id="变量">变量</h2>
+<p>前两个是系统变量, 后两个是自定义的变量.</p>
+<h3 id="全局变量">全局变量</h3>
+<ul>
+<li>查看系统变量: <code>show global variables like '%char%';</code></li>
+<li>查看指定系统变量的值: <code>select @@global.autocommit;</code>/<code>select @@tx_isolasion;</code></li>
+<li>为某个系统变量赋值: <code>set @@global.autocommit=0</code></li>
+</ul>
+<h3 id="会话变量">会话变量</h3>
+<ul>
+<li>查看会话变量: <code>show session variables like '%char%';</code></li>
+<li>查看指定会话变量值<code>select @@tx_isolation;</code>/<code>select session.tx_isolation;</code></li>
+<li>赋值<code>set @@tx_isolation='read-uncommitted';</code>/<code>set session tx_isolation='read-uncommitted'</code></li>
+</ul>
+<h3 id="用户变量局部变量">用户变量/局部变量</h3>
+<p>作用域在当前对话, 也可在BEGIN/END中, 那么就会变成局部变量. 局部变量不需要加<code>@</code>, 并且为BEGIN/END中第一句话.</p>
+<pre><code># 声明
+set @name='lisi'
+set @count=1;
+
+# 修改
+set @name='zhangsan'
+select count(*) into @count from employees;
+
+# 查看
+select @count;
+</code></pre><h2 id="存储">存储</h2>
+<p>一组经过预先编译的sql语句的集合. 提高了sql语句的重用性, 提高了效率, 减少了连接数据库服务器次数.</p>
+<h3 id="创建存储过程procedure">创建存储过程(procedure)</h3>
+<pre><code>delimiter $
+create procedure 存储过程名(in|out|inout 参数名 参数类型, ...)
+begin
+	存储过程体(一组SQL语句)
+end $
+</code></pre><p>对于参数模式:</p>
+<ul>
+<li>默认无返回无参</li>
+<li>in: 该参数可以作为传入值</li>
+<li>out: 该参数可以作为返回值</li>
+<li>inout: 可输入可输出</li>
+</ul>
+<p>procedure的结束标记是<code>delimiter</code>, 如<code>delimiter $</code>, 就是用<code>$</code>作为标记, 如同SQL中的<code>;</code>. procedure中可以有多条SQL语句, 如果仅仅一条sql语句, 可省略begin/end. <code>call 存储过程名(实参列表)$</code>便可调用procedure.</p>
+<p>返回输入值的两倍, 举例:</p>
+<pre><code>create procedure proc(INOUT a int, INOUT b int)
+BEGIN
+	SET a=a*2;
+	SET b=b*2;
+END $
+
+set @m=10$
+set @n=20$
+call proc(@m,@n)$ #输入不能是常量
+
+select @m,@n;
+</code></pre><h2 id="函数">函数</h2>
+<p>有且仅有一个返回, 所以procedure适合批量插入/更新, 而函数一般用来处理数据.</p>
+<h3 id="创建函数">创建函数</h3>
+<pre><code>CREATE FUNCTION 函数名(参数名 参数类型, ...) RETURNS 返回类型
+BEGIN
+	函数体
+END
+</code></pre><p>举例, 返回员工数量:</p>
+<pre><code>create function fun() returns int
+begin
+	declare c int default 0; # set @c=0; 定义用户变量也是一会事
+
+	select count(*) into c # @c
+	from employees;
+
+	return c; # @c
+end $
+
+SELECT fun()$
+</code></pre><h3 id="查看删除函数">查看/删除函数</h3>
+<p><code>show create function fun;</code>/<code>drop function fun;</code></p>
+<h2 id="流程控制结构">流程控制结构</h2>
+<h3 id="if函数">if函数</h3>
+<p><code>if(条件, 值1, 值2)</code></p>
+<h3 id="case语句">case语句</h3>
+<p>类似于Java的switch</p>
+<pre><code>case 变量/表达式/字段
+when 值1 then 结果1或语句1(如果是语句, 需要加分号)
+when 值2 then 结果2或语句2(如果是语句, 需要加分号)
+...
+else 结果n或语句n(如果是语句, 需要加分号)
+end [case] (如果是放在begin end中需要加上case, 如果放在select后面不需要)
+</code></pre><p>类似于Java的多重if</p>
+<pre><code>case 
+when 条件1 then 结果1或语句1(如果是语句, 需要加分号) 
+when 条件2 then 结果2或语句2(如果是语句, 需要加分号)
+...
+else 结果n或语句n(如果是语句, 需要加分号)
+end [case] (如果是放在begin end中需要加上case, 如果放在select后面不需要)
+</code></pre><h3 id="if-elseif语句">if-elseif语句</h3>
+<p><strong>只能用在begin end中</strong>.</p>
+<pre><code>if 情况1 then 语句1;
+elseif 情况2 then 语句2;
+...
+else 语句n;
+end if;
+</code></pre><h3 id="循环">循环</h3>
+<p><code>只能放在BEGIN END里面</code>, 可以用<code>leave</code>跳出, 但是<code>leave</code>需要搭配标签.</p>
+<pre><code>标签: WHILE 循环条件 DO
+		循环体
+	END WHILE [标签];
+</code></pre><p>举例, 插入名字:</p>
+<pre><code>create procedure test(IN incount INT)
+BEGIN
+	declare i int default 0;
+	a: while i&lt;= incount do
+			set i=i+1
+			if mod(i,2) != 0 then iterate a;
+			end if;
+
+			insert into admin(username, `password`) values(concat('zhang', i), 123);
+	end while a;
+END $
+
+call test(10)$
+</code></pre><h2 id="参考">参考</h2>
+<ol>
+<li><a href="https://www.bilibili.com/video/BV12b411K7Zu?p=12">尚硅谷MySQL</a></li>
+<li>MySQL必知必会</li>
+</ol>
+
+
+                
+
+                
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/post/29_%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C_%E9%93%BE%E8%B7%AF%E5%B1%82/" data-toggle="tooltip" data-placement="top" title="计算机网络-链路层">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/post/42_mysql_%E9%AB%98%E7%BA%A7/" data-toggle="tooltip" data-placement="top" title="MySQL-高级">Next
+                            Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+                
+
+                
+
+
+<div id="disqus-comment"></div>
+<div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "xqt01" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+            </div>
+
+            
+            
+            <div class="
+                col-lg-2 col-lg-offset-0
+                visible-lg-block
+                sidebar-container
+                catalog-container">
+                <div class="side-catalog">
+                    <hr class="hidden-sm hidden-xs">
+                    <h5>
+                        <a class="catalog-toggle" href="#">CATALOG</a>
+                    </h5>
+                    <ul class="catalog-body"></ul>
+                </div>
+            </div>
+            
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/java" title="java">
+                            java
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/jvm" title="jvm">
+                            jvm
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/spring" title="spring">
+                            spring
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E5%89%8D%E7%AB%AF" title="前端">
+                            前端
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F" title="操作系统">
+                            操作系统
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93" title="数据库">
+                            数据库
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95" title="数据结构与算法">
+                            数据结构与算法
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B" title="网络编程">
+                            网络编程
+                        </a>
+                        
+                        
+                    </div>
+                </section>
+                
+
+                
+                
+                <section>
+                    <hr>
+                    <h5>FRIENDS</h5>
+                    <ul class="list-inline">
+                        
+                        <li><a target="_blank" href="https://fan-bu-fan.github.io/">FELL &amp; ENJOY</a></li>
+                        
+                    </ul>
+                </section>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">                  
+                    
+                    <li>
+                        <a href="mailto:huanruiz@foxmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		           
+                    
+                    
+                    
+                    
+
+		            
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/xqt01">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		            
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+            
+            
+            
+           
+                   <li>
+                       <a href='' rel="alternate" type="application/rss+xml" title="PunchCode" >
+                           <span class="fa-stack fa-lg">
+                               <i class="fas fa-circle fa-stack-2x"></i>
+                               <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                           </span>
+                       </a>
+                   </li>
+            
+             </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; PunchCode 2024
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function loadAsync(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        loadAsync("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    loadAsync("https://cdn.jsdelivr.net/npm/fastclick@1.0.6/lib/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+    function generateCatalog(selector) {
+
+        
+        
+        
+        
+            _containerSelector = 'div.post-container'
+        
+
+        
+        var P = $(_containerSelector), a, n, t, l, i, c;
+        a = P.find('h1,h2,h3,h4,h5,h6');
+
+        
+        $(selector).html('')
+
+        
+        a.each(function () {
+            n = $(this).prop('tagName').toLowerCase();
+            i = "#" + $(this).prop('id');
+            t = $(this).text();
+            c = $('<a href="' + i + '" rel="nofollow">' + t + '</a>');
+            l = $('<li class="' + n + '_nav"></li>').append(c);
+            $(selector).append(l);
+        });
+        return true;
+    }
+
+    generateCatalog(".catalog-body");
+
+    
+    $(".catalog-toggle").click((function (e) {
+        e.preventDefault();
+        $('.side-catalog').toggleClass("fold")
+    }))
+
+    
+
+
+    loadAsync("\/js\/jquery.nav.js", function () {
+        $('.catalog-body').onePageNav({
+            currentClass: "active",
+            changeHash: !1,
+            easing: "swing",
+            filter: "",
+            scrollSpeed: 700,
+            scrollOffset: 0,
+            scrollThreshold: .2,
+            begin: null,
+            end: null,
+            scrollChange: null,
+            padding: 80
+        });
+    });
+</script>
+
+
+
+
+
+
+</body>
+</html>

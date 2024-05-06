@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="PunchCode">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://xqt01.github.io/front.png">
+    <meta property="twitter:image" content="https://xqt01.github.io/front.png" />
+    
+
+    
+    <meta name="title" content="Effective Java Chapter9&amp;10-General Programming&amp;Exceptions" />
+    <meta property="og:title" content="Effective Java Chapter9&amp;10-General Programming&amp;Exceptions" />
+    <meta property="twitter:title" content="Effective Java Chapter9&amp;10-General Programming&amp;Exceptions" />
+    
+
+    
+    <meta name="description" content="Software Engineer">
+    <meta property="og:description" content="Software Engineer" />
+    <meta property="twitter:description" content="Software Engineer" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="Harry, 小拳头">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>Effective Java Chapter9&amp;10-General Programming&amp;Exceptions | 以终为始</title>
+
+    <link rel="canonical" href="/post/75_effective_java_chapter9_10/">
+
+    
+    
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hugo-theme-cleanwhite.min.css">
+
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+
+    
+    <link href="https://cdn.jsdelivr.net/gh/FortAwesome/Font-Awesome@5.15.1/css/all.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    
+    <script src="/js/jquery.min.js"></script>
+
+    
+    <script src="/js/bootstrap.min.js"></script>
+
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+
+</head>
+
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">PunchCode</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">All Posts</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/tech">tech</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0">学习笔记</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/%E6%9D%82%E8%B0%88">杂谈</a>
+                        </li>
+                        
+                    
+                    
+		    
+                        <li><a href="/top/archive/">ARCHIVE</a></li>
+                    
+                        <li><a href="/top/about/">ABOUT</a></li>
+                    
+
+                    
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/front.png')
+    }
+</style>
+
+<header class="intro-header" >
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/java" title="Java">
+                            Java
+                        </a>
+                        
+                    </div>
+                    <h1>Effective Java Chapter9&amp;10-General Programming&amp;Exceptions</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        
+                            Posted by 
+                            
+                                小拳头
+                             
+                            on 
+                            Thursday, January 20, 2022
+                            
+                            
+                            
+                            
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <p>这是Effective Java第九和第十章的总结, 讲如何编程. 项目链接<a href="https://github.com/xqt01/JavaLab">JavaLab</a>.</p>
+<h2 id="item-57-minimize-the-scope-of-local-variables">Item 57: Minimize the scope of local variables</h2>
+<p>减少局部变量的scope, 比如循环遍历Iterator的场景, 大多数人都会用while遍历, 这样会在循环的外部创建Iterator, 容易导致错误使用Iterator. 如果是for-loop, 在for的括号内定义Iterator, 就避免了这种问题.</p>
+<h2 id="item-58-prefer-for-each-loops-to-traditional-for-loops">Item 58: Prefer for-each loops to traditional for loops</h2>
+<p>为了防止溢出, 用for-each替代传统的for loop. 除了以下三点无法使用for-each的场景</p>
+<ul>
+<li>Destructive filtering: 需要移除集合中的元素, 但是这个时候可以考虑用<code>Collection’s removeIf</code></li>
+<li>Transforming: 需要遍历集合替换集合中的元素</li>
+<li>Parallel iteration: 并行地遍历多个集合</li>
+</ul>
+<h2 id="item-59-know-and-use-the-libraries">Item 59: Know and use the libraries</h2>
+<p>别造轮子, 在理解的基础上多用库里有的api. 比如Java8中的随机数可以用性能更好的<code>ThreadLocalRandom</code>和<code>SplittableRandom</code>提供的api实现, 而不是用Random本身.</p>
+<h2 id="item-60-avoid-float-and-double-if-exact-answers">Item 60: Avoid float and double if exact answers</h2>
+<p>因为浮点型天然无法准确表示negative power of ten, 所以在需要精确计算(货币计算)时不能使用. 可以使用<code>BigDecimal</code>替换, 带来的问题是比较麻烦, 而且计算会比浮点型更慢. 还有一个办法就是用更小的单位, 这样就可以用整型来表示浮点型.</p>
+<h2 id="item-61-prefer-primitive-types-to-boxed-primitives">Item 61: Prefer primitive types to boxed primitives</h2>
+<p>用基本数据类型, 省去拆箱装箱和乱用包装类型导致bug的烦恼. 虽然在泛型的场景, 我们不得不用包装类型.</p>
+<h2 id="item-62-avoid-strings-where-other-types-are-more-appropriate">Item 62: Avoid strings where other types are more appropriate</h2>
+<p>能不用String的场景尽量用其他的类型替换, 书中介绍了一些case, 在开发中常见的场景就是redis key, 如果用String魔法值表示很容易重复. 如果转而用枚举表示, 并用String作为枚举的一个字段不失为一个更好的方式.</p>
+<h2 id="item-63-beware-the-performance-of-string-concatenation">Item 63: Beware the performance of string concatenation</h2>
+<p>因为<code>String</code>是immutable的, 所以用<code>+</code>拼接需要把原来的多个String全部赋值一遍, 产生不必要的内存消耗. 用<code>StringBuilder</code>可以避免这一点.</p>
+<h2 id="item-64-refer-to-objects-by-their-interfaces">Item 64: Refer to objects by their interfaces</h2>
+<p>为了代码的灵活度, 引用对象的时候最好用合适的接口去表示引用. 有3中情况不好用接口表示:</p>
+<ol>
+<li><code>String</code>或<code>BigInteger</code>这种本身不会有多种实现类</li>
+<li>没有合适的接口使用, 像class-based framework, 类的粒度已经最大了</li>
+<li>类里面有的方法咋接口没有提供, 如<code>PriorityQueue</code>的<code>comparator</code>在<code>Queue</code>接口中没有</li>
+</ol>
+<h2 id="item-65-prefer-interfaces-to-reflection">Item 65: Prefer interfaces to reflection</h2>
+<p>当我们需要的类在编译期才能确定时, 只能通过反射实现. 反射问题主要有三个: 编译期的检查没了/写起来麻烦/性能比正常new对象差. 我们使用反射的时候应当在new的时候就做好, 并用接口或父类去引用实例. 在使用时就当普通的实例使用即可.</p>
+<h2 id="item-66-use-native-methods-judiciously">Item 66: Use native methods judiciously</h2>
+<p>为了安全, native methods别用, 相信JVM&hellip;</p>
+<h2 id="item-67-optimize-judiciously">Item 67: Optimize judiciously</h2>
+<p>不要傻乎乎地优化性能, 试着写好代码而不是写快速的代码, 好的代码自然快. 对底层设计, 从算法和数据结构上就要考虑性能, 并且要有灵活度, 让我们在以后的升级中能有更多操作空间.</p>
+<h2 id="item-68-adhere-to-generally-accepted-naming-conventions">Item 68: Adhere to generally accepted naming conventions</h2>
+<p>列几个特点:</p>
+<ul>
+<li>可实例化的<strong>Class</strong>通常由单数名词/名词词组组成, 而不可实例化的Class通常是复数名词</li>
+<li><strong>接口名</strong>和类名相似, 或在后缀加上able/ible表能力</li>
+<li><strong>方法名</strong>表示一种操作, 由动词/动词词组组成, 返回<code>boolean</code>的方法会有is前缀. 除了JavaBean中的方法, 注意与getter和setter区分(不用get/set做前缀)</li>
+<li><strong>转换类型的方法</strong>, 一般是<code>toType</code>的形式. <strong>返回基础类型的方法</strong>, 一般是<code>typeValue</code>的形式.</li>
+</ul>
+<hr>
+<p>下面开始第10章的笔记, 讲exceptions.</p>
+<h2 id="item-69-use-exceptions-only-for-exceptional-conditions">Item 69: Use exceptions only for exceptional conditions</h2>
+<p>exceptions只能用来处理潜在的意外情况, 而不是用作基础的流程控制.</p>
+<h2 id="item-70-use-checked-exceptions-for-recoverable-conditions-and-runtime-exceptions-for-programming-errors">Item 70: Use checked exceptions for recoverable conditions and runtime exceptions for programming errors</h2>
+<p>包括Exception及其子类(除了RuntimeException及其子类)都应捕获, 这种类型的异常称为Checked Exception. 包括Error及其子类, RuntimeException及其子类不需要捕获. 但实际上为了项目不崩, 项目一般最后都会有兜底的Exception.</p>
+<h2 id="item-71-avoid-unnecessary-use-of-checked-exceptions">Item 71: Avoid unnecessary use of checked exceptions</h2>
+<p>如果某个case会provide insufficient information, 才抛checked exception, 其他情况可以正常走业务逻辑, 用正常代码去拦可能错误的case. 如果unchecked exceptions可以自恢复, 也可以考虑cache但不抛. (日志该记还是要记)</p>
+<h2 id="item-72-favor-the-use-of-standard-exceptions">Item 72: Favor the use of standard exceptions</h2>
+<p><strong>Do not reuse Exception, RuntimeException, Throwable, or Error directly</strong>. 把他们当成抽象类, 开发中尽量用标准库的exceptions. 其中<code>IllegalStateException</code>是输入的任何只都无效, 其余情况用<code>IllegalStateException</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Exception</th>
+<th>Occasion for Use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>IllegalArgumentException</td>
+<td>Non-null parameter value is inappropriate</td>
+</tr>
+<tr>
+<td>IllegalStateException</td>
+<td>Object state is inappropriate for method invocation</td>
+</tr>
+<tr>
+<td>NullPointerException</td>
+<td>Parameter value is null where prohibited</td>
+</tr>
+<tr>
+<td>IndexOutOfBoundsException</td>
+<td>Index parameter value is out of range</td>
+</tr>
+<tr>
+<td>ConcurrentModificationException</td>
+<td>Concurrent modification of an object has been detected where it is prohibited</td>
+</tr>
+<tr>
+<td>UnsupportedOperationException</td>
+<td>Object does not support method</td>
+</tr>
+</tbody>
+</table>
+<h2 id="item-73-throw-exceptions-appropriate-to-the-abstraction">Item 73: Throw exceptions appropriate to the abstraction</h2>
+<p>在higher layers去catch lower-level exceptions, 并抛higher-level exceptions, 传递错误信息, 这里主要的目的是防止报错的来源被污染了. 实际开发中通常会catch之后直接记日志, 并隔离lower-level exceptions, 防止影响主业务流程.</p>
+<h2 id="item-74-document-all-exceptions-thrown-by-each-method">Item 74: Document all exceptions thrown by each method</h2>
+<p><code>throws exception</code>只抛checked exceptions, 并在<code>@throw</code>中做好文档, 如果一个类有很多重复的exception, 那么可以把这个文档写在类的文档中.</p>
+<h2 id="item-75-include-failure-capture-information-in-detail-messages">Item 75: Include failure-capture information in detail messages</h2>
+<p>报错打印足够的信息, 比如<code>IndexOutOfBoundsException</code>可以打印出具体上下限是多少, 但注意有信安风险的信息不能打印.</p>
+<h2 id="item-76-strive-for-failure-atomicity">Item 76: Strive for failure atomicity</h2>
+<p>在exception出现的时候, 应该保证原子性, 也就是不影响方法其他对象. 比如可以在要修改对象是进行合法判断, 如果不合法则抛错, 合法才能修改对象. 也可以金修改对象的copy, 合法再把修改的内容传给对象. 除此之外只能用recovery code进行回滚了.</p>
+<h2 id="item-77-dont-ignore-exceptions">Item 77: Don’t ignore exceptions</h2>
+<p>不要catch了exceptions什么都不做, 如果可以忽略, 也要在文档中注明.</p>
+
+
+                
+
+                
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/post/74_effective_java_chapter8/" data-toggle="tooltip" data-placement="top" title="Effective Java Chapter8-Methods">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/post/76_my_mac_tool_list/" data-toggle="tooltip" data-placement="top" title="Mac上我常用的一些工具">Next
+                            Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+                
+
+                
+
+
+<div id="disqus-comment"></div>
+<div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "xqt01" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+            </div>
+
+            
+            
+            <div class="
+                col-lg-2 col-lg-offset-0
+                visible-lg-block
+                sidebar-container
+                catalog-container">
+                <div class="side-catalog">
+                    <hr class="hidden-sm hidden-xs">
+                    <h5>
+                        <a class="catalog-toggle" href="#">CATALOG</a>
+                    </h5>
+                    <ul class="catalog-body"></ul>
+                </div>
+            </div>
+            
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/java" title="java">
+                            java
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/jvm" title="jvm">
+                            jvm
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/spring" title="spring">
+                            spring
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E5%89%8D%E7%AB%AF" title="前端">
+                            前端
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F" title="操作系统">
+                            操作系统
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93" title="数据库">
+                            数据库
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95" title="数据结构与算法">
+                            数据结构与算法
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B" title="网络编程">
+                            网络编程
+                        </a>
+                        
+                        
+                    </div>
+                </section>
+                
+
+                
+                
+                <section>
+                    <hr>
+                    <h5>FRIENDS</h5>
+                    <ul class="list-inline">
+                        
+                        <li><a target="_blank" href="https://fan-bu-fan.github.io/">FELL &amp; ENJOY</a></li>
+                        
+                    </ul>
+                </section>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">                  
+                    
+                    <li>
+                        <a href="mailto:huanruiz@foxmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		           
+                    
+                    
+                    
+                    
+
+		            
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/xqt01">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		            
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+            
+            
+            
+           
+                   <li>
+                       <a href='' rel="alternate" type="application/rss+xml" title="PunchCode" >
+                           <span class="fa-stack fa-lg">
+                               <i class="fas fa-circle fa-stack-2x"></i>
+                               <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                           </span>
+                       </a>
+                   </li>
+            
+             </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; PunchCode 2024
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function loadAsync(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        loadAsync("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    loadAsync("https://cdn.jsdelivr.net/npm/fastclick@1.0.6/lib/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+    function generateCatalog(selector) {
+
+        
+        
+        
+        
+            _containerSelector = 'div.post-container'
+        
+
+        
+        var P = $(_containerSelector), a, n, t, l, i, c;
+        a = P.find('h1,h2,h3,h4,h5,h6');
+
+        
+        $(selector).html('')
+
+        
+        a.each(function () {
+            n = $(this).prop('tagName').toLowerCase();
+            i = "#" + $(this).prop('id');
+            t = $(this).text();
+            c = $('<a href="' + i + '" rel="nofollow">' + t + '</a>');
+            l = $('<li class="' + n + '_nav"></li>').append(c);
+            $(selector).append(l);
+        });
+        return true;
+    }
+
+    generateCatalog(".catalog-body");
+
+    
+    $(".catalog-toggle").click((function (e) {
+        e.preventDefault();
+        $('.side-catalog').toggleClass("fold")
+    }))
+
+    
+
+
+    loadAsync("\/js\/jquery.nav.js", function () {
+        $('.catalog-body').onePageNav({
+            currentClass: "active",
+            changeHash: !1,
+            easing: "swing",
+            filter: "",
+            scrollSpeed: 700,
+            scrollOffset: 0,
+            scrollThreshold: .2,
+            begin: null,
+            end: null,
+            scrollChange: null,
+            padding: 80
+        });
+    });
+</script>
+
+
+
+
+
+
+</body>
+</html>

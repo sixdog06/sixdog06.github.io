@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>ajax on PunchCode</title>
+    <link>https://xqt01.github.io/tags/ajax/</link>
+    <description>Recent content in ajax on PunchCode</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Mon, 20 Sep 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://xqt01.github.io/tags/ajax/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>ajax的发post请求的坑</title>
+      <link>https://xqt01.github.io/post/63_ajax%E7%9A%84%E5%8F%91post%E8%AF%B7%E6%B1%82%E7%9A%84%E5%9D%91/</link>
+      <pubDate>Mon, 20 Sep 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/63_ajax%E7%9A%84%E5%8F%91post%E8%AF%B7%E6%B1%82%E7%9A%84%E5%9D%91/</guid>
+      <description>在前端通过ajax请求向服务端发送请求是非常常见的场景, 在Java Web开发中, 通常用SpringMVC去取得请求体的数据. 而用ajax做p</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="PunchCode">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://xqt01.github.io/front.png">
+    <meta property="twitter:image" content="https://xqt01.github.io/front.png" />
+    
+
+    
+    <meta name="title" content="SpringBoot入门" />
+    <meta property="og:title" content="SpringBoot入门" />
+    <meta property="twitter:title" content="SpringBoot入门" />
+    
+
+    
+    <meta name="description" content="Software Engineer">
+    <meta property="og:description" content="Software Engineer" />
+    <meta property="twitter:description" content="Software Engineer" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="Harry, 小拳头">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>SpringBoot入门 | 以终为始</title>
+
+    <link rel="canonical" href="/post/61_springboot%E5%85%A5%E9%97%A8/">
+
+    
+    
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hugo-theme-cleanwhite.min.css">
+
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+
+    
+    <link href="https://cdn.jsdelivr.net/gh/FortAwesome/Font-Awesome@5.15.1/css/all.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    
+    <script src="/js/jquery.min.js"></script>
+
+    
+    <script src="/js/bootstrap.min.js"></script>
+
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+
+</head>
+
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">PunchCode</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">All Posts</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/tech">tech</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0">学习笔记</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/%E6%9D%82%E8%B0%88">杂谈</a>
+                        </li>
+                        
+                    
+                    
+		    
+                        <li><a href="/top/archive/">ARCHIVE</a></li>
+                    
+                        <li><a href="/top/about/">ABOUT</a></li>
+                    
+
+                    
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/front.png')
+    }
+</style>
+
+<header class="intro-header" >
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/spring" title="Spring">
+                            Spring
+                        </a>
+                        
+                    </div>
+                    <h1>SpringBoot入门</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        
+                            Posted by 
+                            
+                                小拳头
+                             
+                            on 
+                            Sunday, August 15, 2021
+                            
+                            
+                            
+                            
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <p>Spring Boot is an open source Java-based framework used to create a micro Service. It is developed by Pivotal Team and is used to build stand-alone and production ready spring applications. Micro Service is an architecture that allows the developers to develop and deploy services independently. Each service running has its own process and this achieves the lightweight model to support business applications.</p>
+<h2 id="hello-world">Hello World</h2>
+<p>SpringBoot生成非常简单, 直接新建一个Spring Initializr project并配置. 比如我们建一个名叫helloworld的项目, 就会生成<code>HelloworldApplication</code>的类, 这个类下就包含了启动项目的方法. 在同一个包下, 就可以新建其他包, 写controller等等.</p>
+<p>SpringBoot可以用<code>yaml</code>文件进行配置, 比如我们配置一个<code>application.yaml</code>文件:</p>
+<pre><code>person:
+  name: zhangsan
+  age: 20
+  happy: false
+  birth: 2000/01/01
+  maps: {k1: v1, k2: v2}
+  lists:
+    - code
+    - eat
+    - sleep
+  dog:
+    name: 柯基
+    age: 1
+</code></pre><p>实际上就是给实体类的字段进行了配置, 在实体类上加入注解即可. <code>prefix</code>对应是yaml文件的前缀, 而<code>Dog</code>类直接用了<code>Value</code>进行字段的初始化.</p>
+<pre><code>@Component
+@ConfigurationProperties(prefix = &quot;person&quot;)
+public class Person {
+
+    private String name;
+    private Integer age;
+    private Boolean happy;
+    private Date birth;
+    private Map&lt;String, Object&gt; maps;
+    private List&lt;Object&gt; lists;
+    private Dog dog;
+}
+
+@Component
+public class Dog {
+
+    @Value(&quot;狗&quot;)
+    private String name;
+    @Value(&quot;3&quot;)
+    private Integer age;
+}
+</code></pre><p>如果用<code>@Autowired</code>注入这两个类, 打印结果如下, 也就是说<code>Person</code>类下的dog实际上已经是在字段初始化后再进行赋值的结果了.</p>
+<pre><code>Dog{name='狗', age=3}
+Person{name='zhangsan', age=20, happy=false, birth=Sat Jan 01 00:00:00 CST 2000, maps={k1=v1, k2=v2}, lists=[code, eat, sleep], dog=Dog{name='柯基', age=1}}
+</code></pre><p>yaml还支持多环境配置, 通过<code>---</code>分开不同环境.</p>
+<pre><code>server:
+ port: 8081
+spring:
+ profiles:
+   active: prod
+---
+server:
+ port: 8083
+spring:
+ profiles: dev
+---
+server:
+ port: 8084
+spring:
+ profiles: prod
+</code></pre><p>给容器中自动配置类添加组件的时候, 会从properties类中获取属性, 我们只需要在配置文件中指定这些属性的值即可. 源码中的<code>xxxAutoConfigurartion</code>就是自动配置类(配置类中的<code>Conditionalxxx</code>注解会控制配置类是否生效), 而<code>xxxProperties</code>封装了配置文件中的相关属性. 在配置文件中加入<code>debug=true</code>, 就能打印所有加载的配置.</p>
+<blockquote>
+<p>通过<code>@Validated</code>注解, 可以给数据进行<strong>JSR303</strong>(Java Specification Requests)数据校验</p>
+</blockquote>
+<h2 id="web开发">Web开发</h2>
+<h3 id="静态资源导入">静态资源导入</h3>
+<p>可以通过webjars处理, 也可以放在resources下的resources/static/public目录, 优先级依次降低. 而templates中一般放动态页面, 需要通过controller访问. 动态网页传值时需要用模板引擎, springboot推荐的是thymyleaf, 导入如下maven依赖即可.</p>
+<pre><code>&lt;dependency&gt;
+    &lt;groupId&gt;org.thymeleaf&lt;/groupId&gt;
+    &lt;artifactId&gt;thymeleaf-spring5&lt;/artifactId&gt;
+    &lt;version&gt;3.0.12.RELEASE&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre><p>编写controller:</p>
+<pre><code>@Controller
+public class IndexController {
+
+    @RequestMapping(&quot;/test&quot;)
+    public String test(Model model) {
+        model.addAttribute(&quot;msg&quot;, &quot;&lt;h1&gt;hello springboot&lt;/h1&gt;&quot;);
+        model.addAttribute(&quot;users&quot;, Arrays.asList(&quot;zhang3&quot;, &quot;li4&quot;));
+        return &quot;test&quot;;
+    }
+}
+</code></pre><p>html文件中通过<code>th:</code>与<code>${}</code>去取model中传入的值. <code>text</code>原封不动地输出了<code>msg</code>中的文本, 而<code>utext</code>标签下的文本把<code>&lt;h1&gt;</code>标签转义了. thymyleaf还可以通过<code>each</code>去读取一个list中的元素.</p>
+<pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;title&gt;Title&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div th:text=&quot;${msg}&quot;&gt;123&lt;/div&gt;
+&lt;div th:utext=&quot;${msg}&quot;&gt;123&lt;/div&gt;
+&lt;div th:each=&quot;user:${users}&quot; th:text=&quot;${user}&quot;&gt;&lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre><h3 id="配置mvc">配置MVC</h3>
+<p>可以简单地用以下类测试, 并在<code>class DispatcherServlet-method doDispatch</code>中打断点, 可以看到<code>this-viewResolvers</code>, 也就是视图解析器实例加载的解析器下包含了我们的<code>MyMvcConfig</code>. 除此之外还可以看到其他的视图解析器, 比如我们刚才配置的<code>ThymeleafViewResolver</code>.</p>
+<pre><code>@Configuration
+public class MyMvcConfig implements WebMvcConfigurer {
+
+    /**
+     * 配置自己的视图解析器
+     * @return 自定义的视图解析器class
+     */
+    @Bean
+    public ViewResolver myViewResolver() {
+        return new MyViewResolver();
+    }
+
+    /**
+     * 自定义的视图解析器
+     */
+    public static class MyViewResolver implements ViewResolver {
+        @Override
+        public View resolveViewName(String viewName, Locale locale) {
+            return null;
+        }
+    }
+}
+</code></pre><p>更好的方式是去实现<code>WebMvcConfigurer</code>的配置.</p>
+<pre><code>@Override
+public void addViewControllers(ViewControllerRegistry registry) {
+    registry.addViewController(&quot;/kuang&quot;).setViewName(&quot;test&quot;);
+}
+</code></pre><blockquote>
+<p>官方文档特别强调不能加入<code>@EnableWebMvc</code>配置类, 否则自动配置会因为condition失效</p>
+</blockquote>
+<h2 id="整合数据库">整合数据库</h2>
+<p>我做实验的时候, <code>spring-boot-starter-parent</code>已经到了<code>2.5.4</code>. 会无法自动注入<code>DataSource</code>, 报错的信息是如下, 所以导入<strong>对应版本的依赖</strong>即可.</p>
+<pre><code>Cannot resolve org.springframework:spring-tx:5.3.9
+Cannot resolve com.zaxxer:HikariCP:4.0.3
+</code></pre><p>配置数据库:</p>
+<pre><code>spring:
+  datasource:
+    username: root
+    password: 123
+    url: jdbc:mysql://localhost:3306/myemployees?serverTimezone=UTC&amp;useUnicode=true&amp;characterEncoding=utf-8
+    driver-class-name: com.mysql.cj.jdbc.Driver
+</code></pre><p>配置好吼, 就可以注入<code>DataSource</code>, 证明我们的数据源已经被自动配置了. 接下来就可以通过注入<code>JdbcTemplate</code>来进行数据库的CRUD. 比如<code>jdbcTemplate.queryForList(sql);</code>/<code>jdbcTemplate.update(sql);</code>等等操作.</p>
+<p>还可以整合Mybatis, 都是配置即可, 我选Mybatis简单了解. 首先导入包, 我们可以发现<code>artifactid</code>的开头是<code>mybatis-spring-boot-xxx</code>, 而不是<code>spring-boot-xxx</code>, 说明这个不是springboot官方提供的包.</p>
+<pre><code>&lt;dependency&gt;
+    &lt;groupId&gt;org.mybatis.spring.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;mybatis-spring-boot-starter&lt;/artifactId&gt;
+    &lt;version&gt;2.1.1&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre><p>mybatis需要在application文件中额外配置如下信息, 直接用即可.</p>
+<pre><code>mybatis:
+  type-aliases-package: com.kuang.pojo
+  mapper-locations: classpath/mapper/*.xml
+</code></pre><h2 id="springsecurity">SpringSecurity</h2>
+<p>用SpringSecurity可以帮助实现登陆的验证.</p>
+<pre><code>&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-security&lt;/artifactId&gt;
+&lt;/dependency&gt;
+</code></pre><p>首先需要一个controller来做实验, 子页面分别有<code>level1/level2/level3</code>构成.</p>
+<pre><code>@Controller
+public class RouterController {
+
+    @RequestMapping({&quot;/&quot;,&quot;/index&quot;})
+    public String index(){
+        return &quot;index&quot;;
+    }
+
+    @RequestMapping(&quot;/toLogin&quot;)
+    public String toLogin(){
+        return &quot;views/login&quot;;
+    }
+
+    @RequestMapping(&quot;/level1/{id}&quot;)
+    public String level1(@PathVariable(&quot;id&quot;) int id){
+        return &quot;views/level1/&quot;+id;
+    }
+
+    @RequestMapping(&quot;/level2/{id}&quot;)
+    public String level2(@PathVariable(&quot;id&quot;) int id){
+        return &quot;views/level2/&quot;+id;
+    }
+
+    @RequestMapping(&quot;/level3/{id}&quot;)
+    public String level3(@PathVariable(&quot;id&quot;) int id){
+        return &quot;views/level3/&quot;+id;
+    }
+}
+</code></pre><p>写一个类来拦截请求, 分配权限. 测试的时候就会发现, 对应的用户才能访问对应的资源文件. <code>BCryptPasswordEncoder</code>是将密码加密的方法, 业务中通常都会对敏感信息进行加密处理.</p>
+<pre><code>@EnableWebSecurity
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.authorizeRequests().antMatchers(&quot;/&quot;).permitAll()
+                .antMatchers(&quot;/level1/**&quot;).hasRole(&quot;vip1&quot;)
+                .antMatchers(&quot;/level2/**&quot;).hasRole(&quot;vip2&quot;)
+                .antMatchers(&quot;/level3/**&quot;).hasRole(&quot;vip3&quot;);
+        http.formLogin();
+        // 开启注销功能, 注销成功则跳转
+        http.logout().logoutSuccessUrl(&quot;/&quot;);
+        // 开启记住我功能
+        http.rememberMe();
+    }
+
+    //定义认证规则
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+
+        auth.inMemoryAuthentication().passwordEncoder(new BCryptPasswordEncoder())
+                .withUser(&quot;zhangsan&quot;).password(new BCryptPasswordEncoder().encode(&quot;123&quot;)).roles(&quot;vip2&quot;,&quot;vip3&quot;)
+                .and()
+                .withUser(&quot;lisi&quot;).password(new BCryptPasswordEncoder().encode(&quot;123&quot;)).roles(&quot;vip1&quot;,&quot;vip2&quot;,&quot;vip3&quot;)
+                .and()
+                .withUser(&quot;wangwu&quot;).password(new BCryptPasswordEncoder().encode(&quot;123&quot;)).roles(&quot;vip1&quot;,&quot;vip2&quot;);
+    }
+}
+</code></pre><p>很多情况下, 我们更希望用自己写的登录页面, 也可以通过配置复用SpringSecurity的验证逻辑, 比如配置<code>http.formLogin().loginPage(&quot;/toLogin&quot;).usernameParameter(&quot;user&quot;).passwordParameter(&quot;pwd&quot;).loginProcessingUrl(&quot;login&quot;);</code>, 登陆时就会走<code>login</code>.  <code>xxxParameter</code>方法可以用来传递参数. <code>rememberMe</code>方法也是同样的道理, 用<code>rememberMeParameter</code>可以传递这个记住我的参数, 用checkbox组件捕获即可.</p>
+<h2 id="shiro">Shiro</h2>
+<p>看官方的<a href="https://shiro.apache.org/10-minute-tutorial.html#introduction">10 Minute Tutorial on Apache Shiro</a>即可. 直接上手做springboot继承shiro实验. 首先搭建一个index主页做测试, 测试的时候要记住先不导入shiro, 否则<code>/</code>会被重定向到没实现的登陆界面. springboot整合也看官方的sample, 防止踩坑.</p>
+<h2 id="swagger">Swagger</h2>
+<p>生成api文档, 跳过</p>
+<h2 id="异步邮件定时任务">异步/邮件/定时任务</h2>
+<ul>
+<li>异步: 在<code>@Service</code>注解的类下的方法打上<code>@Async</code>注释, 再在主程序上加上<code>@EnableAsync</code>注解开启异步功能.</li>
+<li>定时: <code>@EnableScheduling</code>开启定时job, <code>@Scheduled</code>控制类执行时间, 同样需要给service类打上<code>@Service</code>注解</li>
+<li>邮件: 需要<code>spring-boot-starter-mail</code>启动器, 桶sender发送配置好的message</li>
+</ul>
+<h2 id="整合redis">整合redis</h2>
+<p>加入NoSQL的redis依赖, 直接看配置类. 可以看到<code>RedisTemplate&lt;Object, Object&gt;</code>的key-value都是Object, 但是只有在<code>redisTemplate</code>没有时才生效, 所以我们可以自定义. 通常我们还要自己去实现<code>RedisTemplate</code>的序列化方式, 去序列化传入的对象. 用redisTemplate的ops系列方法操作get/set redis即可.</p>
+<pre><code>@Configuration(
+    proxyBeanMethods = false
+)
+@ConditionalOnClass({RedisOperations.class})
+@EnableConfigurationProperties({RedisProperties.class})
+@Import({LettuceConnectionConfiguration.class, JedisConnectionConfiguration.class})
+public class RedisAutoConfiguration {
+    public RedisAutoConfiguration() {
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(
+        name = {&quot;redisTemplate&quot;}
+    )
+    @ConditionalOnSingleCandidate(RedisConnectionFactory.class)
+    public RedisTemplate&lt;Object, Object&gt; redisTemplate(RedisConnectionFactory redisConnectionFactory) {
+        RedisTemplate&lt;Object, Object&gt; template = new RedisTemplate();
+        template.setConnectionFactory(redisConnectionFactory);
+        return template;
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    @ConditionalOnSingleCandidate(RedisConnectionFactory.class)
+    public StringRedisTemplate stringRedisTemplate(RedisConnectionFactory redisConnectionFactory) {
+        StringRedisTemplate template = new StringRedisTemplate();
+        template.setConnectionFactory(redisConnectionFactory);
+        return template;
+    }
+}
+</code></pre><h2 id="dubbozookeeper">Dubbo+zookeeper</h2>
+<p>Dubbo可以让服务被注册与消费, zookeeper做服务治理.</p>
+<h2 id="参考">参考</h2>
+<ol>
+<li><a href="https://www.bilibili.com/video/BV1PE411i7CV">SpringBoot-狂神说Java</a></li>
+<li><a href="https://www.tutorialspoint.com/spring_boot/spring_boot_introduction.htm">Spring Boot-Introduction</a></li>
+</ol>
+
+
+                
+
+                
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/post/62_%E6%B6%A6%E4%B8%80%E6%B6%A6%E6%88%91%E4%BB%AC%E7%9A%84java%E4%BB%A3%E7%A0%81/" data-toggle="tooltip" data-placement="top" title="润一润我们的Java代码">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/post/63_ajax%E7%9A%84%E5%8F%91post%E8%AF%B7%E6%B1%82%E7%9A%84%E5%9D%91/" data-toggle="tooltip" data-placement="top" title="ajax的发post请求的坑">Next
+                            Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+                
+
+                
+
+
+<div id="disqus-comment"></div>
+<div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "xqt01" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+            </div>
+
+            
+            
+            <div class="
+                col-lg-2 col-lg-offset-0
+                visible-lg-block
+                sidebar-container
+                catalog-container">
+                <div class="side-catalog">
+                    <hr class="hidden-sm hidden-xs">
+                    <h5>
+                        <a class="catalog-toggle" href="#">CATALOG</a>
+                    </h5>
+                    <ul class="catalog-body"></ul>
+                </div>
+            </div>
+            
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/java" title="java">
+                            java
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/jvm" title="jvm">
+                            jvm
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/spring" title="spring">
+                            spring
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E5%89%8D%E7%AB%AF" title="前端">
+                            前端
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F" title="操作系统">
+                            操作系统
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93" title="数据库">
+                            数据库
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95" title="数据结构与算法">
+                            数据结构与算法
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B" title="网络编程">
+                            网络编程
+                        </a>
+                        
+                        
+                    </div>
+                </section>
+                
+
+                
+                
+                <section>
+                    <hr>
+                    <h5>FRIENDS</h5>
+                    <ul class="list-inline">
+                        
+                        <li><a target="_blank" href="https://fan-bu-fan.github.io/">FELL &amp; ENJOY</a></li>
+                        
+                    </ul>
+                </section>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">                  
+                    
+                    <li>
+                        <a href="mailto:huanruiz@foxmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		           
+                    
+                    
+                    
+                    
+
+		            
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/xqt01">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		            
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+            
+            
+            
+           
+                   <li>
+                       <a href='' rel="alternate" type="application/rss+xml" title="PunchCode" >
+                           <span class="fa-stack fa-lg">
+                               <i class="fas fa-circle fa-stack-2x"></i>
+                               <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                           </span>
+                       </a>
+                   </li>
+            
+             </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; PunchCode 2024
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function loadAsync(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        loadAsync("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    loadAsync("https://cdn.jsdelivr.net/npm/fastclick@1.0.6/lib/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+    function generateCatalog(selector) {
+
+        
+        
+        
+        
+            _containerSelector = 'div.post-container'
+        
+
+        
+        var P = $(_containerSelector), a, n, t, l, i, c;
+        a = P.find('h1,h2,h3,h4,h5,h6');
+
+        
+        $(selector).html('')
+
+        
+        a.each(function () {
+            n = $(this).prop('tagName').toLowerCase();
+            i = "#" + $(this).prop('id');
+            t = $(this).text();
+            c = $('<a href="' + i + '" rel="nofollow">' + t + '</a>');
+            l = $('<li class="' + n + '_nav"></li>').append(c);
+            $(selector).append(l);
+        });
+        return true;
+    }
+
+    generateCatalog(".catalog-body");
+
+    
+    $(".catalog-toggle").click((function (e) {
+        e.preventDefault();
+        $('.side-catalog').toggleClass("fold")
+    }))
+
+    
+
+
+    loadAsync("\/js\/jquery.nav.js", function () {
+        $('.catalog-body').onePageNav({
+            currentClass: "active",
+            changeHash: !1,
+            easing: "swing",
+            filter: "",
+            scrollSpeed: 700,
+            scrollOffset: 0,
+            scrollThreshold: .2,
+            begin: null,
+            end: null,
+            scrollChange: null,
+            padding: 80
+        });
+    });
+</script>
+
+
+
+
+
+
+</body>
+</html>

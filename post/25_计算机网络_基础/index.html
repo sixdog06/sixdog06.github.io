@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="PunchCode">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://xqt01.github.io/front.png">
+    <meta property="twitter:image" content="https://xqt01.github.io/front.png" />
+    
+
+    
+    <meta name="title" content="计算机网络-基础" />
+    <meta property="og:title" content="计算机网络-基础" />
+    <meta property="twitter:title" content="计算机网络-基础" />
+    
+
+    
+    <meta name="description" content="Software Engineer">
+    <meta property="og:description" content="Software Engineer" />
+    <meta property="twitter:description" content="Software Engineer" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="Harry, 小拳头">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>计算机网络-基础 | 以终为始</title>
+
+    <link rel="canonical" href="/post/25_%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C_%E5%9F%BA%E7%A1%80/">
+
+    
+    
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hugo-theme-cleanwhite.min.css">
+
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+
+    
+    <link href="https://cdn.jsdelivr.net/gh/FortAwesome/Font-Awesome@5.15.1/css/all.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    
+    <script src="/js/jquery.min.js"></script>
+
+    
+    <script src="/js/bootstrap.min.js"></script>
+
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+
+</head>
+
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">PunchCode</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">All Posts</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/tech">tech</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0">学习笔记</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/%E6%9D%82%E8%B0%88">杂谈</a>
+                        </li>
+                        
+                    
+                    
+		    
+                        <li><a href="/top/archive/">ARCHIVE</a></li>
+                    
+                        <li><a href="/top/about/">ABOUT</a></li>
+                    
+
+                    
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/front.png')
+    }
+</style>
+
+<header class="intro-header" >
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B" title="网络编程">
+                            网络编程
+                        </a>
+                        
+                    </div>
+                    <h1>计算机网络-基础</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        
+                            Posted by 
+                            
+                                小拳头
+                             
+                            on 
+                            Monday, October 19, 2020
+                            
+                            
+                            
+                            
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <p>所有手机, 电脑, 平板都可以成为主机(host)或者<strong>端系统</strong>(end system), 他们通过通信链路和分组交换机连接在一起. 对于通信链路, 传输速率可以用bit/s或bps来衡量. 端系统互相通讯时会把数据分段, 为每段加上首部字节, 生成的包叫分组(packet). 分组交换机可以接受并转发分组, 包括路由器(router)和链路层交换机(link-layer switch).</p>
+<p>端系统有ISP(Internet Service Provider)介入互联网, 因特网部件由不同的协议(protocol)控制信息的接受和发送, 协议包括TCP/IP, SMTP等. 而因特网标准是由IETF研发, IETF的标准文档就是请求评论RFC. 当然也有其他组织指定网络部件标准, 比如以太网和无线WiFi就是IEEE制定的.</p>
+<h2 id="接入网">接入网</h2>
+<p>传统的一般是以数字用户线DSL或电缆接入的. DSL需要DSL调制解调器连接电话线与电话公司通讯. 电缆介入也需要电缆解调器(cable modem). 现在国内光纤到户(FTTH)已经习以为常了, 直接从本地中心局通过光纤每一户, 当然用户是可以共享光纤的. 在这个时间点, 以太网/wifi这种形式可以说是最流行了, 如下图.
+
+  <img src="/25_1.png" alt="">
+
+</p>
+<h2 id="网络核心">网络核心</h2>
+<p>前面的都是一些边缘部分的总结, 现在我们来研究核心, 也就是交换机和链路构成的网络.</p>
+<h3 id="分组交换">分组交换</h3>
+<p>端系统彼此交换<strong>报文(message)</strong>, 原系统向端系统发送时, 将其切分成小的数据块<strong>分组(packet)</strong>, 每个分组通过链路和<strong>分组交换机(packect switch)</strong>, 包括路由器和链路交换机. 一条链路发送L bit分组, 链路传输书读为R bit/s, 则传输时间为L/R.</p>
+<ol>
+<li>
+<p>存储转发传输: 交换机收到(缓存)整个分组才能转发, N条速率为R的路径(N-1个路由器), 一个分组端到端时延是$d=N\frac{L}{R}$.</p>
+</li>
+<li>
+<p>排队时延和分组丢失: 分组交换机具有<strong>输出缓存/输出队列(output buffer/output queue)</strong>, 所以分组要承受<strong>排队时延(queue delay)</strong>, 这个时延取决于网络的阻塞程度. 如果分组道法交换机后缓存已满,则会丢包(packet lost), 到达的分组或已排队的分组之一将被丢弃.</p>
+</li>
+<li>
+<p>转发表与路由选择协议: 因特网靠端系统的IO地址作为目的地, 每台路由器有转发表(forwarding table), 将目的地址(或部分)映射为输出链路. **路由转发协议(routing protocol)**便可用来自动设置转发表, 并使用最短路径.</p>
+</li>
+</ol>
+<h3 id="电路交换">电路交换</h3>
+<p>**电路交换(circuit switching)**比较经典的场景是打电话, 端系统间通信的资源是预留的.两台主机通讯时会建立端到端链接(end-to-end connection).</p>
+<ol>
+<li>
+<p>复用. 有<strong>频分复用(Frequency-Division Multiplexing)<strong>和</strong>时分复用(Time-Division Multiplexing)两种</strong>, 对FDM, 链路的频谱被创建的所有连接共享, 频段的宽度叫带宽(bandwidth). 对TDM, 时间被划分为固定区间的帧, 帧也的被固定的时隙划分. 每个电路在周期性的时隙中可以得到所有带宽, 所以电路的传输速率等于帧速率乘以时隙中的比特数量.
+
+  <img src="/25_2.png" alt="">
+
+</p>
+</li>
+<li>
+<p>两种交换对比. 分组交换更有效, 因为可以动态地分配资源.</p>
+</li>
+</ol>
+<h2 id="分组交换的时延-丢包-吞吐量">分组交换的时延, 丢包, 吞吐量</h2>
+<h3 id="时延">时延</h3>
+<p>包括<strong>结点处理时延(nodal processing delay)</strong>, <strong>排队时延(queuing delay)</strong>, <strong>传输时延(transmission delay)<strong>和</strong>传播时延(propagation delay)</strong>, 共同组成了<strong>节点总时延(total nodal delay)</strong>.
+
+  <img src="/25_3.png" alt="">
+
+</p>
+<ul>
+<li>处理时延: 根据packet首部决定导向何处</li>
+<li>排队时延: packet在链路等待传输</li>
+<li>传输时延: 分组长度 / 路由器A到B<strong>链路</strong>的传输速率</li>
+<li>传播时延: 比特从链路起点到B的时间</li>
+</ul>
+<h3 id="丢包">丢包</h3>
+<p>排队时延带来丢包. a(pkt/s)代表packet到达队列的平均速率, R(bps)为队列推出的比特率. packet的都是L(bit)组成, $|a/R$就是<strong>流量强度(traffic intensity)</strong>, 若大于1, 则排队时延趋向无穷大, 所以它必须&lt;=1. 实际上队列是有大小限制的, 流量强度接近于1就会丢包.</p>
+<h3 id="端到端时延">端到端时延</h3>
+<p>若有N-1个路由器在源和目的之间, 则$d_{end2end} = N(d_{proc}+d_{trans}+d_{prop})$</p>
+<h3 id="吞吐量">吞吐量</h3>
+<p>从端到端的角度来,看 主机接受F bit用了T秒, **平均吞吐量(average throughput)**就是F/T bps. 实际上取决于瓶颈链路的传输速度, 通常接入网链路速度远小于互联网核心链路速度, 所以接入网往往限制了吞吐量. 如果接入网速度大于公共链路, 但是多个接入网共享一条链路, 那么公共链路叶柯能成为瓶颈.</p>
+<h2 id="协议层次">协议层次</h2>
+<h3 id="分层">分层</h3>
+<p>每一层为上一层提供服务.</p>
+<ul>
+<li>应用层: 任务是通过<strong>应用进程</strong>间的交互来完成特定网络应用; HTTP, SMTP, FTP; 报文(message)</li>
+<li>表示层/会话层: 负责向主机之间的不同进程的通信提供通用的数据传输服务; 加密解密/不同用户间的会话管理和建立</li>
+<li>运输层: ;TCP/UDP; 报文段(segment)</li>
+<li>网络层: ;IP协议; 数据报(datagram)</li>
+<li>链路层: ;帧(frame)</li>
+<li>物理层: 把帧中的比特从一个节点移动到下一个节点.</li>
+</ul>
+<p>osi的表示层和会话层留给开发者处理. 其中表示层使app能够解释交换数据的含义, 会话层提供数据交换定界和同步. 会话层和表示层在用户空间. 链路层/网络层IP/传输层TCP(UDP)在内核空间.</p>
+<h3 id="封装">封装</h3>
+<p>这张图展示了每个设备所运行的层级, 每一层在报文头部加上<strong>首部字段</strong>, 上一层的分组则在<strong>有效载荷字段(payload field)</strong>, 这就是<strong>封装</strong>.
+
+  <img src="/25_4.png" alt="">
+
+</p>
+<blockquote>
+<p>题外话, 其实这本书前面的章节主要就是按照分层, 自顶向下, 围绕着各个协议来介绍的, 从官方实验就可以看出来. 从HTTP-&gt;DNS-&gt;TCP-&gt;UDP-&gt;IP-&gt;NAT-&gt;ICMP-&gt;Ethernet and ARP-&gt;DHCP-&gt;802.11 WiFi-&gt;SSL/TLS.</p>
+<p>链路传输的速度kbps, bps指的是bit, 而文件大小KB, MB指的是byte, 算吞吐量的时候记得乘8.</p>
+</blockquote>
+<h2 id="实验">实验</h2>
+<p>后面一系列的实验都会用wireshark抓包分析, 非常有趣. 我都基于第七版来做, 写这篇笔记的时候已经有第八版了. wireshark这种观察交换报文的工具也叫<strong>packet sniffer</strong>, 结构如下图. packet sniffer包含<strong>packet capture library</strong>去获取链路层的帧, <strong>packet analyzer</strong>根据不同的协议可以去解析帧, 把帧解析为ip数据报, 报文段等等.
+
+  <img src="/25_5.png" alt="">
+
+</p>
+<p>双击<code>Wi-Fi en0</code>就可以抓当前连接wifi的包了. 注意<strong>packet-listing window</strong>中的<code>No.</code>只是Wireshark标的号而已, 和头部字段没有关系.
+
+  <img src="/25_6.png" alt="">
+
+</p>
+<p>向http://gaia.cs.umass.edu/wireshark-labs/INTRO-wireshark-file1.html发送HTTP请求. 这里如果没有得到结果可能是浏览器已经缓存了, 清除缓存再试一次就好. 可以根据time计算从GET到OK的时间. 在菜单的View中可以修改时间的格式.
+
+  <img src="/25_7.png" alt="">
+
+</p>
+<h2 id="参考">参考</h2>
+<ol>
+<li>计算机网络-自顶向下方法(第6版)</li>
+<li>Computer Networking A Top-Down Approach(7th edition)</li>
+<li><a href="https://github.com/moranzcw/Computer-Networking-A-Top-Down-Approach-NOTES">作业</a></li>
+<li><a href="https://github.com/jzplp/Computer-Network-A-Top-Down-Approach-Answer">习题答案</a></li>
+<li><a href="https://gaia.cs.umass.edu/kurose_ross/wireshark.htm">wireshark实验</a></li>
+</ol>
+
+
+                
+
+                
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/post/24_%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F_%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E4%B8%8E%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/" data-toggle="tooltip" data-placement="top" title="操作系统-设备驱动与文件系统">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/post/26_%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C_%E5%BA%94%E7%94%A8%E5%B1%82/" data-toggle="tooltip" data-placement="top" title="计算机网络-应用层">Next
+                            Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+                
+
+                
+
+
+<div id="disqus-comment"></div>
+<div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "xqt01" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+            </div>
+
+            
+            
+            <div class="
+                col-lg-2 col-lg-offset-0
+                visible-lg-block
+                sidebar-container
+                catalog-container">
+                <div class="side-catalog">
+                    <hr class="hidden-sm hidden-xs">
+                    <h5>
+                        <a class="catalog-toggle" href="#">CATALOG</a>
+                    </h5>
+                    <ul class="catalog-body"></ul>
+                </div>
+            </div>
+            
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/java" title="java">
+                            java
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/jvm" title="jvm">
+                            jvm
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/spring" title="spring">
+                            spring
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E5%89%8D%E7%AB%AF" title="前端">
+                            前端
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F" title="操作系统">
+                            操作系统
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93" title="数据库">
+                            数据库
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95" title="数据结构与算法">
+                            数据结构与算法
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B" title="网络编程">
+                            网络编程
+                        </a>
+                        
+                        
+                    </div>
+                </section>
+                
+
+                
+                
+                <section>
+                    <hr>
+                    <h5>FRIENDS</h5>
+                    <ul class="list-inline">
+                        
+                        <li><a target="_blank" href="https://fan-bu-fan.github.io/">FELL &amp; ENJOY</a></li>
+                        
+                    </ul>
+                </section>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">                  
+                    
+                    <li>
+                        <a href="mailto:huanruiz@foxmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		           
+                    
+                    
+                    
+                    
+
+		            
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/xqt01">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		            
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+            
+            
+            
+           
+                   <li>
+                       <a href='' rel="alternate" type="application/rss+xml" title="PunchCode" >
+                           <span class="fa-stack fa-lg">
+                               <i class="fas fa-circle fa-stack-2x"></i>
+                               <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                           </span>
+                       </a>
+                   </li>
+            
+             </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; PunchCode 2024
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function loadAsync(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        loadAsync("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    loadAsync("https://cdn.jsdelivr.net/npm/fastclick@1.0.6/lib/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+    function generateCatalog(selector) {
+
+        
+        
+        
+        
+            _containerSelector = 'div.post-container'
+        
+
+        
+        var P = $(_containerSelector), a, n, t, l, i, c;
+        a = P.find('h1,h2,h3,h4,h5,h6');
+
+        
+        $(selector).html('')
+
+        
+        a.each(function () {
+            n = $(this).prop('tagName').toLowerCase();
+            i = "#" + $(this).prop('id');
+            t = $(this).text();
+            c = $('<a href="' + i + '" rel="nofollow">' + t + '</a>');
+            l = $('<li class="' + n + '_nav"></li>').append(c);
+            $(selector).append(l);
+        });
+        return true;
+    }
+
+    generateCatalog(".catalog-body");
+
+    
+    $(".catalog-toggle").click((function (e) {
+        e.preventDefault();
+        $('.side-catalog').toggleClass("fold")
+    }))
+
+    
+
+
+    loadAsync("\/js\/jquery.nav.js", function () {
+        $('.catalog-body').onePageNav({
+            currentClass: "active",
+            changeHash: !1,
+            easing: "swing",
+            filter: "",
+            scrollSpeed: 700,
+            scrollOffset: 0,
+            scrollThreshold: .2,
+            begin: null,
+            end: null,
+            scrollChange: null,
+            padding: 80
+        });
+    });
+</script>
+
+
+
+
+
+
+</body>
+</html>

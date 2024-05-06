@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>JVM on PunchCode</title>
+    <link>https://xqt01.github.io/tags/jvm/</link>
+    <description>Recent content in JVM on PunchCode</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Tue, 02 Feb 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://xqt01.github.io/tags/jvm/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>JVM入门-垃圾回收器</title>
+      <link>https://xqt01.github.io/post/40_jvm%E5%85%A5%E9%97%A8_%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E5%99%A8/</link>
+      <pubDate>Tue, 02 Feb 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/40_jvm%E5%85%A5%E9%97%A8_%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E5%99%A8/</guid>
+      <description>按线程数分 串行垃圾回收器和并行垃圾回收器. 串行回收指的是在同一时间段内只允许有一个CPU用于执行垃圾回收操作, 此时工作线程被暂停, 直至垃圾收</description>
+    </item>
+    
+    <item>
+      <title>JVM入门-垃圾回收相关概念</title>
+      <link>https://xqt01.github.io/post/39_jvm%E5%85%A5%E9%97%A8_%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E7%9B%B8%E5%85%B3%E6%A6%82%E5%BF%B5/</link>
+      <pubDate>Mon, 01 Feb 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/39_jvm%E5%85%A5%E9%97%A8_%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E7%9B%B8%E5%85%B3%E6%A6%82%E5%BF%B5/</guid>
+      <description>System.gc() 在默认情况下, 通过System.gc()或者Runtime.getRuntime().gc()的调用, 会显式触发Full GC, 同时对老年代和新</description>
+    </item>
+    
+    <item>
+      <title>JVM入门-垃圾回收概述与算法</title>
+      <link>https://xqt01.github.io/post/38_jvm%E5%85%A5%E9%97%A8_%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%A6%82%E8%BF%B0%E4%B8%8E%E7%AE%97%E6%B3%95/</link>
+      <pubDate>Sat, 30 Jan 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/38_jvm%E5%85%A5%E9%97%A8_%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%A6%82%E8%BF%B0%E4%B8%8E%E7%AE%97%E6%B3%95/</guid>
+      <description>垃圾是指在运行程序中没有任何指针指向的对象, 这个对象就是需要被回收的垃圾. 如果不及时对内存中的垃圾进行清理, 这些垃圾对象所占的内存空间会一直</description>
+    </item>
+    
+    <item>
+      <title>JVM入门-字符串常量池</title>
+      <link>https://xqt01.github.io/post/37_jvm%E5%85%A5%E9%97%A8_%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%B8%B8%E9%87%8F%E6%B1%A0/</link>
+      <pubDate>Fri, 29 Jan 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/37_jvm%E5%85%A5%E9%97%A8_%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%B8%B8%E9%87%8F%E6%B1%A0/</guid>
+      <description>String比较特殊, 具有不可变性(声明为final), 并且实现了Serializable接口(支持序列化), Comparable接口(可比</description>
+    </item>
+    
+    <item>
+      <title>JVM入门-执行引擎</title>
+      <link>https://xqt01.github.io/post/36_jvm%E5%85%A5%E9%97%A8_%E6%89%A7%E8%A1%8C%E5%BC%95%E6%93%8E/</link>
+      <pubDate>Fri, 29 Jan 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/36_jvm%E5%85%A5%E9%97%A8_%E6%89%A7%E8%A1%8C%E5%BC%95%E6%93%8E/</guid>
+      <description>虚拟机是一个相对于&amp;quot;物理机&amp;quot;的概念, 这两种机器都有代码执行能力; 区别是物理机的执行引擎是直接建立在处理器, 缓存, 指令集和</description>
+    </item>
+    
+    <item>
+      <title>JVM入门-对象实例化与直接内存</title>
+      <link>https://xqt01.github.io/post/35_jvm%E5%85%A5%E9%97%A8_%E5%AF%B9%E8%B1%A1%E5%AE%9E%E4%BE%8B%E5%8C%96/</link>
+      <pubDate>Thu, 28 Jan 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/35_jvm%E5%85%A5%E9%97%A8_%E5%AF%B9%E8%B1%A1%E5%AE%9E%E4%BE%8B%E5%8C%96/</guid>
+      <description>运行时方法区已经讲完了, 那么new的对象是在堆中的, 它的类信息在方法区, 而局部变量在虚拟机栈中. 接下来我们梳理的是内存层面对象到底是怎么实例</description>
+    </item>
+    
+    <item>
+      <title>JVM入门-方法区</title>
+      <link>https://xqt01.github.io/post/34_jvm%E5%85%A5%E9%97%A8_%E6%96%B9%E6%B3%95%E5%8C%BA/</link>
+      <pubDate>Thu, 28 Jan 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/34_jvm%E5%85%A5%E9%97%A8_%E6%96%B9%E6%B3%95%E5%8C%BA/</guid>
+      <description>所有的方法区在逻辑上属于堆的一部分(官方文档原话), 但一些简单的实现可能不会选择去进行垃圾收集或者进行压缩. 所以我们把方法区看作是一块独立于</description>
+    </item>
+    
+    <item>
+      <title>JVM入门-堆</title>
+      <link>https://xqt01.github.io/post/33_jvm%E5%85%A5%E9%97%A8_%E5%A0%86/</link>
+      <pubDate>Wed, 27 Jan 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/33_jvm%E5%85%A5%E9%97%A8_%E5%A0%86/</guid>
+      <description>上一篇笔记讲的是运行时方法区的线程独享的部分, 接下来将线程共享的方法区与堆. Heap(堆) Java堆区在JVM启动的时候即被创建, 其空间大小</description>
+    </item>
+    
+    <item>
+      <title>JVM入门-运行时数据区概述及线程</title>
+      <link>https://xqt01.github.io/post/32_jvm%E5%85%A5%E9%97%A8_%E8%BF%90%E8%A1%8C%E6%97%B6%E6%95%B0%E6%8D%AE%E5%8C%BA%E6%A6%82%E8%BF%B0%E5%8F%8A%E7%BA%BF%E7%A8%8B/</link>
+      <pubDate>Wed, 27 Jan 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/32_jvm%E5%85%A5%E9%97%A8_%E8%BF%90%E8%A1%8C%E6%97%B6%E6%95%B0%E6%8D%AE%E5%8C%BA%E6%A6%82%E8%BF%B0%E5%8F%8A%E7%BA%BF%E7%A8%8B/</guid>
+      <description>回顾上一讲, class文件被类加载器加载之后, 会使用run engine去执行. Running Data Area具体内容如下图, 红色部分是多个线程共享的, 灰色部分</description>
+    </item>
+    
+    <item>
+      <title>JVM入门-JVM与Java体系结构</title>
+      <link>https://xqt01.github.io/post/30_jvm%E5%85%A5%E9%97%A8_vm%E4%B8%8Ejava%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/</link>
+      <pubDate>Mon, 25 Jan 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/30_jvm%E5%85%A5%E9%97%A8_vm%E4%B8%8Ejava%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/</guid>
+      <description>Java的垃圾回收使得开发效率大大提升(对比C++), 但是理解JVM工作机制才能更好地让我们我们有扩展知识和debug的能力. JVM不一定只</description>
+    </item>
+    
+    <item>
+      <title>JVM入门-类加载子系统</title>
+      <link>https://xqt01.github.io/post/31_jvm%E5%85%A5%E9%97%A8_%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%AD%90%E7%B3%BB%E7%BB%9F/</link>
+      <pubDate>Mon, 25 Jan 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/31_jvm%E5%85%A5%E9%97%A8_%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%AD%90%E7%B3%BB%E7%BB%9F/</guid>
+      <description>通过Class Loader SubSystem从文件系统或者网络中加载Class文件. ClassLoader只负责XXX.class文件的加载, 至于它是</description>
+    </item>
+    
+  </channel>
+</rss>

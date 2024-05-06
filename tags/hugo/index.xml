@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Hugo on PunchCode</title>
+    <link>https://xqt01.github.io/tags/hugo/</link>
+    <description>Recent content in Hugo on PunchCode</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Wed, 30 Sep 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://xqt01.github.io/tags/hugo/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>如何搭建Hugo博客并部署到Github Page</title>
+      <link>https://xqt01.github.io/post/0_%E5%A6%82%E4%BD%95%E6%90%AD%E5%BB%BAhugo%E5%8D%9A%E5%AE%A2%E5%B9%B6%E9%83%A8%E7%BD%B2%E5%88%B0github_page/</link>
+      <pubDate>Wed, 30 Sep 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/0_%E5%A6%82%E4%BD%95%E6%90%AD%E5%BB%BAhugo%E5%8D%9A%E5%AE%A2%E5%B9%B6%E9%83%A8%E7%BD%B2%E5%88%B0github_page/</guid>
+      <description>因为Hexo博客又一次出现了问题, 在推油的推荐下, 我把个人博客迁移到了Hugo上. 我会根据复习的进度慢慢地把相关的笔记迁移到这里. Hugo的</description>
+    </item>
+    
+  </channel>
+</rss>

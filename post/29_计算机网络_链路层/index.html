@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="PunchCode">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://xqt01.github.io/front.png">
+    <meta property="twitter:image" content="https://xqt01.github.io/front.png" />
+    
+
+    
+    <meta name="title" content="计算机网络-链路层" />
+    <meta property="og:title" content="计算机网络-链路层" />
+    <meta property="twitter:title" content="计算机网络-链路层" />
+    
+
+    
+    <meta name="description" content="Software Engineer">
+    <meta property="og:description" content="Software Engineer" />
+    <meta property="twitter:description" content="Software Engineer" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="Harry, 小拳头">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>计算机网络-链路层 | 以终为始</title>
+
+    <link rel="canonical" href="/post/29_%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C_%E9%93%BE%E8%B7%AF%E5%B1%82/">
+
+    
+    
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hugo-theme-cleanwhite.min.css">
+
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+
+    
+    <link href="https://cdn.jsdelivr.net/gh/FortAwesome/Font-Awesome@5.15.1/css/all.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    
+    <script src="/js/jquery.min.js"></script>
+
+    
+    <script src="/js/bootstrap.min.js"></script>
+
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+
+</head>
+
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">PunchCode</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">All Posts</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/tech">tech</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0">学习笔记</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/%E6%9D%82%E8%B0%88">杂谈</a>
+                        </li>
+                        
+                    
+                    
+		    
+                        <li><a href="/top/archive/">ARCHIVE</a></li>
+                    
+                        <li><a href="/top/about/">ABOUT</a></li>
+                    
+
+                    
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/front.png')
+    }
+</style>
+
+<header class="intro-header" >
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B" title="网络编程">
+                            网络编程
+                        </a>
+                        
+                    </div>
+                    <h1>计算机网络-链路层</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        
+                            Posted by 
+                            
+                                小拳头
+                             
+                            on 
+                            Monday, November 9, 2020
+                            
+                            
+                            
+                            
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <h2 id="概述">概述</h2>
+<p>运行链路层的主机/路由器/交换机等都叫<strong>结点(node)</strong>, 连接相邻结点的通信信道叫链路. 数据报会被封装到链路层帧中并被传送到链路. 主体部分是网络适配器或者网络接口卡(NIC).</p>
+<h3 id="链路层提供的服务">链路层提供的服务</h3>
+<ol>
+<li>framing.</li>
+<li>链路接入, <strong>medium access control(MAC) protocol</strong>规定帧在链路上的传输规则.</li>
+<li>可靠交付, 链路层提供可靠交付服务时, 保证无差错地移动网络层数据报.</li>
+<li>差错检测和纠正, 通过硬件提供.</li>
+</ol>
+<h2 id="多路访问链路和协议">多路访问链路和协议</h2>
+<p>链路层信道有<strong>点对点</strong>和<strong>广播</strong>两种. 对于广播, 当任何一个结点传输一个帧时, 信道就会广播这个帧, 让其他的结点都收到一个副本. 以太网和无线局域网就是广播的应用. 通过多路访问协议来规范它们在共享的广播信道上的传输行为. 具体内容暂时跳过, 主要focus在下一章.</p>
+<h2 id="交换局域网">交换局域网</h2>
+<p>在交换局域网中, 交换机运行在链路层, 意味着他们不执行网络层协议(不识别ip地址, 没有路由选择), 只在链路层交换链路层帧.</p>
+<h3 id="链路层寻址和arp">链路层寻址和ARP</h3>
+<p><strong>MAC地址</strong>存在于结点的<strong>网络适配器</strong>中. 也叫LAN address/physical addrerss. 对于以太网和802.11无线局域网, MAC地址有6个byte, 对局域网的每个接口来说都是独一无二的(虽然可以通过一些软件来改变, 但是设计上是独一无二的). 前24位由IEEE分配, 后24位由生产主机/路由等结点的公司分配, 来保证唯一性.</p>
+<p><strong>ARP就是地址解析协议</strong>, 可以将IP地址解析为MAC地址, 自然会联想到DNS, 不同的是DNS解析可以在因特网任何地方, 而ARP只能在一个子网上解析. 每台主机或者路由器的内存中会有一个<strong>ARP table</strong>, 包含IP地址到MAC地址的映射和一个TTL值. TTL值表示删除一个映射的时间.</p>
+<p>所以, 如果ARP table中本来就有某个表项, 从ip<code>222.222.222.220</code>向<code>222.222.222.222</code>发送数据报就很容易了, 但是如果没有, 发送方就需要通过ARP协议来解析ip. 同样的例子, <code>222.222.222.220</code>会先向适配器发送ARP查询分组, 并且MAC地址为广播地址<code>FF-FF-FF-FF-FF-FF-FF</code>, 这个特殊的<strong>ARP分组</strong>被封装到帧中, 并被传输进子网. <code>222.222.222.222</code>所对应的主机就能返回一个响应ARP分组, <code>222.222.222.220</code>就可以更新ARP表了. 而对于跨子网来说, 路由器会成为连接两个子网的媒介, 先从主机到路由器MAC, 再从路由器到另一个子网某个主机的MAC.
+
+  <img src="/29_1.png" alt="">
+
+</p>
+<blockquote>
+<p>ARP不仅涵盖了链路层的MAC, 也涵盖了网络层的IP, 所以它实际上是一个跨越链路层和网络层的协议.</p>
+</blockquote>
+<h3 id="以太网">以太网</h3>
+<p>以太网帧如下图所示. 以太网服务是无连接, 不可靠的. 即使有CRC检验, 但是如果校验失败也只是丢弃该帧而已. 如果应用基于UDP, 那么接收主机是可以看到因为丢帧带来的<strong>数据间隙</strong>的, 而堆TCP应用来说, 虽然丢帧不直接引起重传, 但是如果TCP需要重传, 意味着datagram其实也重传了, 只是以太网并不知道此.
+
+  <img src="/29_2.png" alt="">
+
+</p>
+<ul>
+<li>数据字段(46~1500byte): 承载datagram, 1500好理解, 是MTU的最大限制, 而46是数据字段最小长度(也是最小的MTU长度), 如果小于46byte, 就会进行填充. 而网络层解析IP datagram的时候可以根据头中的长度字段来去除填充部分.</li>
+<li>目的的值(6byte): 目的适配器的MAC地址.</li>
+<li>源地址(6byte): 传输该帧的适配器的MAC地址.</li>
+<li>类型(2byte): 网络层协议的类型, 0x0800表示IP地址.</li>
+<li>CRC(4byte): 循环冗余检测, 接收适配器以此检测帧中是否有差错.</li>
+<li>前同步码(8byte): 同步发送和接收适配器.</li>
+</ul>
+<h3 id="链路层交换机">链路层交换机</h3>
+<p>交换机对子网中的主机和路由器是透明的. 他们并不知道交换机的存在.</p>
+<ol>
+<li>交换转发和过滤: <strong>filtering</strong>值判断帧应该转发到某个节后还是将其丢弃, <strong>forwarding</strong>决定帧导向哪个接口. 都借助switch table完成. 表项包括(MAC地址, 交换机接口, 时间). 如果交换机接口x到达了一个帧. 先查表, 如果表中没有对应的地址, 则广播该帧到前面所有的输出缓存. 如果该帧的MAC得知对应的接口还是x, 则过滤掉(丢弃)该帧. 如果对应接口不是x, 则将该帧放到对应接口的输出缓存.</li>
+<li>自学习: switch table初始为空, 每个入帧被存储. 当过了<strong>aging time</strong>后, 交换机没有收到该地址作为源地址的帧, 则在表中删除这个地址.</li>
+<li>性质: 消除碰撞(集线器不行), 链路彼此隔离, 管理.</li>
+<li>比较交换机和路由器, 交换机在第二层, 路由器在第三层. 交换机可以即插即用, 有相对高的分组过滤和转发速率. 但是微课防止广播帧逊汗, 交换网络的拓扑结构限制为生成树. 过大的交换网络会要求主机和路由器由大的ARP表, 造成大量的ARP流量和处理量. 路由的拓扑结构没有限制, 因为有TTL保证不会有过多冗余.</li>
+</ol>
+<h2 id="web页面请求过程">Web页面请求过程</h2>
+<p>书本上用张三访问<code>www.google.com</code>为例, 过程如下图. 张三将笔记本通过以太网电缆连接到学校的以太网交换机, 而交换机连接着学校的路由器. 学校的路由器连接着ISP<code>comcast</code>.
+
+  <img src="/29_3.png" alt="">
+
+</p>
+<h3 id="准备阶段">准备阶段</h3>
+<p>张三的笔记本连接以太网后, 需要通过本地的DHCP服务器获得一个ip. 笔记本的操作系统生成DHCP请求报文, 并将其放入UDP segment. 其目的端口是67(DHCP服务器), 源端口是68(DHCP客户). UDP又被放到datagram中, 目的地ip地址是<code>255.255.255.255</code>(广播), ip源地址是<code>0.0.0.0</code>(因为笔记本还没被分配ip地址). IP datagram被封装到以太网帧中, 以太网帧的目的MAC地址是<code>FF:FF:FF:FF:FF:FF</code>, 而源MAC地址就是张三笔记本适配器的<code>00:16:D3:23:68:8A</code>. 最终帧通过交换机到达路由器的接口, 层层分解, 直到DHCP请求从UDP segment中抽取出来, 给DHCP服务器. DHCP服务器生成包含这个IP地址/DNS服务器IP<code>68.87.71.126</code>/网关路由器IP<code>68.85.2.1</code>(包括掩码)的DHCP ACK报文. 再层层向下封装到帧. 源MAC地址是<code>00:22:6B:45:1F:1B</code>, 目的MAC地址是<code>00:16:D3:23:68:8A</code>. 此时的交换机已经知道了张三笔记本的MAC地址, 所以直接将DHCP ACK的以太网帧从对应的端口发送. 层层向上解析, 得到自己的IP地址和DNS服务器的IP地址.</p>
+<h3 id="仍在准备dns-arp">仍在准备(DNS, ARP)</h3>
+<p>当张三输入了<code>www.google.com</code>的url之后, Web浏览器通过TCP socket, 向<code>www.google.com</code>发送HTTP请求, socket需要ip, 而ip会通过DNS得到.</p>
+<p>张三笔记本的os生成DNS查询报文, 将<code>www.google.com</code>放入其中, 而DNS报文又会被放到端口是53的UDP segment中, UDP segment的目的地址是<code>86.87.71.226</code>, 源地址是<code>68.85.2.101</code>. 层层封装到帧中, 在链路层寻址到学校的网关路由器. 因为之前张三的笔记本只通过<code>DHCP ACK</code>得到了这个网关路由器的ip地址, 所以现在需要通过ARP去取得对应的MAC地址. 张三笔记本生成一个目的地是<code>68.85.2.11</code>的ARP查询报文, 将其放在广播地址<code>FF:FF:FF:FF:FF:FF</code>的以太网帧中, 通过交换机发送.  当网关路由器接收到该ARP查询报文的帧, 发现目标地址匹配, 就会进行ARP应答, 封装到以太网帧中, 并向交换机发送, 交换机再交付给张三的笔记本. 张三的笔记本就可以从ARP响应报文中抽取网关路由器的MAC地址.</p>
+<p>接下来, 张三的笔记本就能将DNS的以太网帧就能寻址到网关路由器了.</p>
+<h3 id="仍在准备域内路由选择到dns服务器">仍在准备(域内路由选择到DNS服务器)</h3>
+<p>网关路由器解析这个帧, 提取帧中DNS查询的IP datagram, 根据datagram的目的地址<code>68.87.71.226</code>, 通过转发表转发到Comeast最左侧的路由器. 继续转发, 直到DNS查询到达DNS服务器, 找到对应域名<code>www.google.com</code>的ip<code>64.233.169.105</code>的DNS源记录. 形成DNS回答报文, 被放入UDP datagram, 向张三的笔记本发送. 张三的笔记本就可以抽取出这个ip地址了.</p>
+<blockquote>
+<p>这里书里面没有讲缓存, 实际操作和实验中其实常常会遇到DNS已经被缓存了. 通常会找浏览器缓存, 本机的hosts文件映射, 路由缓存, 最后在才会找DNS服务器.</p>
+</blockquote>
+<h3 id="web-client---servertcp-http">Web client -&gt; Server(TCP. HTTP)</h3>
+<p>Bob的笔记本浏览器通过TCP 生成socket向<code>www.google.com</code>发送HTTP GET报文门. 生成socket的时候会三次握手, TCP SYN-&gt;TCP SYNACK-&gt;ACK.</p>
+<p>google的HTTP服务器收到HTTP GET报文, 生成HTTP响应报文, 把Web页内容放进响应体中, 向Bob的笔记本转发. 最终网页就显示了出来.</p>
+<h2 id="实验">实验</h2>
+<h3 id="ethernet-and-arp">Ethernet and ARP</h3>
+<p>分析原实验的log, uncheck <code>Analyze-&gt;Enabled Protocols</code>中的<code>IPv4</code>, 因为我们只想看网络层以下的信息.
+
+  <img src="/29_4.png" alt="">
+
+</p>
+<p>选择的这一条信息是包含HTTP GET的. host的MAC地址是<code>00:d0:59:a9:3d:68</code>, 目的地址是<code>00:06:25:da:af:73</code>. 而以太网类型编号<code>0x0800</code>表示IPv4. 到G出现在以太网帧共有55byte(两个16进制位相当于一个字节).</p>
+<p>继续看下图中的ARP请求帧. 源地址是<code>00:80:ad:73:8d:ce</code>, 目的地址是<code>ff:ff:ff:ff:ff:ff</code>. 可以看到ARP所对应的Tpye是<code>0x0806</code>. 而Opcode操作码为1. (1是ARP请求, 2是ARP回显, 3是RARP请求, 4是RARP应答). 其中的<code>192.168.1.1</code>就是路由器的地址. 而从<code>Ethernet II</code>可以看出这是一次广播.
+
+  <img src="/29_5.png" alt="">
+
+</p>
+<p>ARP响应. 此时路由器的MAC地址就知道了. 路由器的MAC地址是<code>00:06:25:da:af:73</code>, 而主机的MAC地址是<code>00:d0:59:a9:3d:68</code>.
+
+  <img src="/29_6.png" alt="">
+
+</p>
+<h2 id="参考">参考</h2>
+<ol>
+<li>计算机网络-自顶向下方法(第6版)</li>
+<li>Computer Networking A Top-Down Approach(7th edition)</li>
+<li><a href="https://github.com/moranzcw/Computer-Networking-A-Top-Down-Approach-NOTES">作业</a></li>
+<li><a href="https://github.com/jzplp/Computer-Network-A-Top-Down-Approach-Answer">习题答案</a></li>
+<li><a href="https://gaia.cs.umass.edu/kurose_ross/wireshark.htm">wireshark实验</a></li>
+<li>程序羊-计算机网络面试题总结</li>
+</ol>
+
+
+                
+
+                
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/post/28_%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C_%E7%BD%91%E7%BB%9C%E5%B1%82/" data-toggle="tooltip" data-placement="top" title="计算机网络-网络层">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/post/41_mysql_%E5%9F%BA%E7%A1%80/" data-toggle="tooltip" data-placement="top" title="MySQL-基础">Next
+                            Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+                
+
+                
+
+
+<div id="disqus-comment"></div>
+<div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "xqt01" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+            </div>
+
+            
+            
+            <div class="
+                col-lg-2 col-lg-offset-0
+                visible-lg-block
+                sidebar-container
+                catalog-container">
+                <div class="side-catalog">
+                    <hr class="hidden-sm hidden-xs">
+                    <h5>
+                        <a class="catalog-toggle" href="#">CATALOG</a>
+                    </h5>
+                    <ul class="catalog-body"></ul>
+                </div>
+            </div>
+            
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/java" title="java">
+                            java
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/jvm" title="jvm">
+                            jvm
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/spring" title="spring">
+                            spring
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E5%89%8D%E7%AB%AF" title="前端">
+                            前端
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F" title="操作系统">
+                            操作系统
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93" title="数据库">
+                            数据库
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95" title="数据结构与算法">
+                            数据结构与算法
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B" title="网络编程">
+                            网络编程
+                        </a>
+                        
+                        
+                    </div>
+                </section>
+                
+
+                
+                
+                <section>
+                    <hr>
+                    <h5>FRIENDS</h5>
+                    <ul class="list-inline">
+                        
+                        <li><a target="_blank" href="https://fan-bu-fan.github.io/">FELL &amp; ENJOY</a></li>
+                        
+                    </ul>
+                </section>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">                  
+                    
+                    <li>
+                        <a href="mailto:huanruiz@foxmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		           
+                    
+                    
+                    
+                    
+
+		            
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/xqt01">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		            
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+            
+            
+            
+           
+                   <li>
+                       <a href='' rel="alternate" type="application/rss+xml" title="PunchCode" >
+                           <span class="fa-stack fa-lg">
+                               <i class="fas fa-circle fa-stack-2x"></i>
+                               <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                           </span>
+                       </a>
+                   </li>
+            
+             </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; PunchCode 2024
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function loadAsync(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        loadAsync("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    loadAsync("https://cdn.jsdelivr.net/npm/fastclick@1.0.6/lib/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+    function generateCatalog(selector) {
+
+        
+        
+        
+        
+            _containerSelector = 'div.post-container'
+        
+
+        
+        var P = $(_containerSelector), a, n, t, l, i, c;
+        a = P.find('h1,h2,h3,h4,h5,h6');
+
+        
+        $(selector).html('')
+
+        
+        a.each(function () {
+            n = $(this).prop('tagName').toLowerCase();
+            i = "#" + $(this).prop('id');
+            t = $(this).text();
+            c = $('<a href="' + i + '" rel="nofollow">' + t + '</a>');
+            l = $('<li class="' + n + '_nav"></li>').append(c);
+            $(selector).append(l);
+        });
+        return true;
+    }
+
+    generateCatalog(".catalog-body");
+
+    
+    $(".catalog-toggle").click((function (e) {
+        e.preventDefault();
+        $('.side-catalog').toggleClass("fold")
+    }))
+
+    
+
+
+    loadAsync("\/js\/jquery.nav.js", function () {
+        $('.catalog-body').onePageNav({
+            currentClass: "active",
+            changeHash: !1,
+            easing: "swing",
+            filter: "",
+            scrollSpeed: 700,
+            scrollOffset: 0,
+            scrollThreshold: .2,
+            begin: null,
+            end: null,
+            scrollChange: null,
+            padding: 80
+        });
+    });
+</script>
+
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="PunchCode">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://xqt01.github.io/front.png">
+    <meta property="twitter:image" content="https://xqt01.github.io/front.png" />
+    
+
+    
+    <meta name="title" content="Mybatis入门" />
+    <meta property="og:title" content="Mybatis入门" />
+    <meta property="twitter:title" content="Mybatis入门" />
+    
+
+    
+    <meta name="description" content="Software Engineer">
+    <meta property="og:description" content="Software Engineer" />
+    <meta property="twitter:description" content="Software Engineer" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="Harry, 小拳头">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>Mybatis入门 | 以终为始</title>
+
+    <link rel="canonical" href="/post/52_mybatis%E5%85%A5%E9%97%A8/">
+
+    
+    
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hugo-theme-cleanwhite.min.css">
+
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+
+    
+    <link href="https://cdn.jsdelivr.net/gh/FortAwesome/Font-Awesome@5.15.1/css/all.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    
+    <script src="/js/jquery.min.js"></script>
+
+    
+    <script src="/js/bootstrap.min.js"></script>
+
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+
+</head>
+
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">PunchCode</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">All Posts</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/tech">tech</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0">学习笔记</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/%E6%9D%82%E8%B0%88">杂谈</a>
+                        </li>
+                        
+                    
+                    
+		    
+                        <li><a href="/top/archive/">ARCHIVE</a></li>
+                    
+                        <li><a href="/top/about/">ABOUT</a></li>
+                    
+
+                    
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/front.png')
+    }
+</style>
+
+<header class="intro-header" >
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                    </div>
+                    <h1>Mybatis入门</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        
+                            Posted by 
+                            
+                                小拳头
+                             
+                            on 
+                            Friday, July 9, 2021
+                            
+                            
+                            
+                            
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <p>MyBatis是一款优秀的持久<strong>层</strong>框架, 它支持自定义SQL/存储过程以及高级映射. MyBatis免除了几乎所有的JDBC代码以及设置参数和获取结果集的工作. MyBatis可以通过简单的XML或注解来配置和映射原始类型/接口和Java POJO为数据库中的记录. (官网介绍)</p>
+<h2 id="第一个mybatis程序">第一个Mybatis程序</h2>
+<p>首先创建一个数据库进行测试.</p>
+<pre><code>create database `mybatis`;
+
+use `mybatis`;
+
+create table `user` (
+	`id` int(20) NOT NULL PRIMARY KEY,
+    `name` VARCHAR(30) DEFAULT NULL,
+    `pwd` VARCHAR(30) DEFAULT NULL
+)ENGINE=INNODB DEFAULT CHARSET=utf8;
+
+INSERT INTO `user`(`id`, `name`, `pwd`) VALUES
+(1, 'Harry1', '123a'),
+(2, 'Harry2', '123b'),
+(3, 'Harry3', '123c')
+</code></pre><p>创建一个工具类, 用来生产sqlSession.</p>
+<pre><code>public class MybatisUtils {
+
+    private static SqlSessionFactory sqlSessionFactory;
+
+    static {
+        try {
+            //step1, 获取sqlSessionFactory对象
+            String resource = &quot;mybatis-config.xml&quot;;
+            InputStream inputStream = Resources.getResourceAsStream(resource);
+            sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //step2, 获得SqlSession实例, SqlSession完全包含面向数据库执行SQL命令的所有方法
+    public static SqlSession getSqlSession() {
+        return sqlSessionFactory.openSession();
+    }
+}
+</code></pre><p>而工具类的配置文件如下:</p>
+<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;
+&lt;!DOCTYPE configuration
+        PUBLIC &quot;-//mybatis.org//DTD Config 3.0//EN&quot;
+        &quot;http://mybatis.org/dtd/mybatis-3-config.dtd&quot;&gt;
+
+&lt;configuration&gt;
+    &lt;environments default=&quot;development&quot;&gt;
+        &lt;environment id=&quot;development&quot;&gt;
+            &lt;transactionManager type=&quot;JDBC&quot;/&gt;
+            &lt;dataSource type=&quot;POOLED&quot;&gt;
+                &lt;property name=&quot;driver&quot; value=&quot;com.mysql.jdbc.Driver&quot;/&gt;
+                &lt;property name=&quot;url&quot; value=&quot;jdbc:mysql://localhost:3306/mybatis?useSSL=true&amp;amp;useUnicode=true&amp;amp;useUnicode=true&amp;amp;characterEncoding=UTF-8&quot;/&gt;
+                &lt;property name=&quot;username&quot; value=&quot;root&quot;/&gt;
+                &lt;property name=&quot;password&quot; value=&quot;xxxxxx&quot;/&gt;
+            &lt;/dataSource&gt;
+        &lt;/environment&gt;
+    &lt;/environments&gt;
+
+    &lt;!--每个Mapper.xml都需要在MyBatis核心配置文件中注册--&gt;
+    &lt;mappers&gt;
+        &lt;mapper resource=&quot;com/kuang/dao/UserMapper.xml&quot;/&gt;
+    &lt;/mappers&gt;
+&lt;/configuration&gt;
+</code></pre><p>为了测试再创建一个user的pojo类, 这里省略getter/setter方法.</p>
+<pre><code>public class User {
+  private int id;
+  private String name;
+  private String pwd;
+}
+</code></pre><p>同时创建<code>UserDao</code>的接口.</p>
+<pre><code>public interface UserDao {
+    List&lt;User&gt; getUserList();
+}
+</code></pre><p>通过MyBatis, 我们不用自己写<code>Impl</code>实现类去实现接口, 而是通过配置实现.</p>
+<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;
+&lt;!DOCTYPE mapper
+        PUBLIC &quot;-//mybatis.org//DTD Mapper 3.0//EN&quot;
+        &quot;http://mybatis.org/dtd/mybatis-3-mapper.dtd&quot;&gt;
+
+&lt;!--绑定一个Dao(Mapper)接口--&gt;
+&lt;mapper namespace=&quot;com.kuang.dao.UserDao&quot;&gt;
+    &lt;!--相当于用Impl去重写接口方法, resultMap代表返回值--&gt;
+    &lt;select id=&quot;getUserList&quot; resultType=&quot;com.kuang.pojo.User&quot;&gt;
+        select * from mybatis.user
+    &lt;/select&gt;
+&lt;/mapper&gt;
+</code></pre><p>最后做个单元测试看能否拿到数据库的数据.</p>
+<pre><code>public class UserDaoTest {
+    
+    @Test
+    public void test() {
+        //1.获得sqlSession对象
+        SqlSession sqlSession = MybatisUtils.getSqlSession();
+        //2.执行SQL
+        UserDao userDao = sqlSession.getMapper(UserDao.class);
+        List&lt;User&gt; userList = userDao.getUserList();
+
+        for (User user : userList) {
+            System.out.println(user);
+        }
+
+        //关闭Session
+        sqlSession.close();
+    }
+}
+</code></pre><p>不要忘了maven的配置. 父配置文件如下:</p>
+<pre><code>&lt;!--import dependency--&gt;
+&lt;dependencies&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;mysql&lt;/groupId&gt;
+        &lt;artifactId&gt;mysql-connector-java&lt;/artifactId&gt;
+        &lt;version&gt;8.0.25&lt;/version&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.mybatis&lt;/groupId&gt;
+        &lt;artifactId&gt;mybatis&lt;/artifactId&gt;
+        &lt;version&gt;3.5.7&lt;/version&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;junit&lt;/groupId&gt;
+        &lt;artifactId&gt;junit&lt;/artifactId&gt;
+        &lt;version&gt;4.13.1&lt;/version&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;
+</code></pre><p>子配置文件继承了父配置文件的包即可.</p>
+<pre><code>&lt;parent&gt;
+    &lt;artifactId&gt;MyBatis-Study&lt;/artifactId&gt;
+    &lt;groupId&gt;com.kuang&lt;/groupId&gt;
+    &lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;
+&lt;/parent&gt;
+</code></pre><p>这里有一个坑, 就是maven可能会扫描不到我们的<code>UserMapper.xml</code>文件, 导致资源导出失败, 那么我们需要在配置文件中加入如下过滤.</p>
+<pre><code>&lt;build&gt;
+    &lt;resources&gt;
+        &lt;resource&gt;
+            &lt;directory&gt;src/main/resources&lt;/directory&gt;
+            &lt;includes&gt;
+                &lt;include&gt;**/*.properties&lt;/include&gt;
+                &lt;include&gt;**/*.xml&lt;/include&gt;
+            &lt;/includes&gt;
+            &lt;filtering&gt;true&lt;/filtering&gt;
+        &lt;/resource&gt;
+        &lt;resource&gt;
+            &lt;directory&gt;src/main/java&lt;/directory&gt;
+            &lt;includes&gt;
+                &lt;include&gt;**/*.properties&lt;/include&gt;
+                &lt;include&gt;**/*.xml&lt;/include&gt;
+            &lt;/includes&gt;
+            &lt;filtering&gt;true&lt;/filtering&gt;
+        &lt;/resource&gt;
+    &lt;/resources&gt;
+&lt;/build&gt;
+</code></pre><h3 id="增删改查">增删改查</h3>
+<ol>
+<li>namespace: namespace中包名要和Dao/Mapper接口的包名一致</li>
+<li>select: id就是namespace中的方法名, resultType是sql的返回值</li>
+<li>parameterType</li>
+</ol>
+<p>把之前的<code>UserDao</code>重构为<code>UserMapper</code>, 加入下列方法.</p>
+<pre><code>//根据id查用户
+User getUserById(int id);
+
+//insert一个用户
+int addUser(User user);
+
+//update用户
+int updateUser(User user);
+
+//delete用户
+int deleteUser(int id);
+</code></pre><p><code>UserMapper.xml</code>中写sql语句.</p>
+<pre><code>&lt;select id=&quot;getUserById&quot; parameterType=&quot;int&quot; resultType=&quot;com.kuang.pojo.User&quot;&gt;
+    select * from mybatis.user where id = #{id};
+&lt;/select&gt;
+
+&lt;insert id=&quot;addUser&quot; parameterType=&quot;com.kuang.pojo.User&quot;&gt;
+    insert into mybatis.user (id, name, pwd) values (#{id}, #{name}, #{pwd});
+&lt;/insert&gt;
+
+&lt;update id=&quot;updateUser&quot; parameterType=&quot;com.kuang.pojo.User&quot;&gt;
+    update mybatis.user set name=#{name}, pwd=#{pwd} where id = #{id};
+&lt;/update&gt;
+
+&lt;delete id=&quot;deleteUser&quot; parameterType=&quot;int&quot;&gt;
+    delete from mybatis.user where id = #{id};
+&lt;/delete&gt;
+</code></pre><p>测试如下, <strong>增删改</strong>必须<code>commit()</code>提交事务, 否则不生效.</p>
+<pre><code>@Test
+public void addUser() {
+    SqlSession sqlSession = MybatisUtils.getSqlSession();
+
+    UserMapper mapper = sqlSession.getMapper(UserMapper.class);
+    int res = mapper.addUser(new User(4, &quot;ha&quot;, &quot;12333&quot;));
+    System.out.println(res);
+
+    sqlSession.commit();
+    sqlSession.close();
+}
+
+@Test
+public void updateUser() {
+    SqlSession sqlSession = MybatisUtils.getSqlSession();
+
+    UserMapper mapper = sqlSession.getMapper(UserMapper.class);
+    mapper.updateUser(new User(4, &quot;hehe&quot;, &quot;123123&quot;));
+
+    sqlSession.commit();
+    sqlSession.close();
+}
+
+@Test
+public void deleteUser() {
+    SqlSession sqlSession = MybatisUtils.getSqlSession();
+
+    UserMapper mapper = sqlSession.getMapper(UserMapper.class);
+    mapper.deleteUser(4);
+
+    sqlSession.commit();
+    sqlSession.close();
+}
+</code></pre><ul>
+<li>可以用<code>parameterType=map</code>并传入Map类型的值, 这样就可以根据Map的键值对传值.</li>
+<li>如果只有一个参数, 可以直接在sql中写.</li>
+<li>如果传入的是对象, 可以直接取对象的field, <code>parameterType=Object</code>.</li>
+</ul>
+<blockquote>
+<p>like模糊查询注意sql注入问题</p>
+</blockquote>
+<h2 id="配置解析">配置解析</h2>
+<p>在<code>mybatis-config.xml</code>相同的包下加入<code>db.properties</code>, 写入</p>
+<pre><code>driver=com.mysql.jdbc.Driver
+url=jdbc:mysql://localhost:3306/mybatis?useSSL=true&amp;useUnicode=true&amp;useUnicode=true&amp;characterEncoding=UTF-8
+username=root
+password=xxxxxxxx
+</code></pre><p>并在<code>mybatis-config.xml</code>中的<code>&lt;configuration&gt;</code>下加入<code>&lt;configuration&gt;</code>. 就可以用<code>&lt;property name=&quot;driver&quot; value=&quot;${driver}&quot;/&gt;</code>的方式去替换我们的配置. <code>&lt;properties&gt;</code>这个标签下也可以直接用<code>&lt;property&gt;</code>直接配置. 如果两个文件都配置了相同字段, 优先使用外部配置文件的.</p>
+<p>还可以取别名, 这个功能唯一的好处就是方便, 在Mapper中的类名就可以换掉. 可以给类名, 包名取别名, 如下两种方式. 如果是扫描包, 则可以把<code>@Alias</code>加在实体类上, 给实体类自定义别名, 否则用类名本身. <strong>基本类型/包装类有默认的别名</strong>.</p>
+<pre><code>&lt;typeAliases&gt;
+    &lt;typeAlias type=&quot;com.kuang.pojo.User&quot; alias=&quot;User&quot;/&gt;
+    &lt;package name=&quot;com.kuang.pojo&quot;/&gt;
+&lt;/typeAliases&gt;
+</code></pre><p>之前<code>mappers</code>中我们用了<code>&lt;mapper resource=&quot;com/kuang/dao/UserMapper.xml&quot;/&gt;</code>注册, 实际上还有<code>&lt;mapper class=&quot;com.kuang.dao.UserMapper&quot;/&gt;</code>类注册, <code>&lt;package name=&quot;com.kuang.dao&quot;/&gt;</code>包注册两种方式, 但是要注意接口和配置文件<strong>名称必须一致</strong>, 并且在<strong>同一个包下</strong>.</p>
+<p>对于<strong>生命周期和作用域</strong>, 简单的总结是: <code>SqlSessionFactoryBuilder</code>创建<code>SqlSessionFactory</code>(想象为连接池), <code>SqlSessionFactory</code>生产<code>SqlSession</code>一个线程, <code>SqlSession</code>下包含<code>Mapper</code>, <code>Mapper</code>就是一个个业务. <code>SqlSessionFactoryBuilder</code>在<code>SqlSessionFactory</code>创建后就没用了, 但是<code>SqlSessionFactory</code>在应用运行期间一直应存在, <strong>最佳作用域是应用的作用域</strong>, 最简单的使用就是单例. 而<code>SqlSession</code>是连接到线程池的一个请求, 线程不安全, <strong>最佳作用域是请求或方法作用域</strong>, 用完之后应立刻关闭, 防止资源占用.</p>
+<blockquote>
+<p>对于执行流程, 还有很多是源码做的但我们看不到的, 比如读配置, 事务管理, 创建executor执行器等等. 介意debug的时候看一条sql语句是怎么跑的, 看用到了哪些东西</p>
+</blockquote>
+<h2 id="结果集映射">结果集映射</h2>
+<p>前面的例子中, 我们的User Bean中的字段和数据库字段的名称一一对应, 如果不同的话怎么办? 例如把<code>User</code>中的<code>pwd</code>改为<code>password</code>, 那么除了用MySQL的别名, 还可以用mybatis的<code>resultMap</code>. 当然这是比较简单的情况, 文档里面说<strong>如果这个世界总是这么简单就好了</strong>, 实际还有更复杂的一对多多对一的情况, 需要用<code>collections</code>处理.</p>
+<pre><code>&lt;resultMap id=&quot;UserMap&quot; type=&quot;User&quot;&gt;
+    &lt;result column=&quot;id&quot; property=&quot;id&quot;/&gt;
+    &lt;result column=&quot;name&quot; property=&quot;name&quot;/&gt;
+    &lt;result column=&quot;pwd&quot; property=&quot;password&quot;/&gt;
+&lt;/resultMap&gt;
+&lt;!--相当于用Impl去重写接口方法, resultMap代表返回值--&gt;
+&lt;select id=&quot;getUserById&quot; resultMap=&quot;UserMap&quot;&gt;
+    select * from mybatis.user where id = #{id}
+&lt;/select&gt;
+</code></pre><h2 id="mybatis的日志">Mybatis的日志</h2>
+<p>在配置文件配一下就ok, 这里用的标准输出为例.</p>
+<pre><code>&lt;settings&gt;
+    &lt;setting name=&quot;logImpl&quot; value=&quot;STDOUT_LOGGING&quot;/&gt;
+&lt;/settings&gt;
+</code></pre><p>会打印:</p>
+<pre><code>Opening JDBC Connection
+Created connection 551479935.
+Setting autocommit to false on JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@20deea7f]
+==&gt;  Preparing: select * from mybatis.user where id = ?
+==&gt; Parameters: 1(Integer)
+&lt;==    Columns: id, name, pwd
+&lt;==        Row: 1, Harry1, 123a
+&lt;==      Total: 1
+User{id=1, name='Harry1', pwd='123a'}
+Resetting autocommit to true on JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@20deea7f]
+Closing JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@20deea7f]
+Returned connection 551479935 to pool.
+</code></pre><p>再尝试一下<code>log4j</code>.</p>
+<pre><code>&lt;!-- https://mvnrepository.com/artifact/log4j/log4j --&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;log4j&lt;/groupId&gt;
+    &lt;artifactId&gt;log4j&lt;/artifactId&gt;
+    &lt;version&gt;1.2.17&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre><p>新建<code>resource</code>下创建<code>log4j.properties</code>, 参照官网配置.</p>
+<pre><code># 全局日志配置, 级别有OFF/FATAL(导致程序挂掉的严重错误)/ERROR(发生错误但不影响运行)/WARN(潜在错误)/INFO(打印感兴趣的日志)/DEBUG(帮助debug()/TRACE(一般不用)/ALL
+log4j.rootLogger=DEBUG, stdout
+# MyBatis 日志配置
+log4j.logger.org.mybatis.example.BlogMapper=TRACE
+# 控制台输出
+log4j.appender.stdout=org.apache.log4j.ConsoleAppender
+log4j.appender.stdout.layout=org.apache.log4j.PatternLayout
+log4j.appender.stdout.layout.ConversionPattern=%5p [%t] - %m%n
+#
+log4j.logger.com.mybatis=DEBUG
+</code></pre><p>Mybatis配置改为如下并运行.</p>
+<pre><code>&lt;settings&gt;
+    &lt;setting name=&quot;logImpl&quot; value=&quot;LOG4j&quot;/&gt;
+&lt;/settings&gt;
+</code></pre><p><strong>比较标准的使用方式</strong>: 通过<code>static Logger logger = Logger.getLogger(UserDaoTest.class);</code>拿到日志对象, 通过<code>logger.info()/logger.debug()/logger.erroer()</code>打印日志, 比如在同一个测试类下加入:</p>
+<pre><code>@Test
+public void testLog4j(){
+    logger.info(&quot;info&quot;);
+    logger.debug(&quot;debug&quot;);
+    logger.error(&quot;error&quot;);
+}
+</code></pre><p>就能打印:</p>
+<pre><code> INFO [main] - info
+DEBUG [main] - debug
+ERROR [main] - error
+</code></pre><h2 id="分页">分页</h2>
+<p>分页的目的是减少数据的处理量. 可以通过Limit或者<strong>RowBounds</strong>实现. 对于limit实现实际上就是简单地传入limit的值即可.</p>
+<pre><code>&lt;!--对应List&lt;User&gt; getUserByLimit(Map&lt;String, Integer&gt; map);--&gt;
+&lt;select id=&quot;getUserByLimit&quot; parameterType=&quot;map&quot; resultMap=&quot;UserMap&quot;&gt;
+    select * from mybatis.user limit #{startIndex},#{pageSize}
+&lt;/select&gt;
+</code></pre><p><strong>RowBounds</strong>实现, 在写sql时就不需要加limit了, 而是在调用的时候用<code>RowBounds</code>作为selectList的参数传入.</p>
+<pre><code>@Test
+public void getUserByRowBounds() {
+    SqlSession sqlSession = MybatisUtils.getSqlSession();
+    RowBounds rowBounds = new RowBounds(1, 2);
+    List&lt;User&gt; userList = sqlSession.selectList(&quot;com.kuang.dao.UserMapper.getUserByRowBounds&quot;, null, rowBounds);
+
+    for (User user: userList) {
+        System.out.println(user);
+    }
+    sqlSession.close();
+}
+</code></pre><p>还有诸如<code>PageHelper</code>这样的插件可以分页, 甚至公司会有自己私有的分页工具.</p>
+<h2 id="注解开发">注解开发</h2>
+<p>直接删掉<code>UserMapper.xml</code>, dao接口直接在方法上加上注解, 依然可以查询. 核心是用反射通过<code>UserMapper</code>做到<code>UserMapper.xml</code>的配置. 但是这个地方如果数据库的字段和实体类不同就无法读取了. <strong>注意核心配置文件还是要绑定接口</strong>.</p>
+<pre><code>public interface UserMapper {
+
+    @Select(&quot;select * from user&quot;)
+    List&lt;User&gt; getUsers();
+}
+</code></pre><p>直接在注解中写sql语句即可.</p>
+<pre><code>@Select(&quot;select * from user&quot;)
+List&lt;User&gt; getUsers();
+
+//多个参数, 前面加上@Param, 和用ajax前后端交互那种注解类似
+@Select(&quot;select * from user where id = #{id}&quot;)
+User getUserById(@Param(&quot;id&quot;) int id);
+
+@Insert(&quot;insert into user(id,name,pwd) values (#{id},#{name},#{pwd})&quot;)
+int addUser(User user);
+
+@Update(&quot;update user set name=#{name} where id = #{id}&quot;)
+int updateUser(User user);
+
+@Delete(&quot;delete from user where id = #{uid}&quot;)
+int deleteUser(@Param(&quot;uid&quot;) int id);
+</code></pre><blockquote>
+<p>视频讲了lombok插件, 简化写getter/setter, 是否使用仁者见仁智者见智</p>
+</blockquote>
+<h2 id="复杂查询">复杂查询</h2>
+<p>两个表, 1对多, 多对1的查询如何实现. 用下面的表做测试.</p>
+<pre><code>use mybatis;
+
+CREATE TABLE `teacher` (
+  `id` INT(10) NOT NULL,
+  `name` VARCHAR(30) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
+
+INSERT INTO teacher(`id`, `name`) VALUES (1, &quot;秦老师&quot;); 
+
+CREATE TABLE `student` (
+  `id` INT(10) NOT NULL,teacher
+  `name` VARCHAR(30) DEFAULT NULL,
+  `tid` INT(10) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fktid` (`tid`),
+  CONSTRAINT `fktid` FOREIGN KEY (`tid`) REFERENCES `teacher` (`id`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
+
+INSERT INTO `student` (`id`, `name`, `tid`) VALUES (1, &quot;小明&quot;, 1); 
+INSERT INTO `student` (`id`, `name`, `tid`) VALUES (2, &quot;小红&quot;, 1); 
+INSERT INTO `student` (`id`, `name`, `tid`) VALUES (3, &quot;小张&quot;, 1); 
+INSERT INTO `student` (`id`, `name`, `tid`) VALUES (4, &quot;小李&quot;, 1); 
+INSERT INTO `student` (`id`, `name`, `tid`) VALUES (5, &quot;小王&quot;, 1);
+</code></pre><h3 id="多对一">多对一</h3>
+<p>要查询所有的学生对应的老师, 首先pojo类中的<code>Student</code>会有相对应的<code>Teacher</code>字段. 查询时配置如下, 实际上就把<code>Student</code>中的<code>Teacher</code>字段查询额外绑定了sql语句, 也就是把tid绑定上了Teacher的java类型, 再通过java类型查询. 方法2看起来更简单, 写完所有sql之后再用map绑定.</p>
+<pre><code>&lt;mapper namespace=&quot;com.kuang.dao.StudentMapper&quot;&gt;
+    &lt;!--1--&gt;
+    &lt;select id=&quot;getStudent&quot; resultMap=&quot;StudentTeacher&quot;&gt;
+        select * from student;
+    &lt;/select&gt;
+    &lt;resultMap id=&quot;StudentTeacher&quot; type=&quot;Student&quot;&gt;
+        &lt;result property=&quot;id&quot; column=&quot;id&quot;/&gt;
+        &lt;result property=&quot;name&quot; column=&quot;name&quot;/&gt;
+        &lt;association property=&quot;teacher&quot; column=&quot;tid&quot; javaType=&quot;Teacher&quot; select=&quot;getTeacher&quot;/&gt;
+    &lt;/resultMap&gt;
+    &lt;select id=&quot;getTeacher&quot; resultType=&quot;Teacher&quot;&gt;
+        select * from teacher where id = #{tid}
+    &lt;/select&gt;
+
+    &lt;!--2--&gt;
+    &lt;select id=&quot;getStudent2&quot; resultMap=&quot;StudentTeacher2&quot;&gt;
+    select s.id sid, s.name sname, t.name tname
+    from student s, teacher t
+    where s.tid = t.id;
+    &lt;/select&gt;
+    &lt;resultMap id=&quot;StudentTeacher2&quot; type=&quot;Student&quot;&gt;
+        &lt;result property=&quot;id&quot; column=&quot;sid&quot;/&gt;
+        &lt;result property=&quot;name&quot; column=&quot;sname&quot;/&gt;
+        &lt;association property=&quot;teacher&quot; javaType=&quot;Teacher&quot;&gt;
+            &lt;result property=&quot;name&quot; column=&quot;tname&quot;/&gt;
+        &lt;/association&gt;
+    &lt;/resultMap&gt;
+&lt;/mapper&gt;
+</code></pre><blockquote>
+<p>idea的maven项目在resourse目录下会不能new package, 只要创建directory即可, 用<code>/</code>分隔不同层级的目录, 否则mapper.xml文件可能会无法绑定</p>
+</blockquote>
+<h3 id="一对多">一对多</h3>
+<p>一个老师对应多个学生的情况(Teacher类下有<code>List&lt;Student&gt;</code>字段), 可以用<code>collection</code>去用<code>ofType</code>拿对应的<code>Student</code>.</p>
+<pre><code>&lt;mapper namespace=&quot;com.kuang.dao.TeacherMapper&quot;&gt;
+    &lt;select id=&quot;getTeacher&quot; resultMap=&quot;TeacherStudent&quot;&gt;
+        select s.id sid, s.name sname, t.name tname, t.id id
+        from student s,teacher t
+        where s.tid = t.id and t.id = #{tid}
+    &lt;/select&gt;
+
+    &lt;resultMap id=&quot;TeacherStudent&quot; type=&quot;Teacher&quot;&gt;
+        &lt;result property=&quot;id&quot; column=&quot;tid&quot;/&gt;
+        &lt;result property=&quot;name&quot; column=&quot;tname&quot;/&gt;
+        &lt;collection property=&quot;student&quot; ofType=&quot;Student&quot;&gt;
+            &lt;result property=&quot;id&quot; column=&quot;sid&quot;/&gt;
+            &lt;result property=&quot;name&quot; column=&quot;sname&quot;/&gt;
+            &lt;result property=&quot;tid&quot; column=&quot;tid&quot;/&gt;
+        &lt;/collection&gt;
+    &lt;/resultMap&gt;
+&lt;/mapper&gt;
+</code></pre><p>当然依然可以用几个select去分别读数据, 先读teacher, 拿到id, 再通过id, 到student表中取数据对应<code>tid</code>的数据.</p>
+<pre><code>&lt;select id=&quot;getTeacher2&quot; resultMap=&quot;TeacherStudent2&quot;&gt;
+    select * from mybatis.teacher where id = #{tid}
+&lt;/select&gt;
+&lt;resultMap id=&quot;TeacherStudent2&quot; type=&quot;Teacher&quot;&gt;
+    &lt;collection property=&quot;student&quot; javaType=&quot;ArrayList&quot; ofType=&quot;Student&quot; select=&quot;getStudentByTeacherId&quot; column=&quot;id&quot;/&gt;
+&lt;/resultMap&gt;
+&lt;select id=&quot;getStudentByTeacherId&quot; resultType=&quot;Student&quot;&gt;
+    select * from mybatis.student where tid = #{tid}
+&lt;/select&gt;
+</code></pre><h2 id="动态sql">动态sql</h2>
+<p>建表做实验.</p>
+<pre><code>CREATE TABLE `blog`(
+`id` VARCHAR(50) NOT NULL COMMENT 博客id,
+`title` VARCHAR(100) NOT NULL COMMENT 博客标题,
+`author` VARCHAR(30) NOT NULL COMMENT 博客作者,
+`create_time` DATETIME NOT NULL COMMENT 创建时间,
+`views` INT(30) NOT NULL COMMENT 浏览量
+)ENGINE=INNODB DEFAULT CHARSET=utf8
+</code></pre><p>插入数据. 其中的id通过<code>UUID.randomUUID().toString().replaceAll(&quot;-&quot;, &quot;&quot;);</code>生成, 时间通过<code>new Date()</code>插入.</p>
+<pre><code>&lt;insert id=&quot;addBlog&quot; parameterType=&quot;blog&quot;&gt;
+    insert into mybatis.blog values (#{id}, #{title}, #{author}, #{createTime}, #{views})
+&lt;/insert&gt;
+</code></pre><h3 id="if">if</h3>
+<p>通过一个Map把<code>title</code>和<code>author</code>传入, 进行查询. 其中<code>where 1=1</code>是一个小技巧, 保证<code>and</code>能顺利的加上, 即使没有<code>and</code>也是有效的语句.</p>
+<pre><code>&lt;select id=&quot;queryBlogIF&quot; parameterType=&quot;map&quot; resultType=&quot;Blog&quot;&gt;
+    select * from mybatis.blog where 1 = 1
+    &lt;if test=&quot;title != null&quot;&gt;
+        and title = #{title}
+    &lt;/if&gt;
+    &lt;if test=&quot;author != null&quot;&gt;
+        and author = #{author}
+    &lt;/if&gt;
+&lt;/select&gt;
+</code></pre><h3 id="chooseset">choose/set</h3>
+<p>choose相当于Java的<code>switch</code>, 其中的语句只有一条生效. <code>where</code>元素让我们可以省去写<code>1=1</code>, 他会判断子句是否有返回, 如果只返回一个子句, 那么子句前面的and/or就会被去掉. 这样我们就可以正常地写sql逻辑了.</p>
+<pre><code>&lt;select id=&quot;queryBlogChoose&quot; parameterType=&quot;map&quot; resultType=&quot;blog&quot;&gt;
+    select * from mybatis.blog
+    &lt;where&gt;
+        &lt;choose&gt;
+            &lt;when test=&quot;title != null&quot;&gt;
+                title = #{title}
+            &lt;/when&gt;
+            &lt;when test=&quot;author != null&quot;&gt;
+                and author = #{author}
+            &lt;/when&gt;
+            &lt;otherwise&gt;
+                and views = #{views}
+            &lt;/otherwise&gt;
+        &lt;/choose&gt;
+    &lt;/where&gt;
+&lt;/select&gt;
+</code></pre><p><code>set</code>可以动态地把s<code>et</code>前置 并且删除自动字段间的逗号.</p>
+<pre><code>&lt;update id=&quot;updateBlog&quot; parameterType=&quot;map&quot;&gt;
+    update mybatis.blog
+    &lt;set&gt;
+        &lt;if test=&quot;title != null&quot;&gt;
+            title = #{title},
+        &lt;/if&gt;
+        &lt;if test=&quot;author != null&quot;&gt;
+            author = #{author}
+        &lt;/if&gt;
+    &lt;/set&gt;
+    where id = #{id}
+&lt;/update&gt;
+</code></pre><p>而trim允许我们自定义的去定义首尾的重写, 比如where的功能其实就是<code>&lt;trim prefix=&quot;WHERE&quot; prefixOverrides=&quot;AND |OR &quot;&gt;&lt;/trim&gt;</code>, 如果开头是And或者OR, 就移除. 而<code>set</code>就等同于<code>&lt;trim prefix=&quot;SET&quot; suffixOverrides=&quot;,&quot;&gt;&lt;/trim&gt;</code>.</p>
+<blockquote>
+<p><code>sql</code>标签可以抽取公共部分的语句, 然后在需要用的地方加上<code>&lt;include refid=&quot;sqlid&quot;&gt;&lt;/include&gt;</code>即可. 但是最好用单表定义sql片段, 并且不要放<code>where</code>在片段中, 否则没什么复用的效果</p>
+</blockquote>
+<h3 id="foreach">Foreach</h3>
+<p>相当于去自动生成sql语句的and后或者or后的条件, 如下我们可以传入一个map实例, 最后拼的sql就会加上<code>id=1 or id=2 ...</code>.</p>
+<pre><code>&lt;select id=&quot;queryBlogForeach&quot; parameterType=&quot;map&quot; resultType=&quot;blog&quot;&gt;
+    select * from mybatis.blog
+    &lt;where&gt;
+        &lt;foreach collection=&quot;ids&quot; item=&quot;id&quot; open=&quot;and (&quot; close=&quot;)&quot; separator=&quot;or&quot;&gt;
+            id = #{id}
+        &lt;/foreach&gt;
+    &lt;/where&gt;
+&lt;/select&gt;
+</code></pre><h2 id="缓存">缓存</h2>
+<h3 id="一级缓存本地缓存">一级缓存(本地缓存)</h3>
+<p>也就是前面看到的SqlSession, 对于同一个查询, 第二次就会读缓存. 可以用<code>&lt;setting name=&quot;logImpl&quot; value=&quot;STDOUT_LOGGING&quot;/&gt;</code>标准日志打印做测试, 写两条相同的查询, 从连接到关闭只会实际查询一次数据库. 但是如果在两次查询之间有增删改, 会使缓存失效(因为可能会修改原来的数据, 缓存会刷新). 除此之外, 查不同的Mapper.xml或者手动<code>sqlSession.clearCache()</code>清理缓存也会使缓存失效.</p>
+<h3 id="二级缓存全局缓存">二级缓存(全局缓存)</h3>
+<p>文档只写了二级缓存, 有如下四种, 其中LRU是默认缓存规则. 基于<code>namespace</code>级别(在<code>namespace</code>下放<code>&lt;cache/&gt;</code>). 一个查询的数据放在一级缓存中, <strong>当会话关闭或提交, 一级缓存消失, 就会把一级缓存中的数据存到二级缓存中</strong>. 新的查询也就可以通过二级缓存获取数据. <strong>不同的mapper分别有不同的缓存</strong>.</p>
+<ul>
+<li>LRU(Least Recently Used): Removes objects that haven&rsquo;t been used for the longst period of time.</li>
+<li>FIFO(First In First Out): Removes objects in the order that they entered the cache.</li>
+<li>SOFT(Soft Reference): Removes objects based on the garbage collector state and the rules of Soft References.</li>
+<li>WEAK(Weak Reference): More aggressively removes objects based on the garbage collector state and rules of Weak References.</li>
+</ul>
+<p>使用前核心配置文件一般要加入<code>&lt;setting name=&quot;cacheEnabled&quot; value=&quot;true&quot;/&gt;</code>显式开启缓存(为了可读性). 用如下的测试看效果. 当关闭session的操作在1处, 则会查两次数据库. 而在2时就只会查一次数据库. 注意这里的实体类需要序列化<code>implements Serializable</code>.</p>
+<pre><code>@Test
+public void test() {
+    SqlSession sqlSession = MybatisUtils.getSqlSession();
+    SqlSession sqlSession2 = MybatisUtils.getSqlSession();
+
+    UserMapper mapper = sqlSession.getMapper(UserMapper.class);
+    UserMapper mapper2 = sqlSession2.getMapper(UserMapper.class);
+
+    User user = mapper.queryUserById(1);
+    System.out.println(user);
+    sqlSession.close();
+    //sqlSession.close(); //2, 不关闭仍然会查两次, 因为一级缓存的数据还没有放到二级缓存
+
+    User user2 = mapper2.queryUserById(1);
+    System.out.println(user2);
+
+    sqlSession.close(); //1
+    sqlSession2.close();
+}
+</code></pre><blockquote>
+<p>一级缓存在Session, 二级缓存在Mapper. 查询先看二级缓存, 再看一级缓存, 两个都没有就查数据库</p>
+</blockquote>
+<h3 id="自定义缓存">自定义缓存</h3>
+<p>可以用ehcache等多种缓存, 在<code>Mapper.xml</code>文件中加入<code>&lt;cache type=&quot;org.mybatis.caches.ehcache.EhcacheCache&quot; /&gt;</code>即可. 我们可以看到实际上缓存就是去实现了<code>Cache</code>接口, 所以如果我们强到自己写缓存, 实际上也就是去实现这个接口的方法.</p>
+<pre><code>&lt;dependency&gt;
+    &lt;groupId&gt;org.mybatis.caches&lt;/groupId&gt;
+    &lt;artifactId&gt;mybatis-ehcache&lt;/artifactId&gt;
+    &lt;version&gt;1.2.1&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre><h2 id="参考">参考</h2>
+<ol>
+<li><a href="https://www.bilibili.com/video/BV1NE411Q7Nx">Mybatis最新完整教程IDEA版通俗易懂-狂神说Java</a></li>
+</ol>
+
+
+                
+
+                
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/post/54_vue%E5%85%A5%E9%97%A8/" data-toggle="tooltip" data-placement="top" title="Vue入门">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/post/55_springmvc%E5%85%A5%E9%97%A8/" data-toggle="tooltip" data-placement="top" title="SpringMVC入门">Next
+                            Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+                
+
+                
+
+
+<div id="disqus-comment"></div>
+<div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "xqt01" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+            </div>
+
+            
+            
+            <div class="
+                col-lg-2 col-lg-offset-0
+                visible-lg-block
+                sidebar-container
+                catalog-container">
+                <div class="side-catalog">
+                    <hr class="hidden-sm hidden-xs">
+                    <h5>
+                        <a class="catalog-toggle" href="#">CATALOG</a>
+                    </h5>
+                    <ul class="catalog-body"></ul>
+                </div>
+            </div>
+            
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/java" title="java">
+                            java
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/jvm" title="jvm">
+                            jvm
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/spring" title="spring">
+                            spring
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E5%89%8D%E7%AB%AF" title="前端">
+                            前端
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F" title="操作系统">
+                            操作系统
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93" title="数据库">
+                            数据库
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95" title="数据结构与算法">
+                            数据结构与算法
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B" title="网络编程">
+                            网络编程
+                        </a>
+                        
+                        
+                    </div>
+                </section>
+                
+
+                
+                
+                <section>
+                    <hr>
+                    <h5>FRIENDS</h5>
+                    <ul class="list-inline">
+                        
+                        <li><a target="_blank" href="https://fan-bu-fan.github.io/">FELL &amp; ENJOY</a></li>
+                        
+                    </ul>
+                </section>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">                  
+                    
+                    <li>
+                        <a href="mailto:huanruiz@foxmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		           
+                    
+                    
+                    
+                    
+
+		            
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/xqt01">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		            
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+            
+            
+            
+           
+                   <li>
+                       <a href='' rel="alternate" type="application/rss+xml" title="PunchCode" >
+                           <span class="fa-stack fa-lg">
+                               <i class="fas fa-circle fa-stack-2x"></i>
+                               <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                           </span>
+                       </a>
+                   </li>
+            
+             </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; PunchCode 2024
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function loadAsync(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        loadAsync("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    loadAsync("https://cdn.jsdelivr.net/npm/fastclick@1.0.6/lib/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+    function generateCatalog(selector) {
+
+        
+        
+        
+        
+            _containerSelector = 'div.post-container'
+        
+
+        
+        var P = $(_containerSelector), a, n, t, l, i, c;
+        a = P.find('h1,h2,h3,h4,h5,h6');
+
+        
+        $(selector).html('')
+
+        
+        a.each(function () {
+            n = $(this).prop('tagName').toLowerCase();
+            i = "#" + $(this).prop('id');
+            t = $(this).text();
+            c = $('<a href="' + i + '" rel="nofollow">' + t + '</a>');
+            l = $('<li class="' + n + '_nav"></li>').append(c);
+            $(selector).append(l);
+        });
+        return true;
+    }
+
+    generateCatalog(".catalog-body");
+
+    
+    $(".catalog-toggle").click((function (e) {
+        e.preventDefault();
+        $('.side-catalog').toggleClass("fold")
+    }))
+
+    
+
+
+    loadAsync("\/js\/jquery.nav.js", function () {
+        $('.catalog-body').onePageNav({
+            currentClass: "active",
+            changeHash: !1,
+            easing: "swing",
+            filter: "",
+            scrollSpeed: 700,
+            scrollOffset: 0,
+            scrollThreshold: .2,
+            begin: null,
+            end: null,
+            scrollChange: null,
+            padding: 80
+        });
+    });
+</script>
+
+
+
+
+
+
+</body>
+</html>

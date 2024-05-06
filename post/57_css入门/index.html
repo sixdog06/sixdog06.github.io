@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="PunchCode">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://xqt01.github.io/front.png">
+    <meta property="twitter:image" content="https://xqt01.github.io/front.png" />
+    
+
+    
+    <meta name="title" content="CSS入门" />
+    <meta property="og:title" content="CSS入门" />
+    <meta property="twitter:title" content="CSS入门" />
+    
+
+    
+    <meta name="description" content="Software Engineer">
+    <meta property="og:description" content="Software Engineer" />
+    <meta property="twitter:description" content="Software Engineer" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="Harry, 小拳头">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>CSS入门 | 以终为始</title>
+
+    <link rel="canonical" href="/post/57_css%E5%85%A5%E9%97%A8/">
+
+    
+    
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hugo-theme-cleanwhite.min.css">
+
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+
+    
+    <link href="https://cdn.jsdelivr.net/gh/FortAwesome/Font-Awesome@5.15.1/css/all.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    
+    <script src="/js/jquery.min.js"></script>
+
+    
+    <script src="/js/bootstrap.min.js"></script>
+
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+
+</head>
+
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">PunchCode</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">All Posts</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/tech">tech</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0">学习笔记</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/%E6%9D%82%E8%B0%88">杂谈</a>
+                        </li>
+                        
+                    
+                    
+		    
+                        <li><a href="/top/archive/">ARCHIVE</a></li>
+                    
+                        <li><a href="/top/about/">ABOUT</a></li>
+                    
+
+                    
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/front.png')
+    }
+</style>
+
+<header class="intro-header" >
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/%E5%89%8D%E7%AB%AF" title="前端">
+                            前端
+                        </a>
+                        
+                    </div>
+                    <h1>CSS入门</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        
+                            Posted by 
+                            
+                                小拳头
+                             
+                            on 
+                            Thursday, August 12, 2021
+                            
+                            
+                            
+                            
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <p>Cascading Style Sheets(CSS) is a stylesheet language used to describe the presentation of a document written in HTML or XML(including XML dialects such as SVG, MathML or XHTML). CSS describes how elements should be rendered on screen, on paper, in speech, or on other media. CSS is among the core languages of the open web and is standardized across Web browsers according to W3C specifications.</p>
+<p>官方的tutorial读起来会感到都一点混乱, 东西全但抓不住重点, 所以我通过看视频+看重点部分的文档进行入门的学习.</p>
+<h2 id="样式位置">样式位置</h2>
+<p>常用的有三种, 遵循就近原则, 最近的样式优先级最高.</p>
+<pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;title&gt;Title&lt;/title&gt;
+
+    &lt;!--外部样式--&gt;
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;css/style.css&quot;&gt;
+    &lt;!--内部样式--&gt;
+    &lt;style&gt;
+        h1{
+            color: lightgreen;
+        }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;!--行内样式--&gt;
+    &lt;h1 style=&quot;color: blueviolet&quot;&gt;hahahah&lt;/h1&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre><h2 id="选择器">选择器</h2>
+<p>常见的的是下列三种, 更多的可以在<a href="https://developer.mozilla.org/zh-CN/docs/Learn/CSS/Building_blocks/Selectors">选择器列表</a>找到. 优先级<strong>id选择器&gt;class选择器&gt;标签选择器</strong>.</p>
+<pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;title&gt;Title&lt;/title&gt;
+
+    &lt;style&gt;
+        #id{
+            color: blue;
+        }
+        .class{
+            color: red;
+        }
+        h1{
+            color: lightgreen;
+        }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1 id=&quot;id&quot; class=&quot;class&quot; style=&quot;color: blueviolet&quot;&gt;hahahah&lt;/h1&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre><blockquote>
+<p>注意CSS的注释是<code>/* 这是一行单行注释 */</code>这种形式的, <code>&lt;!-- --&gt;</code>在部分浏览器的<code>&lt;style&gt;</code>标签生效, 但不推荐使用.</p>
+</blockquote>
+<h3 id="层次选择器">层次选择器</h3>
+<pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;title&gt;Title&lt;/title&gt;
+
+    &lt;style&gt;
+        /*后代选择器*/
+        body p{
+            background: red;
+        }
+        /*子选择器(只选择一代后代)*/
+        body&gt;p{
+            background:orange;
+        }
+        /*相邻兄弟选择器(只向下选择一个兄弟)*/
+        .active+p{
+            background: blue;
+        }
+        /*通用兄弟选择器(向下选择所有兄弟)*/
+        .active2~p{
+            background:gray;
+        }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;p&gt;p0&lt;/p&gt;
+    &lt;p class=&quot;active&quot;&gt;p1&lt;/p&gt;
+    &lt;p&gt;p2&lt;/p&gt;
+    &lt;p class=&quot;active&quot;&gt;p3&lt;/p&gt;
+    &lt;ul&gt;
+        &lt;li&gt;
+            &lt;p&gt;p4&lt;/p&gt;
+        &lt;/li&gt;
+        &lt;li&gt;
+            &lt;p&gt;p5&lt;/p&gt;
+        &lt;/li&gt;
+        &lt;li&gt;
+            &lt;p&gt;p6&lt;/p&gt;
+        &lt;/li&gt;
+    &lt;/ul&gt;
+    &lt;p&gt;p8&lt;/p&gt;
+    &lt;p class=&quot;active2&quot;&gt;p7&lt;/p&gt;
+    &lt;p&gt;p9&lt;/p&gt;
+    &lt;p&gt;p10&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre><h3 id="伪类选择器">伪类选择器</h3>
+<pre><code>&lt;style&gt;
+    /*ul的第一个子元素*/
+    ul li:first-child{
+        background: red;
+    }
+    /*ul的最后一个子元素*/
+    ul li:last-child{
+        background: blue;
+    }
+    /*
+        首先找到所有当前元素的兄弟元素, 然后按照位置先后顺序从1开始排序
+        nth-child括号中表达式(an+b)匹配到的元素集合
+    */
+    p:nth-child(2n+1){
+        background: orange;
+    }
+    /*针对具有一组兄弟节点的标签, 用n来筛选出在一组兄弟节点的位置*/
+    p:nth-of-type(1){
+        background: green;
+    }
+&lt;/style&gt;
+</code></pre><h3 id="属性选择器">属性选择器</h3>
+<p>支持用正则筛选属性, <code>=</code>表示等于, <code>*=</code>表示包含, <code>^=</code>表示开头, <code>$=</code>表示以结尾.</p>
+<pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;title&gt;Title&lt;/title&gt;
+  &lt;style&gt;
+    .demo a{
+      height: 50px;
+      width: 50px;
+      float:left;
+      background: blue;
+      text-align: center;
+      color: beige;
+      text-decoration: none;
+      margin-right: 5px;
+      font: bold 20px/50px Arial;
+    }
+    a[id]{
+      background: red;
+    }
+    a[class*=first3]{
+      background: aqua;
+    }
+    a[class=&quot;links item2 first2&quot;]{
+      background: orange;
+    }
+    a[class$=first4]{
+      background: lightgreen;
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;p class=&quot;demo&quot;&gt;
+    &lt;a href=&quot;https://www.baidu.com&quot; class=&quot;first&quot; id=&quot;first&quot;&gt;1&lt;/a&gt;
+    &lt;a href=&quot;a&quot; class=&quot;links item2 first2&quot; &gt;2&lt;/a&gt;
+    &lt;a href=&quot;ab&quot; class=&quot;links item3 first3&quot; &gt;3&lt;/a&gt;
+    &lt;a href=&quot;abc&quot; class=&quot;links item4 first4&quot; &gt;4&lt;/a&gt;
+  &lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre><h2 id="样式">样式</h2>
+<h3 id="字体">字体</h3>
+<p>常用方式是用<code>&lt;span&gt;</code>标签吧想处理的部分字体框起来再应用样式.</p>
+<ul>
+<li>font-family: 字体, 可以用逗号隔开中英文样式, 分别应用</li>
+<li>font-size: 字体大小</li>
+<li>font-weight: 字体粗细</li>
+</ul>
+<h3 id="文本样式">文本样式</h3>
+<ul>
+<li>color: 颜色</li>
+<li>text-align: 文本对齐方式</li>
+<li>text-indent: 首行缩进, 比如<code>2em</code>表示首行缩进2个字</li>
+<li>line-height: 行高</li>
+<li>text-decoration: 装饰, 放下划线(underline)/中划线(line-through)等</li>
+<li>vetical-align: 用middle实现水平对齐</li>
+<li>text-shadow: 水平偏移 垂直偏移 模糊半径 颜色</li>
+</ul>
+<h3 id="超链接与阴影">超链接与阴影</h3>
+<p>超链接是有默认颜色和下划线的, 可以自己去掉.</p>
+<pre><code>/*去掉超链接默认的下划线*/
+a{
+    text-decoration:none;
+}
+/*鼠标悬浮的状态*/
+a:hover{
+    color:orange;
+}
+/*鼠标按住未释放的状态*/
+a:active{
+    color:green
+}
+/*点击之后的状态*/
+a:visited{
+    color:red
+}
+</code></pre><h3 id="列表">列表</h3>
+<p>控制列表前面的点或数字. 可以设置<code>list-style</code>如下:</p>
+<ul>
+<li>none: 去掉原点</li>
+<li>circle: 空心圆</li>
+<li>decimal: 数字</li>
+<li>square: 正方形</li>
+</ul>
+<h2 id="盒子模型">盒子模型</h2>
+<p>可以通过debug中的computed测试.</p>
+<ul>
+<li>padding: 内边距</li>
+<li>border: 边框</li>
+<li>margin: 外边距</li>
+</ul>
+<p>比如</p>
+<pre><code>/*分别表示上/右/下/左*/
+margin: 0 0 0 0
+/*auto表示左右自动*/
+margin: 0 auto
+/*表示上/右/下/左都为4px*/
+margin: 4px
+/*表示上为10px, 左右为20px, 下为30px*/
+margin: 10px 20px 30px
+</code></pre><p>最后整个元素的大小就等于<code>内容+padding+border+margin</code>.</p>
+<h2 id="浮动">浮动</h2>
+<p>块级元素比如<code>h1~h6/p/div</code>等的内部可以包含行内元素(也叫内联元素)如<code>span/a/img</code>等, 反之就不行. 块级元素会独占一行, 也就是说后面的元素会放在新的一行(准确的说应该是他们的默认类型是某种元素). 我们也可以通过在块级元素内部写<code>display: inline</code>将其转换为行内元素. 还有<code>display: inline-block</code>. 他们有什么特点呢, 这里直接用文档的解释:</p>
+<p>Some HTML elements, such as <code>&lt;h1&gt;</code> and <code>&lt;p&gt;</code>, use block as their outer display type by default. If a box has an outer display type of block, it will behave in the following ways.</p>
+<ul>
+<li>The box will break onto a new line.</li>
+<li>The box will extend in the inline direction to fill the space available in its container. In most cases this means that the box will become as wide as its container, filling up 100% of the space available.</li>
+<li>The width and height properties are respected.</li>
+<li>Padding, margin and border will cause other elements to be pushed away from the box</li>
+</ul>
+<p>Some HTML elements, such as <code>&lt;a&gt;</code>, <code>&lt;span&gt;</code>, <code>&lt;em&gt;</code> and <code>&lt;strong&gt;</code> use inline as their outer display type by default. If a box has an outer display type of inline, then:</p>
+<ul>
+<li>The box will not break onto a new line.</li>
+<li>The width and height properties will not apply.</li>
+<li>Vertical padding, margins, and borders will apply but will not cause other inline boxes to move away from the box.</li>
+<li>Horizontal padding, margins, and borders will apply and will cause other inline boxes to move away from the box.</li>
+</ul>
+<p>浮动可能会造成父级边框塌陷, 也就是说子元素超出了父级边框, 一般有如下解决方案:</p>
+<ol>
+<li>通过手动给父级增加高度</li>
+<li>在同级元素下增加<code>&lt;div class=&quot;clear&gt;&lt;/div&gt;</code>, clear是margin与padding都为0, 并且clear属性为both的元素</li>
+<li>给父元素增加<code>overflow: hidden</code>, 也就是隐藏溢出的子元素</li>
+<li>给父元素增加一个伪类, 样式为<code>father:after{content: ''; display: block; clear: both;}</code>, <strong>推荐, 侵入性小</strong></li>
+</ol>
+<h2 id="定位">定位</h2>
+<ul>
+<li>相对定位: 相对于原来的位置偏移</li>
+<li>绝对定位: 没有父级元素则相对于浏览器窗口. 父级元素有定位就相对于父级元素定位. 不会超出父级元素范围.</li>
+<li>固定定位: 只相对于浏览器窗口</li>
+</ul>
+<pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;title&gt;Title&lt;/title&gt;
+    &lt;style&gt;
+        body{
+            padding: 20px;
+        }
+        div{
+            margin: 10px;
+            padding: 5px;
+            font-size: 12px;
+            line-height: 25px;
+        }
+        #father{
+            border: 1px solid #666;
+            padding: 0;
+            position: relative;
+        }
+        #first{
+            background-color: yellow;
+            border: 1px dashed black;
+            position: relative;
+            top: -20px;
+        }
+        #second{
+            background-color: green;
+            border: 1px dashed black;
+            position: absolute;
+            right: 20px;
+        }
+        #third{
+            background-color: red;
+            border: 1px dashed black;
+            position: fixed;
+            right: 0;
+            bottom: 0;
+        }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div id = &quot;father&quot;&gt;
+    &lt;div id=&quot;first&quot;&gt;第一个盒子&lt;/div&gt;
+    &lt;div id=&quot;second&quot;&gt;第二个盒子&lt;/div&gt;
+    &lt;div id=&quot;third&quot;&gt;第三个盒子&lt;/div&gt;
+&lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre><h2 id="z-index">z-index</h2>
+<p>类似photoshop的图层. 对于一个已经定位的盒子, z-index属性指定:</p>
+<ul>
+<li>盒子在当前堆叠上下文中的堆叠层级. <code>z-index: 0-999</code>的数字, 数字越大层级越高</li>
+<li>盒子是否创建一个本地堆叠上下文. <code>z-index: auto</code>: 盒子不会创建一个新的本地堆叠上下文, 在当前堆叠上下文中生成的盒子的堆叠层级和父级盒子相同</li>
+</ul>
+<h2 id="参考">参考</h2>
+<ol>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/CSS">CSS doc</a></li>
+<li><a href="https://www.bilibili.com/video/BV1YJ411a7dy">CSS3-狂神说Java</a></li>
+</ol>
+
+
+                
+
+                
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/post/60_java%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%B1%BB%E5%9E%8B/" data-toggle="tooltip" data-placement="top" title="Java的基本类型">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/post/62_%E6%B6%A6%E4%B8%80%E6%B6%A6%E6%88%91%E4%BB%AC%E7%9A%84java%E4%BB%A3%E7%A0%81/" data-toggle="tooltip" data-placement="top" title="润一润我们的Java代码">Next
+                            Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+                
+
+                
+
+
+<div id="disqus-comment"></div>
+<div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "xqt01" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+            </div>
+
+            
+            
+            <div class="
+                col-lg-2 col-lg-offset-0
+                visible-lg-block
+                sidebar-container
+                catalog-container">
+                <div class="side-catalog">
+                    <hr class="hidden-sm hidden-xs">
+                    <h5>
+                        <a class="catalog-toggle" href="#">CATALOG</a>
+                    </h5>
+                    <ul class="catalog-body"></ul>
+                </div>
+            </div>
+            
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/java" title="java">
+                            java
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/jvm" title="jvm">
+                            jvm
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/spring" title="spring">
+                            spring
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E5%89%8D%E7%AB%AF" title="前端">
+                            前端
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F" title="操作系统">
+                            操作系统
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93" title="数据库">
+                            数据库
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95" title="数据结构与算法">
+                            数据结构与算法
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B" title="网络编程">
+                            网络编程
+                        </a>
+                        
+                        
+                    </div>
+                </section>
+                
+
+                
+                
+                <section>
+                    <hr>
+                    <h5>FRIENDS</h5>
+                    <ul class="list-inline">
+                        
+                        <li><a target="_blank" href="https://fan-bu-fan.github.io/">FELL &amp; ENJOY</a></li>
+                        
+                    </ul>
+                </section>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">                  
+                    
+                    <li>
+                        <a href="mailto:huanruiz@foxmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		           
+                    
+                    
+                    
+                    
+
+		            
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/xqt01">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		            
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+            
+            
+            
+           
+                   <li>
+                       <a href='' rel="alternate" type="application/rss+xml" title="PunchCode" >
+                           <span class="fa-stack fa-lg">
+                               <i class="fas fa-circle fa-stack-2x"></i>
+                               <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                           </span>
+                       </a>
+                   </li>
+            
+             </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; PunchCode 2024
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function loadAsync(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        loadAsync("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    loadAsync("https://cdn.jsdelivr.net/npm/fastclick@1.0.6/lib/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+    function generateCatalog(selector) {
+
+        
+        
+        
+        
+            _containerSelector = 'div.post-container'
+        
+
+        
+        var P = $(_containerSelector), a, n, t, l, i, c;
+        a = P.find('h1,h2,h3,h4,h5,h6');
+
+        
+        $(selector).html('')
+
+        
+        a.each(function () {
+            n = $(this).prop('tagName').toLowerCase();
+            i = "#" + $(this).prop('id');
+            t = $(this).text();
+            c = $('<a href="' + i + '" rel="nofollow">' + t + '</a>');
+            l = $('<li class="' + n + '_nav"></li>').append(c);
+            $(selector).append(l);
+        });
+        return true;
+    }
+
+    generateCatalog(".catalog-body");
+
+    
+    $(".catalog-toggle").click((function (e) {
+        e.preventDefault();
+        $('.side-catalog').toggleClass("fold")
+    }))
+
+    
+
+
+    loadAsync("\/js\/jquery.nav.js", function () {
+        $('.catalog-body').onePageNav({
+            currentClass: "active",
+            changeHash: !1,
+            easing: "swing",
+            filter: "",
+            scrollSpeed: 700,
+            scrollOffset: 0,
+            scrollThreshold: .2,
+            begin: null,
+            end: null,
+            scrollChange: null,
+            padding: 80
+        });
+    });
+</script>
+
+
+
+
+
+
+</body>
+</html>

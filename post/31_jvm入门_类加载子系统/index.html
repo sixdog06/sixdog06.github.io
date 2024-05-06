@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="PunchCode">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://xqt01.github.io/front.png">
+    <meta property="twitter:image" content="https://xqt01.github.io/front.png" />
+    
+
+    
+    <meta name="title" content="JVM入门-类加载子系统" />
+    <meta property="og:title" content="JVM入门-类加载子系统" />
+    <meta property="twitter:title" content="JVM入门-类加载子系统" />
+    
+
+    
+    <meta name="description" content="Software Engineer">
+    <meta property="og:description" content="Software Engineer" />
+    <meta property="twitter:description" content="Software Engineer" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="Harry, 小拳头">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>JVM入门-类加载子系统 | 以终为始</title>
+
+    <link rel="canonical" href="/post/31_jvm%E5%85%A5%E9%97%A8_%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%AD%90%E7%B3%BB%E7%BB%9F/">
+
+    
+    
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hugo-theme-cleanwhite.min.css">
+
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+
+    
+    <link href="https://cdn.jsdelivr.net/gh/FortAwesome/Font-Awesome@5.15.1/css/all.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    
+    <script src="/js/jquery.min.js"></script>
+
+    
+    <script src="/js/bootstrap.min.js"></script>
+
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+
+</head>
+
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">PunchCode</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">All Posts</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/tech">tech</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0">学习笔记</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/%E6%9D%82%E8%B0%88">杂谈</a>
+                        </li>
+                        
+                    
+                    
+		    
+                        <li><a href="/top/archive/">ARCHIVE</a></li>
+                    
+                        <li><a href="/top/about/">ABOUT</a></li>
+                    
+
+                    
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/front.png')
+    }
+</style>
+
+<header class="intro-header" >
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/jvm" title="JVM">
+                            JVM
+                        </a>
+                        
+                    </div>
+                    <h1>JVM入门-类加载子系统</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        
+                            Posted by 
+                            
+                                小拳头
+                             
+                            on 
+                            Monday, January 25, 2021
+                            
+                            
+                            
+                            
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <p>通过Class Loader SubSystem从文件系统或者网络中加载Class文件. ClassLoader只负责<code>XXX.class</code>文件的加载, 至于它是否可以运行, 则由Execution Engine决定. 加载的类信息存放在方法区<code>XXX.Class</code>. 通过调用<code>XXX.Class</code>的构造器就可以进行实例化.
+
+  <img src="/31_1.png" alt="">
+
+
+
+  <img src="/31_2.png" alt="">
+
+</p>
+<h2 id="loading">Loading</h2>
+<p>通过一个类的全限定明获取定义此类的二进制字节流, 将这个字节流所代表的的<strong>静态存储结构转化为方法区的运行时数据</strong>, 在内存中生成一个代表这个类的<strong>java.lang.Class</strong>对象, 作为方法区这个类的各种数据的访问入口.</p>
+<h2 id="linking">Linking</h2>
+<p><strong>Verify阶段</strong>, 这个阶段去验证被加载的类是不是复合虚拟机要求的, 字节码开头是CA FE BA BY.</p>
+<p><strong>Prepare阶段</strong>为类的变量分配内存, 同时给这些变量进行初始化(0, false, null等等), 但是final修饰的static变量(常量)除外, 因为这些常量会在编译的时候就分配内存, 并在Prepare阶段显式初始化. 实例变量(方法中的对象)也不会被初始化, 而是随对象一起分配到堆中. 而方法变量会分配在方法区.</p>
+<p><strong>Resolution阶段</strong>将常量池内的符号引用转换为直接引用(以后讨论).</p>
+<blockquote>
+<p>可以通过<code>javap -v XXX.class</code>反编译</p>
+</blockquote>
+<h2 id="initialization">Initialization</h2>
+<ul>
+<li>初始化阶段就是执行类构造器方法<code>clinit()</code>的过程, 此方法不需要定义，是javac编译器自动收集类中的所有<strong>类变量的赋值动作</strong>和<strong>静态代码块中</strong>的语句合并而来. 这里注意类变量就是静态变量, 所以实际上可以理解为<code>clinit()</code>只和静态有关, 如果没有静态代码块, 没有类变量, 那么也就没有<code>clinit()</code>.</li>
+<li>并且构造器方法中指令按语句在源文件中出现的顺序执行. 如下图
+
+  <img src="/31_3.png" alt="">
+
+</li>
+<li>clinit()不同于类的构造器, 构造器函数就是上图的init, 因为我们创建了类, 那构造器就一定被调用了, 所以始终可以看到<code>init</code></li>
+<li>JVM保证子类clinit()执行前, 父类clinit()执行完毕; 一个类的clinit()在多线程下会被同步加锁.</li>
+</ul>
+<blockquote>
+<p><strong>static代码块</strong></p>
+<p>内部可以有输出语句; 随着类的加载而执行; 只执行一次; 初始化类信息; 多个静态代码块按声明顺序先后执行, 但是优先于非静态代码块; 只能调用静态结构, 因为还没对象的初始化</p>
+<p><strong>非static代码块</strong></p>
+<p>内部可以有输出语句; 随着对象的创建而执行; 每创建一个对象, 执行一次非静代码块; 可以在创建对象时, 对象属性会被初始化</p>
+</blockquote>
+<h2 id="classloader">ClassLoader</h2>
+<p>严格来说类加载器分为<strong>Bootstrap Classloader</strong>和<strong>User-Defined ClassLoader</strong>.
+
+  <img src="/31_4.png" alt="">
+
+</p>
+<p>概念上来说将所有派生于抽象类ClassLoader的类加载器都看做User-Defined ClassLoader.
+
+  <img src="/31_5.png" alt="">
+
+</p>
+<p>演示如下
+
+  <img src="/31_6.png" alt="">
+
+</p>
+<ol>
+<li><strong>Bootstrap Classloader</strong>: 用C/C++实现的, 嵌套在JVM内部; 它用来加载java的核心库; 不继承自java.lang.ClassLoader, 没有父加载器; 加载拓展类和应用程序类加载器，并指定为他们的父加载器; 只加载包名为java、javax、sun等开头的类.</li>
+<li><strong>Extension ClassLoader</strong>: 由sun.misc.Launcher$ExtClassLoader实现, 派生于ClassLoader类, 父类加载器为Bootstrap Classloader(但获取不到); 从java.ext.dirs系统属性所指定的目录中加载类库，或从JDK的安装目录的jre/lib/ext子目录(扩展目录)下加载类库。如果用户创建的JAR放在此目录下，也会由拓展类加载器自动加载.</li>
+<li><strong>AppClassLoader</strong>: 由sun.misc.Launcher$AppClassLoader实现, 派生于ClassLoader类, 父类加载器为拓展类加载器, 它负责加载环境变量classpath或系统属性java.class.path指定路径下的类库. 是程序中默认的类加载器.</li>
+</ol>
+<h2 id="双亲委派机制">双亲委派机制</h2>
+<p>Java虚拟机对class文件采用的是按需加载的方式. 也就是说一个类加载的时候会先不断向上委派, 父类加载器不能加载了, 才会让子类加载器加载. 双亲委派机制避免了类的重复加载, 并且防止核心api被随意修改.
+
+  <img src="/31_7.png" alt="">
+
+</p>
+<p>做一个实验. 这个实验中, 最后会由Bootstrap Classloader加载核心库的java.lang.String, 而核心库的<code>String</code>类是没有main方法的, 这也是<strong>安全机制</strong>的体现, 类加载器先加载了jdk自带的文件(rt.jar包中的java\lang\String.class).
+
+  <img src="/31_8.png" alt="">
+
+</p>
+<p>在jvm中表示两个class对象是否为同一个类存在的两个必要条件有两个: 1.类的(包含包名)完整类名必须一致; 2.<strong>加载这个类的ClassLoader(指ClassLoader实例对象)必须相同</strong>. 类的被动使用, 都不会导致类的初始化. 主动使用包括创建类的实例, 访问某各类或接口的静态变量，或者对静态变量赋值, 调用类的静态方法, 反射, 初始化一个类的子类等.</p>
+
+
+                
+
+                
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/post/44_spring_aop/" data-toggle="tooltip" data-placement="top" title="Spring-AOP">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/post/30_jvm%E5%85%A5%E9%97%A8_vm%E4%B8%8Ejava%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/" data-toggle="tooltip" data-placement="top" title="JVM入门-JVM与Java体系结构">Next
+                            Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+                
+
+                
+
+
+<div id="disqus-comment"></div>
+<div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "xqt01" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+            </div>
+
+            
+            
+            <div class="
+                col-lg-2 col-lg-offset-0
+                visible-lg-block
+                sidebar-container
+                catalog-container">
+                <div class="side-catalog">
+                    <hr class="hidden-sm hidden-xs">
+                    <h5>
+                        <a class="catalog-toggle" href="#">CATALOG</a>
+                    </h5>
+                    <ul class="catalog-body"></ul>
+                </div>
+            </div>
+            
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/java" title="java">
+                            java
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/jvm" title="jvm">
+                            jvm
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/spring" title="spring">
+                            spring
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E5%89%8D%E7%AB%AF" title="前端">
+                            前端
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F" title="操作系统">
+                            操作系统
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93" title="数据库">
+                            数据库
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95" title="数据结构与算法">
+                            数据结构与算法
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B" title="网络编程">
+                            网络编程
+                        </a>
+                        
+                        
+                    </div>
+                </section>
+                
+
+                
+                
+                <section>
+                    <hr>
+                    <h5>FRIENDS</h5>
+                    <ul class="list-inline">
+                        
+                        <li><a target="_blank" href="https://fan-bu-fan.github.io/">FELL &amp; ENJOY</a></li>
+                        
+                    </ul>
+                </section>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">                  
+                    
+                    <li>
+                        <a href="mailto:huanruiz@foxmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		           
+                    
+                    
+                    
+                    
+
+		            
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/xqt01">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		            
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+            
+            
+            
+           
+                   <li>
+                       <a href='' rel="alternate" type="application/rss+xml" title="PunchCode" >
+                           <span class="fa-stack fa-lg">
+                               <i class="fas fa-circle fa-stack-2x"></i>
+                               <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                           </span>
+                       </a>
+                   </li>
+            
+             </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; PunchCode 2024
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function loadAsync(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        loadAsync("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    loadAsync("https://cdn.jsdelivr.net/npm/fastclick@1.0.6/lib/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+    function generateCatalog(selector) {
+
+        
+        
+        
+        
+            _containerSelector = 'div.post-container'
+        
+
+        
+        var P = $(_containerSelector), a, n, t, l, i, c;
+        a = P.find('h1,h2,h3,h4,h5,h6');
+
+        
+        $(selector).html('')
+
+        
+        a.each(function () {
+            n = $(this).prop('tagName').toLowerCase();
+            i = "#" + $(this).prop('id');
+            t = $(this).text();
+            c = $('<a href="' + i + '" rel="nofollow">' + t + '</a>');
+            l = $('<li class="' + n + '_nav"></li>').append(c);
+            $(selector).append(l);
+        });
+        return true;
+    }
+
+    generateCatalog(".catalog-body");
+
+    
+    $(".catalog-toggle").click((function (e) {
+        e.preventDefault();
+        $('.side-catalog').toggleClass("fold")
+    }))
+
+    
+
+
+    loadAsync("\/js\/jquery.nav.js", function () {
+        $('.catalog-body').onePageNav({
+            currentClass: "active",
+            changeHash: !1,
+            easing: "swing",
+            filter: "",
+            scrollSpeed: 700,
+            scrollOffset: 0,
+            scrollThreshold: .2,
+            begin: null,
+            end: null,
+            scrollChange: null,
+            padding: 80
+        });
+    });
+</script>
+
+
+
+
+
+
+</body>
+</html>

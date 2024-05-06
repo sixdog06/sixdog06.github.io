@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="PunchCode">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://xqt01.github.io/front.png">
+    <meta property="twitter:image" content="https://xqt01.github.io/front.png" />
+    
+
+    
+    <meta name="title" content="Tech" />
+    <meta property="og:title" content="Tech" />
+    <meta property="twitter:title" content="Tech" />
+    
+
+    
+    <meta name="description" content="Software Engineer">
+    <meta property="og:description" content="Software Engineer" />
+    <meta property="twitter:description" content="Software Engineer" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="Harry, 小拳头">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>Tech | 以终为始</title>
+
+    <link rel="canonical" href="/categories/tech/">
+
+    
+    
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hugo-theme-cleanwhite.min.css">
+
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+
+    
+    <link href="https://cdn.jsdelivr.net/gh/FortAwesome/Font-Awesome@5.15.1/css/all.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    
+    <script src="/js/jquery.min.js"></script>
+
+    
+    <script src="/js/bootstrap.min.js"></script>
+
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+
+</head>
+
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">PunchCode</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">All Posts</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/tech">tech</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0">学习笔记</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/%E6%9D%82%E8%B0%88">杂谈</a>
+                        </li>
+                        
+                    
+                    
+		    
+                        <li><a href="/top/archive/">ARCHIVE</a></li>
+                    
+                        <li><a href="/top/about/">ABOUT</a></li>
+                    
+
+                    
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+<header class="intro-header" style="background-image: url('/front.png')">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 ">
+                <div class="site-heading">
+                    <h1>PunchCode </h1>
+                    
+		    <span class="subheading">以终为始</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+  
+<div class="container">
+    <div class="row">
+        
+        
+   	    <div class="
+            col-lg-8 col-lg-offset-1
+            col-md-8 col-md-offset-1
+            col-sm-12
+            col-xs-12
+            post-container
+        ">
+            
+
+<div class="post-preview">
+    <a href="https://xqt01.github.io/post/13_%E8%B4%AA%E5%BF%83%E7%AE%97%E6%B3%95/">
+        <h2 class="post-title">
+            数据结构与算法-贪心算法
+        </h2>
+	
+        <div class="post-content-preview">
+	
+            贪心算法是动态规划的特殊情况, 因为贪心的每一步都需要选择最优解. 满足贪心选择性质, 就可以用贪心. 区间调度问题 435. 无重叠区间 按右边界从小到大排序
+       
+        </div>
+    </a>
+    <p class="post-meta">
+    
+        Posted by 小拳头 on Friday, January 15, 2021
+        
+        
+    
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+    <a href="https://xqt01.github.io/post/12_%E5%AD%97%E7%AC%A6%E4%B8%B2/">
+        <h2 class="post-title">
+            数据结构与算法-字符串
+        </h2>
+	
+        <div class="post-content-preview">
+	
+            参考 labuladong算法 LeetCode提高班第一期——Week5字符串处理专题 leetcode acwing
+       
+        </div>
+    </a>
+    <p class="post-meta">
+    
+        Posted by 小拳头 on Wednesday, January 13, 2021
+        
+        
+    
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+    <a href="https://xqt01.github.io/post/11_%E5%93%88%E5%B8%8C%E8%A1%A8/">
+        <h2 class="post-title">
+            数据结构与算法-哈希表
+        </h2>
+	
+        <div class="post-content-preview">
+	
+            1. 两数之和 class Solution { public int[] twoSum(int[] nums, int target) { HashMap&lt;Integer, Integer&gt; map = new HashMap&lt;&gt;(); for (int i = 0; i &lt; nums.length; i++) { if (map.containsKey(target - nums[i])) return new int[]{map.get(target - nums[i]), i}; map.put(nums[i], i); } return new int[2]; } } 顺便把3Sum, 4Sum也总结了. 15. 三数之
+       
+        </div>
+    </a>
+    <p class="post-meta">
+    
+        Posted by 小拳头 on Tuesday, January 12, 2021
+        
+        
+    
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+    <a href="https://xqt01.github.io/post/10_%E6%95%B0%E5%AD%A6%E7%B3%BB%E5%88%97/">
+        <h2 class="post-title">
+            数据结构与算法-数学系列
+        </h2>
+	
+        <div class="post-content-preview">
+	
+            这部分来自于&lt;LeetCode提高班第三期——Week3数学专题&gt;, 有的题不需要数学方法, 用动态规划或者利用数据结构做更容易想象
+       
+        </div>
+    </a>
+    <p class="post-meta">
+    
+        Posted by 小拳头 on Saturday, January 9, 2021
+        
+        
+    
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+    <a href="https://xqt01.github.io/post/9_dfs%E4%B8%8Ebfs/">
+        <h2 class="post-title">
+            DFS与BFS
+        </h2>
+	
+        <div class="post-content-preview">
+	
+            回溯 DFS很多情况下会和回溯结合起来, 先通过全排列问题来构建回溯问题的框架. 我的理解中, 回溯实际上就是一种剪枝的技巧. 算法的本质依然是遍历.
+       
+        </div>
+    </a>
+    <p class="post-meta">
+    
+        Posted by 小拳头 on Friday, January 8, 2021
+        
+        
+    
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+    <a href="https://xqt01.github.io/post/18_java%E9%9B%86%E5%90%88%E7%B1%BB/">
+        <h2 class="post-title">
+            Java Collection
+        </h2>
+	
+        <div class="post-content-preview">
+	
+            Collection Framework 首先根据图片感受一下整个collection的架构. Iterator Interface Collection接口扩展了Iterable接口, 目的还是为了操作其中的Ite
+       
+        </div>
+    </a>
+    <p class="post-meta">
+    
+        Posted by 小拳头 on Friday, January 8, 2021
+        
+        
+    
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+    <a href="https://xqt01.github.io/post/8_%E6%95%B0%E7%BB%84%E7%B3%BB%E5%88%97/">
+        <h2 class="post-title">
+            数据结构与算法-数组系列
+        </h2>
+	
+        <div class="post-content-preview">
+	
+            naive双指针 26. 删除排序数组中的重复项 快慢指针, fast != slow就可以把slow的下一个重复的值删掉. class Solution { public int removeDuplicates(int[] nums) { if (nums.length == 0) return 0; int slow = 0, fast =
+       
+        </div>
+    </a>
+    <p class="post-meta">
+    
+        Posted by 小拳头 on Monday, January 4, 2021
+        
+        
+    
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+    <a href="https://xqt01.github.io/post/7_%E6%A0%88%E9%98%9F%E5%88%97%E5%A0%86/">
+        <h2 class="post-title">
+            栈队列堆
+        </h2>
+	
+        <div class="post-content-preview">
+	
+            先用leetcode专题进行练习. 队列实现 622. 设计循环队列 利用循环队列节省空间, 可以复用申请的空间. class MyCircularQueue { private int[] queue; private int capacity; private int head; private int count; public MyCircularQueue(int k) { queue =
+       
+        </div>
+    </a>
+    <p class="post-meta">
+    
+        Posted by 小拳头 on Monday, December 28, 2020
+        
+        
+    
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+    <a href="https://xqt01.github.io/post/6_%E4%BA%8C%E5%88%86%E6%B3%95/">
+        <h2 class="post-title">
+            二分法
+        </h2>
+	
+        <div class="post-content-preview">
+	
+            先用leetcode专题进行练习. 只要遇到了排了序的数组, 实际上都可以考虑能否用二分法加速. 704. 二分查找 首先做最基本的二分查找. class Solution { public int search(int[] nums,
+       
+        </div>
+    </a>
+    <p class="post-meta">
+    
+        Posted by 小拳头 on Sunday, December 27, 2020
+        
+        
+    
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+    <a href="https://xqt01.github.io/post/5_%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/">
+        <h2 class="post-title">
+            动态规划
+        </h2>
+	
+        <div class="post-content-preview">
+	
+            简单题 509. 斐波那契数/剑指Offer10-I. 斐波那契数列 没有用数列存储, 因为转台转移过程只与前两个值有关. class Solution { public int fib(int n) { if (n == 0) return 0; if (n ==
+       
+        </div>
+    </a>
+    <p class="post-meta">
+    
+        Posted by 小拳头 on Saturday, December 26, 2020
+        
+        
+    
+    </p>
+
+</div>
+<hr>
+
+
+            
+
+
+<ul class="pager">
+    
+    <li class="previous">
+        <a href="/categories/tech/">&larr; Newer Posts</a>
+    </li>
+    
+    
+    <li class="next">
+        <a href="/categories/tech/page/3/">Older Posts &rarr;</a>
+    </li>
+    
+</ul>
+
+
+       	</div>
+        
+
+<div class="
+    col-lg-3 col-lg-offset-0
+    col-md-3 col-md-offset-0
+    col-sm-12
+    col-xs-12
+    sidebar-container
+">
+    
+	
+    <section class="visible-md visible-lg">
+	
+        <div class="short-about">
+            
+            <a href="/top/about">
+               <img src="/avatar.jpeg" alt="avatar" style="cursor: pointer" />
+            </a>
+            
+            
+                <p>longtermist</p>
+            
+           
+           <ul class="list-inline">
+               
+               <li>
+                   <a href="mailto:huanruiz@foxmail.com">
+                      <span class="fa-stack fa-lg">
+                          <i class="fa fa-circle fa-stack-2x"></i>
+                          <i class="fa fa-envelope fa-stack-1x fa-inverse"></i>
+                      </span>
+                   </a>
+               </li>
+               
+               
+               
+               
+               
+               
+               
+               <li>
+                   <a target="_blank" href="https://github.com/xqt01">
+                       <span class="fa-stack fa-lg">
+                           <i class="fas fa-circle fa-stack-2x"></i>
+                           <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                       </span>
+                   </a>
+               </li>
+               
+               
+               
+               
+               
+               
+            
+            
+               
+               
+               
+               
+                </ul>
+            </div>
+    </section>
+	
+    
+    
+    
+    
+    <section>
+        <hr class="hidden-sm hidden-xs">
+        <h5>FEATURED TAGS</h5>
+        <div class="tags">
+            
+            
+               
+            
+               
+            
+               
+            
+               
+            
+               
+                    <a href="/tags/java" title="java">
+                        java
+                    </a>
+               
+            
+               
+                    <a href="/tags/jvm" title="jvm">
+                        jvm
+                    </a>
+               
+            
+               
+                    <a href="/tags/spring" title="spring">
+                        spring
+                    </a>
+               
+            
+               
+                    <a href="/tags/%E5%89%8D%E7%AB%AF" title="前端">
+                        前端
+                    </a>
+               
+            
+               
+            
+               
+                    <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F" title="操作系统">
+                        操作系统
+                    </a>
+               
+            
+               
+                    <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93" title="数据库">
+                        数据库
+                    </a>
+               
+            
+               
+                    <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95" title="数据结构与算法">
+                        数据结构与算法
+                    </a>
+               
+            
+               
+            
+               
+                    <a href="/tags/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B" title="网络编程">
+                        网络编程
+                    </a>
+               
+            
+        </div>
+    </section>
+    
+
+    
+    
+    <section>
+        <hr class="hidden-sm hidden-xs">
+        <h5>FRIENDS</h5>
+        <ul class="list-inline">
+            
+            <li><a target="_blank" href="https://fan-bu-fan.github.io/">FELL &amp; ENJOY</a></li>
+            
+        </ul>
+    </section>
+    
+    
+</div>
+
+	</div>
+</div>
+
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">                  
+                    
+                    <li>
+                        <a href="mailto:huanruiz@foxmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		           
+                    
+                    
+                    
+                    
+
+		            
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/xqt01">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		            
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+            
+            
+            
+           
+                   <li>
+                       <a href='/categories/tech/index.xml' rel="alternate" type="application/rss+xml" title="PunchCode" >
+                           <span class="fa-stack fa-lg">
+                               <i class="fas fa-circle fa-stack-2x"></i>
+                               <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                           </span>
+                       </a>
+                   </li>
+            
+             </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; PunchCode 2024
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function loadAsync(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        loadAsync("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    loadAsync("https://cdn.jsdelivr.net/npm/fastclick@1.0.6/lib/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+    function generateCatalog(selector) {
+
+        
+        
+        
+        
+            _containerSelector = 'div.post-container'
+        
+
+        
+        var P = $(_containerSelector), a, n, t, l, i, c;
+        a = P.find('h1,h2,h3,h4,h5,h6');
+
+        
+        $(selector).html('')
+
+        
+        a.each(function () {
+            n = $(this).prop('tagName').toLowerCase();
+            i = "#" + $(this).prop('id');
+            t = $(this).text();
+            c = $('<a href="' + i + '" rel="nofollow">' + t + '</a>');
+            l = $('<li class="' + n + '_nav"></li>').append(c);
+            $(selector).append(l);
+        });
+        return true;
+    }
+
+    generateCatalog(".catalog-body");
+
+    
+    $(".catalog-toggle").click((function (e) {
+        e.preventDefault();
+        $('.side-catalog').toggleClass("fold")
+    }))
+
+    
+
+
+    loadAsync("\/js\/jquery.nav.js", function () {
+        $('.catalog-body').onePageNav({
+            currentClass: "active",
+            changeHash: !1,
+            easing: "swing",
+            filter: "",
+            scrollSpeed: 700,
+            scrollOffset: 0,
+            scrollThreshold: .2,
+            begin: null,
+            end: null,
+            scrollChange: null,
+            padding: 80
+        });
+    });
+</script>
+
+
+
+
+
+
+</body>
+</html>

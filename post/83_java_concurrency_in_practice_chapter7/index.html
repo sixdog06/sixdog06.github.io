@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="PunchCode">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://xqt01.github.io/front.png">
+    <meta property="twitter:image" content="https://xqt01.github.io/front.png" />
+    
+
+    
+    <meta name="title" content="Java Concurrency in Practice Chapter7-Cancellation and Shutdown" />
+    <meta property="og:title" content="Java Concurrency in Practice Chapter7-Cancellation and Shutdown" />
+    <meta property="twitter:title" content="Java Concurrency in Practice Chapter7-Cancellation and Shutdown" />
+    
+
+    
+    <meta name="description" content="Software Engineer">
+    <meta property="og:description" content="Software Engineer" />
+    <meta property="twitter:description" content="Software Engineer" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="Harry, 小拳头">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>Java Concurrency in Practice Chapter7-Cancellation and Shutdown | 以终为始</title>
+
+    <link rel="canonical" href="/post/83_java_concurrency_in_practice_chapter7/">
+
+    
+    
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hugo-theme-cleanwhite.min.css">
+
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+
+    
+    <link href="https://cdn.jsdelivr.net/gh/FortAwesome/Font-Awesome@5.15.1/css/all.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    
+    <script src="/js/jquery.min.js"></script>
+
+    
+    <script src="/js/bootstrap.min.js"></script>
+
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+
+</head>
+
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">PunchCode</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">All Posts</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/tech">tech</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0">学习笔记</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/%E6%9D%82%E8%B0%88">杂谈</a>
+                        </li>
+                        
+                    
+                    
+		    
+                        <li><a href="/top/archive/">ARCHIVE</a></li>
+                    
+                        <li><a href="/top/about/">ABOUT</a></li>
+                    
+
+                    
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/front.png')
+    }
+</style>
+
+<header class="intro-header" >
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/java" title="Java">
+                            Java
+                        </a>
+                        
+                    </div>
+                    <h1>Java Concurrency in Practice Chapter7-Cancellation and Shutdown</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        
+                            Posted by 
+                            
+                                小拳头
+                             
+                            on 
+                            Saturday, November 5, 2022
+                            
+                            
+                            
+                            
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <h3 id="71-task-cancellation">7.1 Task cancellation</h3>
+<p><em>e.g. PrimeGenerator</em>是一个质数生成器, 通过调用<code>aSecondOfPrimes</code>方法, 实现在1秒延迟后取消质数生成. 看起来没有什么问题, 但实际如果这个方法的任务调用了阻塞方法, 并且生产速度大于消费速度, 那么在阻塞队列满了之后, put时就会被阻塞. 即使消费者执行了cancel的操作, 生产者依然处在put的过程中, 读不到cancel的值, 使程序无法退出.</p>
+<pre><code>/**
+ * 质数生成器
+ */
+public class PrimeGenerator implements Runnable {
+    
+    private final List&lt;BigInteger&gt; primes = new ArrayList&lt;&gt;();
+    
+    private volatile boolean cancelled;
+    
+    @Override
+    public void run() {
+        BigInteger p = BigInteger.ONE;
+        while (!cancelled) {
+            p = p.nextProbablePrime();
+            synchronized (this) {
+                primes.add(p);
+            }
+        }
+    }
+    
+    public void cancel() {
+        cancelled = true;
+    }
+    
+    public synchronized List&lt;BigInteger&gt; get() {
+        return new ArrayList&lt;&gt;(primes);
+    }
+    
+    /**
+     * 1秒钟的时候调用cancel
+     */
+    List&lt;BigInteger&gt; aSecondOfPrimes() throws InterruptedException {
+        PrimeGenerator generator = new PrimeGenerator();
+        new Thread(generator).start();
+        try {
+            SECONDS.sleep(1);
+        } finally {
+            generator.cancel();
+        }
+        return generator.get();
+    }
+}
+</code></pre><p>而取消任务最好的方式就是用Thread的<code>interrupt()</code>方法, 注意Thread有一个静态的<code>interrupted()</code>方法, 作用是返回当前的中断状态, 但是它的底层是<code>currentThread().isInterrupted(true);</code>会清除中断标志, 如果返回为<code>true</code>, 表示这个线程正在中断中, 要记住去处理它. 上述代码的<code>!cancelled</code>就可以替换为<code>!Thread.currentThread().isInterrupted()</code>. <strong>Java中取消一个任务最好的方式就是中断</strong>. <strong>Java的中断是非抢占式的, 执行任务或取消操作的代码都不应该对线程的中断策略有任何假设</strong>. 调用阻塞队列的质数生成器: <em>PrimeProducer</em>.</p>
+<pre><code>/**
+ * PrimeGenerator的阻塞队列版, 这时候需要用interrupt来实现cancel, 防止阻塞队列阻塞后线程读不到cancel信号量, 导致任务无法停止
+ */
+public class PrimeProducer extends Thread {
+
+    private final BlockingQueue&lt;BigInteger&gt; queue;
+
+    PrimeProducer(BlockingQueue&lt;BigInteger&gt; queue) {
+        this.queue = queue;
+    }
+
+    @Override
+    public void run() {
+        try {
+            BigInteger p = BigInteger.ONE;
+            while (!Thread.currentThread().isInterrupted()) {
+                queue.put(p = p.nextProbablePrime());
+            }
+        } catch (InterruptedException consumed) {
+            // Allow thread to exit
+        }
+    }
+
+    public void cancel() {
+        interrupt();
+    }
+}
+</code></pre><p>知道了怎么通过中断取消一个任务, 那么对于中断应该如何响应呢. 有两种办法:</p>
+<ul>
+<li><code>throw InterruptedException</code> 抛出中断给父线程</li>
+<li><code>catch (InterruptedException e)</code>中设置<code>interrupted = true;</code>并在finally中判断这个标志位, 若为<code>true</code>则重试中断.</li>
+</ul>
+<p>接下来运用上面的知识来实现一个实现一个计时运行的任务. 在这之前先分析两种不好的实现方法. 第一种的代码如下, 在外部线程中去实现中断, 而我们不应该对线程的中断策略有任何假设, <code>timedRun</code>可以被任意线程调用, 不能被随意中断. <code>timedRun</code>很有可能已经完成任务, 或者没完成任务也不响应中断. 这种实现是绝对不能出现的.</p>
+<pre><code>public class TimedRun {
+    
+    /**
+     * timedRun是static的, 可以被任何线程调用, 调用线程的中断策略是未知的, 如果该线程任务已经执行完成,
+     * {@code cancelExec.schedule}的延时才结束, 那么{@code taskThread.interrupt()}会造成无法推测的后果
+     */
+    private static final ScheduledExecutorService cancelExec = new                       ScheduledThreadPoolExecutor(1);
+    
+    public static void timedRun(Runnable r, long timeout, TimeUnit unit) {
+        final Thread taskThread = Thread.currentThread();
+        // 在一段延时后调用
+        cancelExec.schedule(new Runnable() {
+            @Override
+            public void run() {
+                taskThread.interrupt();
+            }
+        }, timeout, unit);
+        r.run();
+    }
+    
+    /**
+     * 修复了timedRun的问题, 但是因为用了join. 无法知道线程是正常退出(因为taskThread.interrupt()退出)还是因为join超时而返回
+     */
+    public static void timedRun2(final Runnable r, long timeout, TimeUnit unit) throws InterruptedException {
+        class RethrowableTask implements Runnable {
+            /**
+             * 在两个线程之间共享
+             */
+            private volatile Throwable t;
+            
+            @Override
+            public void run() {
+                try { 
+                    r.run();
+                } catch (Throwable t) {
+                    this.t = t;
+                }
+            }
+            
+            void rethrow() {
+                if (t != null) {
+                    throw launderThrowable(t);
+                }
+            }
+        }
+        
+        RethrowableTask task = new RethrowableTask();
+        final Thread taskThread = new Thread(task);
+        // 任务线程开始执行
+        taskThread.start();
+        // 用专门的中断线程中断任务
+        cancelExec.schedule(new Runnable() {
+                @Override
+                public void run() {
+                    taskThread.interrupt();
+                }
+            }, timeout, unit);
+        taskThread.join(unit.toMillis(timeout));
+        task.rethrow();
+    }
+    
+    /**
+     * 通过Future的取消功能来实现. 这样可以知道是因为超时退出(TimeoutException), 还是任务执行完成后或没执行完成因为中断而退出
+     */
+    private static final ExecutorService taskExec = Executors.newFixedThreadPool(1);
+    
+    public static void timedRun3(Runnable r, long timeout, TimeUnit unit) throws InterruptedException {
+        Future&lt;?&gt; task = taskExec.submit(r);
+    
+        try {
+            task.get(timeout, unit);
+        } catch (TimeoutException e) {
+            // 超时, 可以取消任务
+        } catch (ExecutionException e) {
+            // exception thrown in task; rethrow
+            throw launderThrowable(e.getCause());
+        } finally {
+            // 任务没有执行了, 这行代码没有影响. 若还在执行, 则中断任务
+            task.cancel(true);
+        }
+    }
+}
+</code></pre><p>第二种实现方法实际上是可用的, 通过join来让定时任务执行, 而执行任务的线程<code>RethrowableTask</code>也有自己的中断策略, 其中的抛错也被<code>volatile</code>, 保证可见性, 可以安全地被发布到<code>timedRun</code>的线程. 这种实现方式的问题是依赖了<code>join</code>, 因为Java Thread api本身的缺陷, 无论join成功或超时, 总会有结果(因为可见性), 而join本身又不返回成功与否的标志, 程序就无法知道线程是正常对出还是因为join超时而返回.</p>
+<pre><code>public static void timedRun(final Runnable r, long timeout, TimeUnit unit) throws InterruptedException {
+    class RethrowableTask implements Runnable {
+        private volatile Throwable t; 
+        public void run() {
+            try {
+                r.run();
+            } catch (Throwable t) {
+                this.t = t;
+            } 
+            void rethrow() {
+                if (t != null) {
+                    throw launderThrowable(t);
+                }
+            }
+        }
+    }
+
+    RethrowableTask task = new RethrowableTask();
+    final Thread taskThread = new Thread(task);
+    taskThread.start();
+    cancelExec.schedule(new Runnable() {
+        public void run() {
+            taskThread.interrupt();
+        }
+    }, timeout, unit);
+    taskThread.join(unit.toMillis(timeout));
+    task.rethrow();
+}
+</code></pre>
+
+                
+
+                
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/post/82_%E5%AE%8C%E6%88%90%E7%9B%AE%E6%A0%87%E7%9A%84%E6%96%B9%E6%B3%95%E8%AE%BA/" data-toggle="tooltip" data-placement="top" title="完成目标的方法论">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/post/84_csapp123/" data-toggle="tooltip" data-placement="top" title="CSAPP-123讲">Next
+                            Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+                
+
+                
+
+
+<div id="disqus-comment"></div>
+<div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "xqt01" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+            </div>
+
+            
+            
+            <div class="
+                col-lg-2 col-lg-offset-0
+                visible-lg-block
+                sidebar-container
+                catalog-container">
+                <div class="side-catalog">
+                    <hr class="hidden-sm hidden-xs">
+                    <h5>
+                        <a class="catalog-toggle" href="#">CATALOG</a>
+                    </h5>
+                    <ul class="catalog-body"></ul>
+                </div>
+            </div>
+            
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/java" title="java">
+                            java
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/jvm" title="jvm">
+                            jvm
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/spring" title="spring">
+                            spring
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E5%89%8D%E7%AB%AF" title="前端">
+                            前端
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F" title="操作系统">
+                            操作系统
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93" title="数据库">
+                            数据库
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95" title="数据结构与算法">
+                            数据结构与算法
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B" title="网络编程">
+                            网络编程
+                        </a>
+                        
+                        
+                    </div>
+                </section>
+                
+
+                
+                
+                <section>
+                    <hr>
+                    <h5>FRIENDS</h5>
+                    <ul class="list-inline">
+                        
+                        <li><a target="_blank" href="https://fan-bu-fan.github.io/">FELL &amp; ENJOY</a></li>
+                        
+                    </ul>
+                </section>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">                  
+                    
+                    <li>
+                        <a href="mailto:huanruiz@foxmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		           
+                    
+                    
+                    
+                    
+
+		            
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/xqt01">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		            
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+            
+            
+            
+           
+                   <li>
+                       <a href='' rel="alternate" type="application/rss+xml" title="PunchCode" >
+                           <span class="fa-stack fa-lg">
+                               <i class="fas fa-circle fa-stack-2x"></i>
+                               <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                           </span>
+                       </a>
+                   </li>
+            
+             </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; PunchCode 2024
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function loadAsync(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        loadAsync("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    loadAsync("https://cdn.jsdelivr.net/npm/fastclick@1.0.6/lib/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+    function generateCatalog(selector) {
+
+        
+        
+        
+        
+            _containerSelector = 'div.post-container'
+        
+
+        
+        var P = $(_containerSelector), a, n, t, l, i, c;
+        a = P.find('h1,h2,h3,h4,h5,h6');
+
+        
+        $(selector).html('')
+
+        
+        a.each(function () {
+            n = $(this).prop('tagName').toLowerCase();
+            i = "#" + $(this).prop('id');
+            t = $(this).text();
+            c = $('<a href="' + i + '" rel="nofollow">' + t + '</a>');
+            l = $('<li class="' + n + '_nav"></li>').append(c);
+            $(selector).append(l);
+        });
+        return true;
+    }
+
+    generateCatalog(".catalog-body");
+
+    
+    $(".catalog-toggle").click((function (e) {
+        e.preventDefault();
+        $('.side-catalog').toggleClass("fold")
+    }))
+
+    
+
+
+    loadAsync("\/js\/jquery.nav.js", function () {
+        $('.catalog-body').onePageNav({
+            currentClass: "active",
+            changeHash: !1,
+            easing: "swing",
+            filter: "",
+            scrollSpeed: 700,
+            scrollOffset: 0,
+            scrollThreshold: .2,
+            begin: null,
+            end: null,
+            scrollChange: null,
+            padding: 80
+        });
+    });
+</script>
+
+
+
+
+
+
+</body>
+</html>

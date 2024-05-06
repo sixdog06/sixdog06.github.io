@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="PunchCode">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://xqt01.github.io/front.png">
+    <meta property="twitter:image" content="https://xqt01.github.io/front.png" />
+    
+
+    
+    <meta name="title" content="Java多线程-高级" />
+    <meta property="og:title" content="Java多线程-高级" />
+    <meta property="twitter:title" content="Java多线程-高级" />
+    
+
+    
+    <meta name="description" content="Software Engineer">
+    <meta property="og:description" content="Software Engineer" />
+    <meta property="twitter:description" content="Software Engineer" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="Harry, 小拳头">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>Java多线程-高级 | 以终为始</title>
+
+    <link rel="canonical" href="/post/46_java%E5%A4%9A%E7%BA%BF%E7%A8%8B%E9%AB%98%E7%BA%A7/">
+
+    
+    
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hugo-theme-cleanwhite.min.css">
+
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+
+    
+    <link href="https://cdn.jsdelivr.net/gh/FortAwesome/Font-Awesome@5.15.1/css/all.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    
+    <script src="/js/jquery.min.js"></script>
+
+    
+    <script src="/js/bootstrap.min.js"></script>
+
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+
+</head>
+
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">PunchCode</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">All Posts</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/tech">tech</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0">学习笔记</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/%E6%9D%82%E8%B0%88">杂谈</a>
+                        </li>
+                        
+                    
+                    
+		    
+                        <li><a href="/top/archive/">ARCHIVE</a></li>
+                    
+                        <li><a href="/top/about/">ABOUT</a></li>
+                    
+
+                    
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/front.png')
+    }
+</style>
+
+<header class="intro-header" >
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/java" title="Java">
+                            Java
+                        </a>
+                        
+                    </div>
+                    <h1>Java多线程-高级</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        
+                            Posted by 
+                            
+                                小拳头
+                             
+                            on 
+                            Thursday, December 10, 2020
+                            
+                            
+                            
+                            
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <h2 id="继续卖票">继续卖票</h2>
+<p>高内聚低耦合, 线程操作资源类. 操作指线程对外暴露的调用方法(高内聚). 线程之间低耦合.</p>
+<pre><code>public class SaleTicket {
+    public static void main(String[] args) {
+        Ticket ticket = new Ticket();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                for (int i = 1; i &lt; 40; i++) {
+                    ticket.saleTicket();
+                }
+            }
+        }, &quot;A&quot;).start();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                for (int i = 1; i &lt; 40; i++) {
+                    ticket.saleTicket();
+                }
+            }
+        }, &quot;B&quot;).start();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                for (int i = 1; i &lt; 40; i++) {
+                    ticket.saleTicket();
+                }
+            }
+        }, &quot;C&quot;).start();
+    }
+}
+
+class Ticket { //资源类
+
+    private int number = 30;
+    public synchronized void saleTicket() {
+        if (number &gt; 0) {
+            System.out.println(Thread.currentThread().getName() + &quot; sale: no.&quot; + (number--) + &quot;, remain: &quot; + number);
+        }
+    }
+}
+</code></pre><p>用<code>lock</code>和lambda替换<code>synchronized</code>. 其中lambda可以快速实现<code>@functionalInterface</code>函数式接口, 也就是除了default方法/static方法之外只有一个<strong>没有实现的方法</strong>. 括号就对应函数参数, 中括号内就是函数体.</p>
+<pre><code>import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
+public class SaleTicket {
+    public static void main(String[] args) {
+        Ticket ticket = new Ticket();
+        new Thread(() -&gt; {
+            for (int i = 1; i &lt; 40; i++) {
+                ticket.saleTicket();
+            }
+        }, &quot;A&quot;).start();
+        new Thread(() -&gt; {
+            for (int i = 1; i &lt; 40; i++) {
+                ticket.saleTicket();
+            }
+        }, &quot;B&quot;).start();
+        new Thread(() -&gt; {
+            for (int i = 1; i &lt; 40; i++) {
+                ticket.saleTicket();
+            }
+        }, &quot;C&quot;).start();
+    }
+}
+
+class Ticket { //资源类
+
+    private int number = 30;
+    private Lock lock = new ReentrantLock();
+    public void saleTicket() { //参照文档
+        lock.lock();
+        try {
+            if (number &gt; 0) {
+                System.out.println(Thread.currentThread().getName() + &quot; sale: no.&quot; + (number--) + &quot;, remain: &quot; + number);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            lock.unlock();
+        }
+    }
+}
+</code></pre><p>观察Thread.State, 发现其对应6种状态: NEW/RUNNABLE/BLOCKED/WAITING/TIMED_WAITING/TERMINATED. 其中WAITING是一直等待, 而TIMED_WAITING是等待一段时间自唤醒.</p>
+<h2 id="线程间通信生产者消费者">线程间通信(生产者/消费者)</h2>
+<p>条件判断时, 必须在while中. 否则被唤醒时, if内的条件可能根本没有改变, 所以需要用while再次进行判断.</p>
+<pre><code>public class ThreadWaitNotify {
+    public static void main(String[] args) {
+        Airconditioner aircondition = new Airconditioner();
+
+        new Thread(()-&gt;{
+            for (int i = 1; i &lt;= 10; i++) {
+                try {
+                    Thread.sleep(300);
+                    aircondition.increment();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        },&quot;A&quot;).start();
+
+        new Thread(()-&gt;{
+            for (int i = 1; i &lt;= 10; i++) {
+                try {
+                    Thread.sleep(400);
+                    aircondition.decrement();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        },&quot;B&quot;).start();
+
+        new Thread(()-&gt;{
+            for (int i = 1; i &lt;= 10; i++) {
+                try {
+                    Thread.sleep(500);
+                    aircondition.increment();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        },&quot;C&quot;).start();
+
+        new Thread(()-&gt;{
+            for (int i = 1; i &lt;= 10; i++) {
+                try {
+                    Thread.sleep(600);
+                    aircondition.decrement();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        },&quot;D&quot;).start();
+    }
+}
+
+class Airconditioner {
+    private int number = 0;
+
+    public synchronized void increment() throws Exception{
+        while (number != 0) this.wait(); //1.判断, 必须用while! 防止虚假唤醒
+        number++; //2.加
+        System.out.println(Thread.currentThread().getName()+&quot;\t&quot;+number);
+        this.notifyAll(); //3.通知
+    }
+    public synchronized void decrement() throws Exception{
+
+        while (number == 0) this.wait(); //1.判断
+        number--; //2.减
+        System.out.println(Thread.currentThread().getName()+&quot;\t&quot;+number);
+        this.notifyAll(); //3.通知
+    }
+}
+</code></pre><p>用lock(Condition)写, <code>class Airconditioner</code>改为如下形式. 从synchronized/wait/notify到lock/await/signal. 如果多个线程想精确的按`顺序执行, 将number按顺序设置即可.</p>
+<pre><code>class Airconditioner{
+    private int number = 0;
+    private Lock lock = new ReentrantLock();
+    private Condition condition = lock.newCondition(); //用condition替换
+
+    public void increment() throws Exception{
+        lock.lock();
+        try {
+            while (number != 0) { //不是0才执行
+                condition.await(); //this.wait();
+            }
+            number++; //2.加
+            System.out.println(Thread.currentThread().getName() + &quot;\t&quot; + number);
+            condition.signalAll(); //this.notifyAll(); //3.通知
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            lock.unlock();
+        }
+    }
+    public void decrement() throws Exception{
+        lock.lock();
+        try {
+            while (number == 0) {
+                condition.await(); //this.wait(); //1.判断
+            }
+            number--; //2.减
+            System.out.println(Thread.currentThread().getName() + &quot;\t&quot; + number);
+            condition.signalAll(); //this.notifyAll(); //3.通知
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            lock.unlock();
+        }
+    }
+}
+</code></pre><blockquote>
+<p>juc中有枚举类<code>public enum TimeUnit</code>, 比<code>Thread.sleep()</code>, 能够更精确地控制时间. 比如<code>TimeUnit.SECONDS.sleep(2);</code></p>
+</blockquote>
+<h2 id="8锁例题">8锁例题</h2>
+<pre><code>import java.util.concurrent.TimeUnit;
+
+public class Lock8 {
+    public static void main(String[] args) throws Exception{
+        Phone phone = new Phone();
+        Phone phone2 = new Phone();
+        new Thread(()-&gt;{
+            try {
+                phone.sendEmail();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }, &quot;A&quot;).start();
+
+//        Thread.sleep(100);
+
+        new Thread(()-&gt;{
+            try {
+                phone.sendMs(); //phone2.sendMs();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        },&quot;B&quot;).start();
+
+//        Thread.sleep(100);
+
+        new Thread(()-&gt;{
+            try {
+                phone.sayHello();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        },&quot;c&quot;).start();
+    }
+}
+
+class Phone {
+    public synchronized void sendEmail() throws InterruptedException {
+        TimeUnit.SECONDS.sleep(4);
+        System.out.println(&quot;Send EMail&quot;);
+    }
+
+    public synchronized void sendMs() throws InterruptedException {
+        System.out.println(&quot;Send Message&quot;);
+    }
+
+    public void sayHello() throws InterruptedException {
+        System.out.println(&quot;Say Hello&quot;);
+    }
+}
+}
+</code></pre><ol>
+<li>标准访问(资源类无delay), 按顺序打印. 先打印<code>Send EMail</code>.</li>
+<li>邮件设置暂停4秒方法<code>TimeUnit.SECONDS.sleep(4);</code>, 先打印<code>Send EMail</code>. 同上. 因为<code>synchronized</code>锁的是整个实例对象.</li>
+<li>2的基础上, 没有<code>synchronized</code>的<code>sayHello()</code>不会被影响, 会先打印.</li>
+<li>两个对象<code>phone</code>和<code>phone2</code>互相没有影响, 因为是两个实例对象.</li>
+</ol>
+<p>因为在多个<code>synchronized</code>方法存在的情况下, 一个线程调用了其中一个资源类, 其他线程就被等待了, 因为<code>synchronized</code>锁的实际上是当前对象<code>this</code>, 那么其他<code>synchronized</code>方法都没法有其他线程进入. 非<code>synchronized</code>可以有线程进入.</p>
+<ol start="5">
+<li>两个静态同步方法, 同一个手机, 先打印<code>Send EMail</code>, 因为锁的是同一个字节码对象(类本身).</li>
+<li>两个静态同步方法, 两个手机(<code>phone2.sendMs()</code>), 先打印<code>Send EMail</code>, 因为锁的是同一个字节码对象(类本身).</li>
+</ol>
+<p><code>synchronized</code>在1234例子中, 锁的是this, 对于同步代码块, 锁的是括号中的对象(一般是this或者自己建的obj), 但是对于静态同步方法, 锁的就是.class.</p>
+<ol start="7">
+<li>一个静态同步方法, 一个普通同步方法, 同一个手机, 先打印<code>Send Message</code></li>
+<li>一个静态同步方法, 一个普通同步方法, 二个手机, 先打印<code>Send Message</code></li>
+</ol>
+<p>this/.class是两个东西, 所以静态同步方法和普通同步方法互相没有影响. 并且即使静态同步方法对应的<strong>实例化对象</strong>不同, 锁<code>static</code>依然是对象相同的.class.</p>
+<h2 id="不安全的集合">不安全的集合</h2>
+<h3 id="arraylist">ArrayList</h3>
+<p>用ArrayList会出现<code>Exception in thread &quot;7&quot; java.util.ConcurrentModificationException</code>. 用<code>Vector</code>(add加了<code>synchronized</code>又会导致效率降低). 所以用juc的<code>CopyOnWriteArrayList</code>.</p>
+<pre><code>public class NotSafeDemo {
+    public static void main(String[] args) {
+        List&lt;String&gt; list = new CopyOnWriteArrayList&lt;&gt;();//Collections.synchronizedList(new ArrayList&lt;&gt;());//new Vector&lt;&gt;();//new ArrayList&lt;&gt;();
+        for (int i = 1; i &lt;= 10; i++) {
+            new Thread(() -&gt; {
+                list.add(UUID.randomUUID().toString().substring(0, 3)); //生成随机数
+                System.out.println(list);
+            }, String.valueOf(i)).start();
+        }
+    }
+}
+</code></pre><p>其中的<code>CopyOnWriteArrayList</code>的<code>add</code>如下, 所以说这是一个写时复制的容器.</p>
+<pre><code>public boolean add(E e) {
+    final ReentrantLock lock = this.lock;
+    lock.lock();
+    try {
+        Object[] elements = getArray(); //得到当前的array
+        int len = elements.length; //得到长度
+        Object[] newElements = Arrays.copyOf(elements, len + 1); //复制到newElements并多padding一个null用来添加
+        newElements[len] = e; //null改为add的元素
+        setArray(newElements); //替换原array
+        return true;
+    } finally {
+        lock.unlock();
+    }
+}
+</code></pre><h3 id="hashmap">HashMap</h3>
+<pre><code>public class NotSafeDemo {
+    public static void main(String[] args) {
+        Map&lt;String, String&gt; map = new ConcurrentHashMap&lt;&gt;(); //new HashMap&lt;&gt;();
+        for (int i = 1; i &lt;= 10; i++) {
+            new Thread(() -&gt; {
+                map.put(Thread.currentThread().getName(), UUID.randomUUID().toString().substring(0, 3)); //生成随机数
+                System.out.println(map);
+            }, String.valueOf(i)).start();
+        }
+    }
+}
+</code></pre><h2 id="callable">Callable</h2>
+<p>比Runnable多了返回值(带泛型), 可以抛异常, 并且用<code>call</code>替代了<code>run</code>. <code>FutureTask</code>的构造器是<code>public FutureTask(Callable&lt;V&gt; callable)</code>, 并且实现了<code>RunnableFuture&lt;V&gt;</code>, 而<code>RunnableFuture&lt;V&gt;</code>继承了<code>Runnable</code>. 所以就可以通过<code>FutureTask</code>建立多线程.</p>
+<pre><code>public class CallableDemo {
+    public static void main(String[] args) throws Exception{
+        FutureTask futureTask = new FutureTask(new MyThread());
+        new Thread(futureTask, &quot;A&quot;).start();
+        new Thread(futureTask, &quot;B&quot;).start();
+        System.out.println(futureTask.get());
+    }
+}
+
+class MyThread implements Callable&lt;Integer&gt; {
+    @Override
+    public Integer call() throws Exception {
+        System.out.println(&quot;in Callable&quot;);
+        TimeUnit.SECONDS.sleep(3);
+        return 233;
+    }
+}
+</code></pre><p>注意这里的<code>in Callable</code>只会被打印一次(Java有缓存, <del>这里可以深究</del>). get方法一般放在最后, 防止一直等待线程执行完成.</p>
+<h2 id="juc的辅助类">juc的辅助类</h2>
+<h3 id="countdownlatch">CountDownLatch</h3>
+<p>线程调用<code>countDownLatch.await()</code>时, 这些线程会阻塞. 其他线程调用countDown方法会将计数器减1, 当计数器的值变为0时, 前面的因为<code>await</code>阻塞的线程被唤醒. 下面的例子模拟了人必须在关门前离开屋子的例子, 可以看到main线程最后才结束. 如果不加则<code>door close</code>可能会出现在任何位置.</p>
+<pre><code>public class CountDownLatchDemo {
+    public static void main(String[] args) throws InterruptedException {
+        CountDownLatch countDownLatch = new CountDownLatch(6);
+        for (int i = 1; i &lt;= 6; i++) {
+            new Thread(()-&gt;{
+                System.out.println(Thread.currentThread().getName()+&quot;\tleave&quot;);
+                countDownLatch.countDown();
+            },String.valueOf(i)).start();
+        }
+        countDownLatch.await();
+        System.out.println(Thread.currentThread().getName()+&quot;\tdoor close&quot;);
+    }
+}
+</code></pre><h3 id="cyclicbarrier">CyclicBarrier</h3>
+<p>执行完之后阻塞, 等待所有线程执行好了, 包括包括构造器中的Runnable下的run. 和<code>CyclicBarrier</code>对比, 一个await在里面, 一个await在外面.ß</p>
+<pre><code>public class CyclicBarrierDemo {
+    public static void main(String[] args) {
+        CyclicBarrier cyclicBarrier = new CyclicBarrier(9, ()-&gt;{System.out.println(&quot;gogogo&quot;);});
+        for (int i = 9; i &gt; 0; i--) {
+            final int ii = i;
+            new Thread(() -&gt; {
+                System.out.println(Thread.currentThread().getName()+ &quot; &quot; + ii);
+                try {
+                    cyclicBarrier.await();
+                } catch (InterruptedException | BrokenBarrierException e) {
+                    e.printStackTrace();
+                }
+            }, String.valueOf(i)).start();
+        }
+    }
+}
+</code></pre><h3 id="semaphore">Semaphore</h3>
+<p>抢车位模拟, <code>acquire</code>使信号量减1, 信号量为0, 则等待释放; <code>release</code>使信号量加1. 回想linux0.11中进程的信号量, 主要是做互斥量使用, 而这里主要是为了<strong>控制线程数量(并发控制)</strong>. 如果等于<code>Semaphore(1);</code>, 就和<code>synchronized</code>上锁功能相同.</p>
+<pre><code>public class SemaphoreDemo {
+    public static void main(String[] args) throws InterruptedException {
+        Semaphore semaphore = new Semaphore(3); //3个空车位
+        for (int i = 1; i &lt; 10; i++) {
+            new Thread(() -&gt; {
+                try {
+                    semaphore.acquire();
+                    System.out.println(Thread.currentThread().getName() + &quot; get one place&quot;);
+                    TimeUnit.SECONDS.sleep(3);
+                    System.out.println(Thread.currentThread().getName() + &quot; leaving&quot;);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } finally {
+                    semaphore.release();
+                }
+            }, String.valueOf(i)).start();
+        }
+    }
+}
+</code></pre><h2 id="readwritelock">ReadWriteLock</h2>
+<p>读-读操作应该是可以共存的, 互相之间不用阻塞. 而读-写/写-写才应该阻塞. 这个情况下可以用<code>ReadWriteLock readWriteLock = new ReentrantReadWriteLock();</code>, 读写锁.</p>
+<pre><code>public class ReadWriteLockDemo {
+    public static void main(String[] args) {
+        MyCache myCache = new MyCache();
+        for (int i = 1; i &lt;= 5; i++) {
+            final int tempInt = i;
+            new Thread(()-&gt;{
+                myCache.put(tempInt+&quot;&quot;, tempInt+&quot;&quot;);
+            },String.valueOf(i)).start();
+        }
+        for (int i = 1; i &lt;= 5; i++) {
+            final int tempInt = i;
+            new Thread(()-&gt;{
+                myCache.get(tempInt + &quot;&quot;);
+            },String.valueOf(i)).start();
+        }
+    }
+}
+
+class MyCache {
+
+    private volatile Map&lt;String, Object&gt; map = new HashMap&lt;&gt;();
+    private ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
+
+    public void put(String key, Object value) {
+        readWriteLock.writeLock().lock();
+        try {
+            System.out.println(Thread.currentThread().getName() + &quot; start to write&quot; + key);
+            try {
+                TimeUnit.MICROSECONDS.sleep(300);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            map.put(key, value);
+            System.out.println(Thread.currentThread().getName() + &quot; finish write&quot;);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            readWriteLock.writeLock().unlock();
+        }
+    }
+
+    public void get(String key) {
+        readWriteLock.readLock().lock();
+        try {
+            System.out.println(Thread.currentThread().getName() + &quot; read data&quot;);
+            Object result = map.get(key);
+            System.out.println(Thread.currentThread().getName() + &quot; finish read&quot; + result);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            readWriteLock.readLock().unlock();
+        }
+    }
+}
+</code></pre><h2 id="blockingqueue">BlockingQueue</h2>
+<p>了解线程池之前要先搞懂阻塞队列. <code>BlockingQueue</code>是<code>Queue</code>的子接口. 可以控制阻塞队列的大小. 常用实现类有<code>ArrayBlockingQueue</code>(数组存储)和<code>LinkedBlockingDeque</code>(链表存储). <code>add(e)/remove()/element()</code>会报错, <code>offer(e)</code>会返回true or false, poll返回null. put(e)/take()会阻塞. <code>boolean offer(E e, long timeout, TimeUnit unit)/E poll(long timeout, TimeUnit unit)</code>可控制超时等待时间.</p>
+<h2 id="线程池">线程池</h2>
+<p>线程复用, 控制最大并发数, 管理线程. 下面的代码中, 即使循环到10, 但是始终只会有5个线程在跑.</p>
+<pre><code>public class ThreadPoolDemo {
+    public static void main(String[] args) {
+        ExecutorService threadPool = Executors.newFixedThreadPool(5); //1.多线程
+        //ExecutorService threadPool = Executors.newSingleThreadExecutor(); //2.一个线程
+        //ExecutorService threadPool = Executors.newCachedThreadPool(); //3.n线程, 可伸缩, 如果慢一点(加delay), 会发现线程数都减少了
+
+        try {
+            for (int i = 1; i &lt;= 10 ; i++) {
+                threadPool.execute(() -&gt; {
+                    System.out.println(Thread.currentThread().getName());
+                });
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            threadPool.shutdown();
+        }
+    }
+}
+</code></pre><p>而这三种方法底层都是调用了<code>ThreadPoolExecutor</code>, 看似是不同的构造器, 实际上最终都用了调用了<code>this(7个参数)</code>的按个构造器, 如下. (源码的@param解释得很清楚).</p>
+<pre><code>public ThreadPoolExecutor(int corePoolSize, //线程池中常驻核心线程数
+                            int maximumPoolSize, //线程池能同时容纳的最大线程数, 大于1
+                            long keepAliveTime, //多余空闲线程的存活时间, 如果线程数比核心线程大, 则超时的就要销毁, 直到达到corePoolSize
+                            TimeUnit unit, //keepAliveTime单位
+                            BlockingQueue&lt;Runnable&gt; workQueue, //被提交但是没有执行的任务
+                            ThreadFactory threadFactory, //生成线程的工厂
+                            RejectedExecutionHandler handler) { //the handler to use when execution is blocked, because the thread bounds and queue capacities are reached, 队列满了怎么拒绝新来的Runnable
+    if (corePoolSize &lt; 0 ||
+        maximumPoolSize &lt;= 0 ||
+        maximumPoolSize &lt; corePoolSize ||
+        keepAliveTime &lt; 0)
+        throw new IllegalArgumentException();
+    if (workQueue == null || threadFactory == null || handler == null)
+        throw new NullPointerException();
+    this.acc = System.getSecurityManager() == null ?
+            null :
+            AccessController.getContext();
+    this.corePoolSize = corePoolSize;
+    this.maximumPoolSize = maximumPoolSize;
+    this.workQueue = workQueue;
+    this.keepAliveTime = unit.toNanos(keepAliveTime);
+    this.threadFactory = threadFactory;
+    this.handler = handler;
+}
+</code></pre><ol>
+<li>创建线程池后, 等待请求.</li>
+<li><code>execute(Runnable command)</code>创建请求. 运行线程数小于corePoolSize-&gt;创建线程执行任务; 运行线程数大于等于corePoolSize-&gt;任务放入阻塞队列; 队列已满并且运行的线程数量小于maximumPoolSize, 创建非核心线程执行任务; 队列已满并且运行的线程数量大于等于maximumPoolSize-&gt;线程池启动饱和和拒绝策略在执行.</li>
+<li>当一个线程完成任务, 它会从队列中取下一个任务来执行.</li>
+<li>一个线程空闲时间超过keepAliveTime, 判断: 当前线程数大于corePoolSize, 扩容的线程数被停掉. 所以线程池完成任务后, 总会回到corePoolSize大小.</li>
+</ol>
+<p>而阿里开发手册要求只能用<code>ThreadPoolExecutor</code>自定义创建线程池. 因为<code>FixedThreadPool</code>和 <code>SingleThreadPool</code>允许的请求队列长度为<code>Integer.MAX_VALUE</code>, 可能会堆积大量的请求并导致OOM, CachedThreadPool允许的创建线程数量为Integer.MAX_VALUE, 可能会创建大量的线程并导致OOM.</p>
+<pre><code>public class ThreadPoolDemo {
+    public static void main(String[] args) {
+        ThreadPoolExecutor threadPool = new ThreadPoolExecutor(
+                2,
+                3,
+                2L,
+                TimeUnit.SECONDS,
+                new LinkedBlockingDeque&lt;&gt;(3), //原Integer.MAX_VALUE
+                Executors.defaultThreadFactory(),
+                new ThreadPoolExecutor.AbortPolicy());
+        try {
+            for (int i = 1; i &lt;= 10; i++) { //报错RejectedExecutionException
+                threadPool.execute(() -&gt; {
+                    System.out.println(Thread.currentThread().getName());
+                });
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            threadPool.shutdown();
+        }
+    }
+}
+</code></pre><p>上面代码用的<code>AbortPolicy()</code>报错, 因为7&gt;阻塞队列大小+maximumPoolSize. 有以下4种拒绝策略.</p>
+<ul>
+<li><code>AbortPolicy()</code>: RejectedExecutionException阻止运行</li>
+<li><code>CallerRunsPolicy()</code>: 将某任务回退给调用者, 也就说把任务回退给main, 让main去执行整个线程的任务</li>
+<li><code>DiscardOldestPolicy()</code>: 抛弃等待最久的任务</li>
+<li><code>DiscardPolicy</code>: 丢弃无法处理的任务, 不处理也不抛异常, 如果允许任务丢失吗, 这就是最好的策略</li>
+</ul>
+<blockquote>
+<p><code>Runtime.getRuntime().availableProcessors()</code>可以看到核心数量. CPU密集型一般maximumPoolSize=核心数+1, i/o密集型: CPU核数除以阻塞系数</p>
+</blockquote>
+<h2 id="分支合并框架">分支合并框架</h2>
+<p><code>ForkJoinPool</code>继承了<code>AbstractExecutorService</code>, <code>AbstractExecutorService</code>实现了<code>ExecutorService</code>. 下面代码是计算等差数列, 前半部分用t1计算, 后半部分t2计算.</p>
+<pre><code>public class ForkJoinDemo {
+    public static void main(String[] args) throws Exception {
+        MyTask myTask = new MyTask(0, 100);
+        ForkJoinPool threadPool = new ForkJoinPool();
+        ForkJoinTask&lt;Integer&gt; forkJoinTask = threadPool.submit(myTask);
+        System.out.println(forkJoinTask.get());
+        threadPool.shutdown();
+    }
+}
+
+class MyTask extends RecursiveTask&lt;Integer&gt; {
+
+    private static final Integer ADJUST_VALUE = 10;
+    private int begin, end, res;
+
+    public MyTask(int begin, int end) {
+        this.begin = begin;
+        this.end = end;
+    }
+
+    @Override
+    public Integer compute() {
+        if ((end - begin) &lt;= ADJUST_VALUE) {
+            for (int i = begin; i &lt;= end; i++) {
+                res = res + i;
+            }
+        } else {
+            int middle = (end + begin) / 2;
+            MyTask t1 = new MyTask(begin, middle);
+            MyTask t2 = new MyTask(middle + 1, end);
+            t1.fork();
+            t2.fork();
+            res = t1.join() + t2.join();
+        }
+        return res;
+    }
+}
+</code></pre><h2 id="异步回调">异步回调</h2>
+<pre><code>public class CompletableFutureDemo {
+    public static void main(String[] args) throws Exception{
+        CompletableFuture&lt;Void&gt; completableFuture = CompletableFuture.runAsync(() -&gt; {
+            System.out.println(Thread.currentThread().getName() + &quot; no return.&quot;);
+        });
+        completableFuture.get();
+        CompletableFuture&lt;Integer&gt; completableFuture2 = CompletableFuture.supplyAsync(() -&gt; { //异步调用
+            System.out.println(Thread.currentThread().getName() + &quot; has return&quot;);
+            //int a = 10/0; //产生异常
+            return 233; //正常返回
+        });
+
+        System.out.println(completableFuture2.whenComplete((t, u) -&gt; {
+           System.out.println(&quot;t: &quot;+t); //正常打印
+           System.out.println(&quot;u: &quot;+u); //异常打印
+        }).exceptionally(f -&gt; { //异常
+            System.out.println(&quot;exception: &quot;+f.getMessage());
+            return 2333; //异常返回
+        }).get());
+    }
+}
+</code></pre><h2 id="参考">参考</h2>
+<ol>
+<li>Java核心技术</li>
+<li><a href="https://www.bilibili.com/video/BV1vE411D7KE?p=39">juc与并发编程</a></li>
+<li>Java并发编程实战</li>
+</ol>
+
+
+                
+
+                
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/post/45_java%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80/" data-toggle="tooltip" data-placement="top" title="Java多线程-基础">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/post/1_%E5%89%91%E6%8C%87offer/" data-toggle="tooltip" data-placement="top" title="剑指offer">Next
+                            Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+                
+
+                
+
+
+<div id="disqus-comment"></div>
+<div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "xqt01" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+            </div>
+
+            
+            
+            <div class="
+                col-lg-2 col-lg-offset-0
+                visible-lg-block
+                sidebar-container
+                catalog-container">
+                <div class="side-catalog">
+                    <hr class="hidden-sm hidden-xs">
+                    <h5>
+                        <a class="catalog-toggle" href="#">CATALOG</a>
+                    </h5>
+                    <ul class="catalog-body"></ul>
+                </div>
+            </div>
+            
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/java" title="java">
+                            java
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/jvm" title="jvm">
+                            jvm
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/spring" title="spring">
+                            spring
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E5%89%8D%E7%AB%AF" title="前端">
+                            前端
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F" title="操作系统">
+                            操作系统
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93" title="数据库">
+                            数据库
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95" title="数据结构与算法">
+                            数据结构与算法
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B" title="网络编程">
+                            网络编程
+                        </a>
+                        
+                        
+                    </div>
+                </section>
+                
+
+                
+                
+                <section>
+                    <hr>
+                    <h5>FRIENDS</h5>
+                    <ul class="list-inline">
+                        
+                        <li><a target="_blank" href="https://fan-bu-fan.github.io/">FELL &amp; ENJOY</a></li>
+                        
+                    </ul>
+                </section>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">                  
+                    
+                    <li>
+                        <a href="mailto:huanruiz@foxmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		           
+                    
+                    
+                    
+                    
+
+		            
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/xqt01">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		            
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+            
+            
+            
+           
+                   <li>
+                       <a href='' rel="alternate" type="application/rss+xml" title="PunchCode" >
+                           <span class="fa-stack fa-lg">
+                               <i class="fas fa-circle fa-stack-2x"></i>
+                               <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                           </span>
+                       </a>
+                   </li>
+            
+             </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; PunchCode 2024
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function loadAsync(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        loadAsync("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    loadAsync("https://cdn.jsdelivr.net/npm/fastclick@1.0.6/lib/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+    function generateCatalog(selector) {
+
+        
+        
+        
+        
+            _containerSelector = 'div.post-container'
+        
+
+        
+        var P = $(_containerSelector), a, n, t, l, i, c;
+        a = P.find('h1,h2,h3,h4,h5,h6');
+
+        
+        $(selector).html('')
+
+        
+        a.each(function () {
+            n = $(this).prop('tagName').toLowerCase();
+            i = "#" + $(this).prop('id');
+            t = $(this).text();
+            c = $('<a href="' + i + '" rel="nofollow">' + t + '</a>');
+            l = $('<li class="' + n + '_nav"></li>').append(c);
+            $(selector).append(l);
+        });
+        return true;
+    }
+
+    generateCatalog(".catalog-body");
+
+    
+    $(".catalog-toggle").click((function (e) {
+        e.preventDefault();
+        $('.side-catalog').toggleClass("fold")
+    }))
+
+    
+
+
+    loadAsync("\/js\/jquery.nav.js", function () {
+        $('.catalog-body').onePageNav({
+            currentClass: "active",
+            changeHash: !1,
+            easing: "swing",
+            filter: "",
+            scrollSpeed: 700,
+            scrollOffset: 0,
+            scrollThreshold: .2,
+            begin: null,
+            end: null,
+            scrollChange: null,
+            padding: 80
+        });
+    });
+</script>
+
+
+
+
+
+
+</body>
+</html>

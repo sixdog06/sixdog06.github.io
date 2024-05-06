@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>CSAPP on PunchCode</title>
+    <link>https://xqt01.github.io/tags/csapp/</link>
+    <description>Recent content in CSAPP on PunchCode</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Wed, 28 Dec 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://xqt01.github.io/tags/csapp/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>CSAPP-123讲</title>
+      <link>https://xqt01.github.io/post/84_csapp123/</link>
+      <pubDate>Wed, 28 Dec 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/84_csapp123/</guid>
+      <description>1_Overview 第一节课几乎没有讲任何的知识, 只是单纯地介绍了这节课, 老师是Bryant和O’Hallaron, CSAPP原书的作者. 这门课的前置要求是会</description>
+    </item>
+    
+  </channel>
+</rss>

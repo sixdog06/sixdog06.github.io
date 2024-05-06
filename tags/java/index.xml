@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Java on PunchCode</title>
+    <link>https://xqt01.github.io/tags/java/</link>
+    <description>Recent content in Java on PunchCode</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Sat, 05 Nov 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://xqt01.github.io/tags/java/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Java Concurrency in Practice Chapter7-Cancellation and Shutdown</title>
+      <link>https://xqt01.github.io/post/83_java_concurrency_in_practice_chapter7/</link>
+      <pubDate>Sat, 05 Nov 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/83_java_concurrency_in_practice_chapter7/</guid>
+      <description>7.1 Task cancellation e.g. PrimeGenerator是一个质数生成器, 通过调用aSecondOfPrimes方法, 实现在1秒延迟后取消质数生成. 看起来没有什</description>
+    </item>
+    
+    <item>
+      <title>Java Concurrency in Practice Chapter6-Task Execution</title>
+      <link>https://xqt01.github.io/post/81_java_concurrency_in_practice_chapter6/</link>
+      <pubDate>Mon, 07 Mar 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/81_java_concurrency_in_practice_chapter6/</guid>
+      <description>一个大型的应用通常是一个个的任务组成的, 这个Chapter就讲怎么设计一个线程安全的任务. 6.1-Executing tasks in threads 如果串行执行任务, 性能很差, 不适合web服</description>
+    </item>
+    
+    <item>
+      <title>Java Concurrency in Practice Chapter5-Building Blocks</title>
+      <link>https://xqt01.github.io/post/80_java_concurrency_in_practice_chapter5/</link>
+      <pubDate>Sat, 05 Feb 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/80_java_concurrency_in_practice_chapter5/</guid>
+      <description>上一章讲如何设计线程安全类, 这一章就介绍JDK中已有的线程安全类, 把线程安全性委托给这些类, 并让这些类区管理所有的状态, 从而使模块线程安全.</description>
+    </item>
+    
+    <item>
+      <title>Java Concurrency in Practice Chapter4-Composing Objects</title>
+      <link>https://xqt01.github.io/post/79_java_concurrency_in_practice_chapter4/</link>
+      <pubDate>Tue, 01 Feb 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/79_java_concurrency_in_practice_chapter4/</guid>
+      <description>这一章介绍一些组合模式, 让我们把一个类设计成线程安全的类, 避免在每一次访问内存时都要去分析线程安全性, 平切在维护这些类时不会破坏线程安全性.</description>
+    </item>
+    
+    <item>
+      <title>Java Concurrency in Practice Chapter3-Sharing Objects</title>
+      <link>https://xqt01.github.io/post/78_java_concurrency_in_practice_chapter3/</link>
+      <pubDate>Sun, 30 Jan 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/78_java_concurrency_in_practice_chapter3/</guid>
+      <description>这一章主要讲如何安全地共享资源, 来保证线程安全性. 换个角度理解这句话, 如果资源不被共享, 那么也能保证线程安全. Visibility 没有同步机制, 两个线程的执行</description>
+    </item>
+    
+    <item>
+      <title>Java Concurrency in Practice Chapter2-Thread Safety</title>
+      <link>https://xqt01.github.io/post/77_java_concurrency_in_practice_chapter2/</link>
+      <pubDate>Sat, 29 Jan 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/77_java_concurrency_in_practice_chapter2/</guid>
+      <description>这一节主要介绍线程安全的一些基本概念, 解释一些基本名词. 写线程安全的并发代码, 关键就是在访问共享资源时做好管理. Atomicity 在不同的线程访问一个资源时</description>
+    </item>
+    
+    <item>
+      <title>Effective Java Chapter9&amp;10-General Programming&amp;Exceptions</title>
+      <link>https://xqt01.github.io/post/75_effective_java_chapter9_10/</link>
+      <pubDate>Thu, 20 Jan 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/75_effective_java_chapter9_10/</guid>
+      <description>这是Effective Java第九和第十章的总结, 讲如何编程. 项目链接JavaLab. Item 57: Minimize the scope of local variables 减少局部变量的scope, 比如循环遍历</description>
+    </item>
+    
+    <item>
+      <title>Effective Java Chapter8-Methods</title>
+      <link>https://xqt01.github.io/post/74_effective_java_chapter8/</link>
+      <pubDate>Mon, 17 Jan 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/74_effective_java_chapter8/</guid>
+      <description>这是Effective Java第八章的总结, 讲如何设计方法, 个构造器原则一样, 考虑usability, robustness, flexibility. 项目链接JavaLab. Item 49: Check parameters for</description>
+    </item>
+    
+    <item>
+      <title>Java中toMap与asList的坑</title>
+      <link>https://xqt01.github.io/post/72_java%E4%B8%ADtomap%E4%B8%8Easlist%E7%9A%84%E5%9D%91/</link>
+      <pubDate>Thu, 30 Dec 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/72_java%E4%B8%ADtomap%E4%B8%8Easlist%E7%9A%84%E5%9D%91/</guid>
+      <description>工作中遇到了两个坑, 讲述一下心路历程. toMap 写stream的时候有时会用到toMap来把某个实体的两个字段做一个映射关系. 简单的模拟如下, 没有任</description>
+    </item>
+    
+    <item>
+      <title>Effective Java Chapter7-Lambdas and Streams</title>
+      <link>https://xqt01.github.io/post/73_effective_java_chapter7/</link>
+      <pubDate>Wed, 29 Dec 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/73_effective_java_chapter7/</guid>
+      <description>这是Effective Java第七章的总结, 讲Lambdas和Streams这两个在Java8中经常使用的特性. 项目链接JavaLab. Item 42:</description>
+    </item>
+    
+    <item>
+      <title>Effective Java Chapter6-Enums and Annotations</title>
+      <link>https://xqt01.github.io/post/71_effective_java_chapter6/</link>
+      <pubDate>Tue, 28 Dec 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/71_effective_java_chapter6/</guid>
+      <description>这是Effective Java第六章的总结, 讲枚举类和注解. 项目链接JavaLab. Item 34: Use enums instead of int constants 当需要int常量(static final int)</description>
+    </item>
+    
+    <item>
+      <title>Effective Java Chapter5-Generics</title>
+      <link>https://xqt01.github.io/post/70_effective_java_chapter5/</link>
+      <pubDate>Tue, 14 Dec 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/70_effective_java_chapter5/</guid>
+      <description>这是Effective Java第五章的总结, 讲泛型. 项目链接JavaLab. Item 26: Don’t use raw types 在集合中不要用raw types, 写集合带钻石符号, 避免</description>
+    </item>
+    
+    <item>
+      <title>Effective Java Chapter4-Classes and Interfaces</title>
+      <link>https://xqt01.github.io/post/69_effective_java_chapter4/</link>
+      <pubDate>Sun, 28 Nov 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/69_effective_java_chapter4/</guid>
+      <description>这是Effective Java第四章的总结, 讲如何设计Java Class和Interfaces, 这是我们写Java去抽象逻辑的核心. 项目链接</description>
+    </item>
+    
+    <item>
+      <title>Effective Java Chapter3-Methods Common to All Objects</title>
+      <link>https://xqt01.github.io/post/67_effective_java_chapter3/</link>
+      <pubDate>Tue, 16 Nov 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/67_effective_java_chapter3/</guid>
+      <description>这是Effective Java第三章的总结, 将如何override Object类的方法, 以及Comparable.compareTo这个类似</description>
+    </item>
+    
+    <item>
+      <title>Effective Java Chapter2-Creating and Destroying Objects</title>
+      <link>https://xqt01.github.io/post/66_effective_java_chapter2/</link>
+      <pubDate>Mon, 08 Nov 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/66_effective_java_chapter2/</guid>
+      <description>这是Effective Java第二章的总结, 主要涵盖对象的创建和销毁. Item 1: Consider static factory methods instead of constructors 这个建议和设计模式中的工厂方法不是一个东西, 这里指当</description>
+    </item>
+    
+    <item>
+      <title>润一润我们的Java代码</title>
+      <link>https://xqt01.github.io/post/62_%E6%B6%A6%E4%B8%80%E6%B6%A6%E6%88%91%E4%BB%AC%E7%9A%84java%E4%BB%A3%E7%A0%81/</link>
+      <pubDate>Sun, 15 Aug 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/62_%E6%B6%A6%E4%B8%80%E6%B6%A6%E6%88%91%E4%BB%AC%E7%9A%84java%E4%BB%A3%E7%A0%81/</guid>
+      <description>作为一个代码强迫症加代码外貌协会, 写代码的时候总会想提高代码可读性, 不管性能怎么样, 至少要长得好看. 后来又看到有推友的mentor说: &amp;ld</description>
+    </item>
+    
+    <item>
+      <title>Java的基本类型</title>
+      <link>https://xqt01.github.io/post/60_java%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%B1%BB%E5%9E%8B/</link>
+      <pubDate>Sun, 08 Aug 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/60_java%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%B1%BB%E5%9E%8B/</guid>
+      <description>在刚结束的培训项目中需要把几个指标落库, 我想当然的以为int那21亿的范围应该已经够用了, 结果项目发布后报了一堆out of range. 我发现自己对最最基</description>
+    </item>
+    
+    <item>
+      <title>Redis入门</title>
+      <link>https://xqt01.github.io/post/53_redis%E5%85%A5%E9%97%A8/</link>
+      <pubDate>Tue, 15 Jun 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/53_redis%E5%85%A5%E9%97%A8/</guid>
+      <description>NoSQL方便扩展, 因为不像关系型数据库中的数据, 互相之间会有关联. 性能高, 而且数据类型多种多样, 不用提前设计. Redis代表Remote Dictionary</description>
+    </item>
+    
+    <item>
+      <title>JavaWeb-MVC/过滤器/监听器</title>
+      <link>https://xqt01.github.io/post/50_javaweb_mvc_%E8%BF%87%E6%BB%A4%E5%99%A8%E7%9B%91%E5%90%AC%E5%99%A8/</link>
+      <pubDate>Mon, 31 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/50_javaweb_mvc_%E8%BF%87%E6%BB%A4%E5%99%A8%E7%9B%91%E5%90%AC%E5%99%A8/</guid>
+      <description>MVC三层架构 MVC: Controller专注于业务处理, 它的处理结果就是Model. Model可以是一个JavaBean(pojo), 也可以是一</description>
+    </item>
+    
+    <item>
+      <title>JavaWeb-Cookie/Session</title>
+      <link>https://xqt01.github.io/post/49_javaweb_cookie_session/</link>
+      <pubDate>Mon, 24 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/49_javaweb_cookie_session/</guid>
+      <description>cookie: 客户端技术(响应/请求), session: 服务器技术, 把信息或数据放在session中. 都是保存会话的技术. 现实中的例子就是已经登陆的网站, 下次可以直接</description>
+    </item>
+    
+    <item>
+      <title>JavaWeb-Servlet</title>
+      <link>https://xqt01.github.io/post/48_javaweb_servlet/</link>
+      <pubDate>Fri, 14 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/48_javaweb_servlet/</guid>
+      <description>原理 其中首次访问指创建war包的过程, service方法定义在Servlet接口中. 实验 在MVN repository中找Java Servlet API/jsp api, 导入m</description>
+    </item>
+    
+    <item>
+      <title>JavaWeb-Tomcat/Maven及其配置</title>
+      <link>https://xqt01.github.io/post/47_javaweb_tomcatmaven%E5%8F%8A%E5%85%B6%E9%85%8D%E7%BD%AE/</link>
+      <pubDate>Mon, 10 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/47_javaweb_tomcatmaven%E5%8F%8A%E5%85%B6%E9%85%8D%E7%BD%AE/</guid>
+      <description>Web服务器 静态web的客户端直接从服务器下文件, 像我的这个博客一样, 没法动态更新. 而动态web中, 服务器可以提供动态的资源, 可以连接数据库</description>
+    </item>
+    
+    <item>
+      <title>Java String</title>
+      <link>https://xqt01.github.io/post/19_java_string/</link>
+      <pubDate>Thu, 11 Mar 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/19_java_string/</guid>
+      <description>在面试中遇到了一个问题: Java String是线程安全的吗? 我刚开始回答它是不安全的, 因为方法都没有加synchronized, 后来被面试官引导到</description>
+    </item>
+    
+    <item>
+      <title>Java Collection</title>
+      <link>https://xqt01.github.io/post/18_java%E9%9B%86%E5%90%88%E7%B1%BB/</link>
+      <pubDate>Fri, 08 Jan 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/18_java%E9%9B%86%E5%90%88%E7%B1%BB/</guid>
+      <description>Collection Framework 首先根据图片感受一下整个collection的架构. Iterator Interface Collection接口扩展了Iterable接口, 目的还是为了操作其中的Ite</description>
+    </item>
+    
+    <item>
+      <title>Java多线程-高级</title>
+      <link>https://xqt01.github.io/post/46_java%E5%A4%9A%E7%BA%BF%E7%A8%8B%E9%AB%98%E7%BA%A7/</link>
+      <pubDate>Thu, 10 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/46_java%E5%A4%9A%E7%BA%BF%E7%A8%8B%E9%AB%98%E7%BA%A7/</guid>
+      <description>继续卖票 高内聚低耦合, 线程操作资源类. 操作指线程对外暴露的调用方法(高内聚). 线程之间低耦合. public class SaleTicket { public static void main(String[] args) { Ticket ticket = new Ticket(); new Thread(new Runnable() { @Override public void run()</description>
+    </item>
+    
+    <item>
+      <title>Java多线程-基础</title>
+      <link>https://xqt01.github.io/post/45_java%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80/</link>
+      <pubDate>Mon, 30 Nov 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/45_java%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80/</guid>
+      <description>创建 方式1 创建继承Thread类的子类 重写Thread类的run() 创建Thread类的子类的对象 通过此对象调用start() public class ThreadBase { public static void</description>
+    </item>
+    
+    <item>
+      <title>Java如何自定义排序</title>
+      <link>https://xqt01.github.io/post/17_java%E5%A6%82%E4%BD%95%E8%87%AA%E5%AE%9A%E4%B9%89%E6%8E%92%E5%BA%8F/</link>
+      <pubDate>Wed, 14 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/17_java%E5%A6%82%E4%BD%95%E8%87%AA%E5%AE%9A%E4%B9%89%E6%8E%92%E5%BA%8F/</guid>
+      <description>Comparable接口 自定义的类自定义排序需要implementsComparable并且重写public int compareTo(Object o) String等包装类实现了</description>
+    </item>
+    
+  </channel>
+</rss>

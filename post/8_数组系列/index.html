@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="PunchCode">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://xqt01.github.io/front.png">
+    <meta property="twitter:image" content="https://xqt01.github.io/front.png" />
+    
+
+    
+    <meta name="title" content="数据结构与算法-数组系列" />
+    <meta property="og:title" content="数据结构与算法-数组系列" />
+    <meta property="twitter:title" content="数据结构与算法-数组系列" />
+    
+
+    
+    <meta name="description" content="Software Engineer">
+    <meta property="og:description" content="Software Engineer" />
+    <meta property="twitter:description" content="Software Engineer" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="Harry, 小拳头">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>数据结构与算法-数组系列 | 以终为始</title>
+
+    <link rel="canonical" href="/post/8_%E6%95%B0%E7%BB%84%E7%B3%BB%E5%88%97/">
+
+    
+    
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hugo-theme-cleanwhite.min.css">
+
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+
+    
+    <link href="https://cdn.jsdelivr.net/gh/FortAwesome/Font-Awesome@5.15.1/css/all.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    
+    <script src="/js/jquery.min.js"></script>
+
+    
+    <script src="/js/bootstrap.min.js"></script>
+
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+
+</head>
+
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">PunchCode</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">All Posts</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/tech">tech</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0">学习笔记</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/%E6%9D%82%E8%B0%88">杂谈</a>
+                        </li>
+                        
+                    
+                    
+		    
+                        <li><a href="/top/archive/">ARCHIVE</a></li>
+                    
+                        <li><a href="/top/about/">ABOUT</a></li>
+                    
+
+                    
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/front.png')
+    }
+</style>
+
+<header class="intro-header" >
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95" title="数据结构与算法">
+                            数据结构与算法
+                        </a>
+                        
+                    </div>
+                    <h1>数据结构与算法-数组系列</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        
+                            Posted by 
+                            
+                                小拳头
+                             
+                            on 
+                            Monday, January 4, 2021
+                            
+                            
+                            
+                            
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <h2 id="naive双指针">naive双指针</h2>
+<h3 id="26-删除排序数组中的重复项">26. 删除排序数组中的重复项</h3>
+<p>快慢指针, <code>fast != slow</code>就可以把slow的下一个重复的值删掉.</p>
+<pre><code>class Solution {
+    public int removeDuplicates(int[] nums) {
+        if (nums.length == 0) return 0;
+        int slow = 0, fast = 0;
+        while (fast &lt; nums.length) {
+            if (nums[fast] != nums[slow]) {
+                    slow++;
+                    nums[slow] = nums[fast];
+            }
+            fast++;
+        }
+        return slow + 1;
+    }
+}
+</code></pre><h3 id="83-删除排序链表中的重复元素">83. 删除排序链表中的重复元素</h3>
+<p>可以用类似26题的方法做.</p>
+<pre><code>class Solution {
+    public ListNode deleteDuplicates(ListNode head) {
+        if (head == null) return head;
+        ListNode slow = head, fast = head;
+        while (fast != null) {
+            if (slow.val != fast.val) {
+                slow = slow.next;
+                slow.val = fast.val;
+            }
+            fast = fast.next;
+        }
+        slow.next = null;
+        return head;
+    }
+}
+</code></pre><h3 id="27-移除元素">27. 移除元素</h3>
+<p>如果fast的值等于<code>val</code>, 直接跳过, 否则就将这个值赋值给slow.</p>
+<pre><code>class Solution {
+    public int removeElement(int[] nums, int val) {
+        if (nums.length == 0) return 0;
+        int slow = 0, fast = 0;
+        while (fast &lt; nums.length) {
+            if (nums[fast] != val) {
+                nums[slow++] = nums[fast];
+            }
+            fast++;
+        }
+        return slow;
+    }
+}
+</code></pre><h3 id="283-移动零">283. 移动零</h3>
+<p>和27题类似, 只是多了把slow后面的值都赋值成0的操作.</p>
+<pre><code>class Solution {
+    public void moveZeroes(int[] nums) {
+        if (nums.length == 0) return;
+        int slow = 0, fast = 0;
+        while (fast &lt; nums.length) {
+            if (nums[fast] != 0) {
+                nums[slow++] = nums[fast];
+            }
+            fast++;
+        }
+        while (slow &lt; nums.length) {
+            nums[slow++] = 0;
+        }
+    }
+}
+</code></pre><h2 id="滑动窗口-子串问题">滑动窗口-子串问题</h2>
+<h3 id="76-最小覆盖子串">76. 最小覆盖子串</h3>
+<p>根据框架来写, 重要的参数除了左右指针就是valid的个数. 左右指针实际对应的是index, 所以我们是用的区间都是左闭右开的.</p>
+<pre><code>class Solution {
+    public String minWindow(String s, String t) {
+        int left = 0, right = 0;
+        int valid = 0;
+        HashMap&lt;Character, Integer&gt; need = new HashMap&lt;&gt;(), window = new HashMap&lt;&gt;();
+
+        for (int i = 0; i &lt; t.length(); i++) {
+            need.put(t.charAt(i), need.getOrDefault(t.charAt(i), 0) + 1);
+        }
+
+        int start = 0, len = s.length() + 1;
+        while (right &lt; s.length()) {
+            char c = s.charAt(right);
+            right++; //区间左闭右开
+            if (need.getOrDefault(c, 0) &gt; 0) {
+                window.put(c, window.getOrDefault(c, 0) + 1);
+                if (window.get(c).equals(need.get(c))) valid++; //Integer比较
+            }
+            while (valid == need.size()) { //要收缩区间
+                if (right - left &lt; len) {
+                    start = left; //先记录当前的最优起始值
+                    len = right - start;
+                }
+                char d = s.charAt(left);
+                left++;
+                if (need.getOrDefault(d, 0) &gt; 0) {
+                    if (window.get(d).equals(need.get(d))) {
+                        valid--;
+                    }
+                    window.put(d, window.get(d) - 1);
+                }
+            }
+        }
+        return len == s.length() + 1 ? &quot;&quot; : s.substring(start, start+len);
+    }
+}
+</code></pre><h3 id="567-字符串的排列">567. 字符串的排列</h3>
+<p>收缩区间的条件改变, 因为题目中要求的是子串, 必须是连续的</p>
+<pre><code>class Solution {
+    public boolean checkInclusion(String s1, String s2) {
+        int left = 0, right = 0;
+        int valid = 0;
+        HashMap&lt;Character, Integer&gt; window = new HashMap&lt;&gt;(), need = new HashMap&lt;&gt;();
+        for (int i = 0; i &lt; s1.length(); i++) {
+            need.put(s1.charAt(i), need.getOrDefault(s1.charAt(i), 0) + 1);
+        }
+        while (right &lt; s2.length()) {
+            char c = s2.charAt(right++);
+            if (need.getOrDefault(c, 0) &gt; 0) {
+                window.put(c, window.getOrDefault(c, 0) + 1);
+                if (window.get(c).equals(need.get(c))) valid++;
+            }
+            while (right - left &gt;= s1.length()) {
+                if (valid == need.size()) return true; //只要满足条件就会收缩, 所以if中一定满足长度相同
+                char d = s2.charAt(left++);
+                if (need.getOrDefault(d, 0) &gt; 0) {
+                    if (window.get(d).equals(need.get(d))) valid--;
+                    window.put(d, window.get(d) - 1);
+                }
+            }
+        }
+        return false;
+    }
+}
+</code></pre><h3 id="438-找到字符串中所有字母异位词">438. 找到字符串中所有字母异位词</h3>
+<p>同上.</p>
+<pre><code>class Solution {
+    public List&lt;Integer&gt; findAnagrams(String s, String p) {
+        int left = 0, right = 0;
+        int valid = 0;
+        HashMap&lt;Character, Integer&gt; need = new HashMap&lt;&gt;(), window = new HashMap&lt;&gt;();
+        List&lt;Integer&gt; res = new LinkedList&lt;&gt;();
+        for (int i = 0; i &lt; p.length(); i++) need.put(p.charAt(i), need.getOrDefault(p.charAt(i), 0) + 1);
+
+        while (right &lt; s.length()) {
+            char c = s.charAt(right++);
+            if (need.getOrDefault(c, 0) &gt; 0) {
+                window.put(c, window.getOrDefault(c, 0) + 1);
+                if (need.get(c).equals(window.get(c))) valid++;
+            }
+            while (right - left &gt;= p.length()) {
+                if (valid == need.size()) res.add(left);
+                char d = s.charAt(left++);
+                if (need.getOrDefault(d, 0) &gt; 0) {
+                    if (need.get(d).equals(window.get(d)))
+                        valid--;
+                    window.put(d, window.get(d) - 1);
+                }
+            }
+        }
+        return res;
+    }
+}
+</code></pre><h3 id="3-无重复字符的最长子串">3. 无重复字符的最长子串</h3>
+<p>无重复本身相当于代替了之前几道题的<code>need</code>条件, 最后计算<code>res</code>要在left滑动之后才满足条件. 始终记住区间是<strong>左闭右开</strong>的, 所以结果的长度并不用加1(之前加过了).</p>
+<pre><code>class Solution {
+    public int lengthOfLongestSubstring(String s) {
+        int res = 0;
+        int left = 0, right = 0;
+        HashMap&lt;Character, Integer&gt; window = new HashMap&lt;&gt;();
+        while (right &lt; s.length()) {
+            char c = s.charAt(right++);
+            window.put(c, window.getOrDefault(c, 0) + 1);
+            while (window.get(c) &gt; 1) {
+                char d = s.charAt(left++);
+                window.put(d, window.get(d) - 1);
+            }
+            res = Math.max(res, right - left);
+        }
+        return res;
+    }
+}
+</code></pre><h2 id="参考">参考</h2>
+<ol>
+<li><a href="https://mp.weixin.qq.com/s/1221AWsL7G89RtaHyHjRPNJENA">labuladong算法-数组</a></li>
+<li><a href="https://www.bilibili.com/video/BV15441117yb">大雪菜LeetCode暑期刷题打卡2019—Week6 滑动窗口/双指针/单调队列和单调栈</a></li>
+<li><a href="https://leetcode-cn.com">leetcode</a></li>
+<li><a href="https://www.acwing.com/problem/">acwing</a></li>
+</ol>
+
+
+                
+
+                
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/post/7_%E6%A0%88%E9%98%9F%E5%88%97%E5%A0%86/" data-toggle="tooltip" data-placement="top" title="栈队列堆">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/post/18_java%E9%9B%86%E5%90%88%E7%B1%BB/" data-toggle="tooltip" data-placement="top" title="Java Collection">Next
+                            Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+                
+
+                
+
+
+<div id="disqus-comment"></div>
+<div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "xqt01" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+            </div>
+
+            
+            
+            <div class="
+                col-lg-2 col-lg-offset-0
+                visible-lg-block
+                sidebar-container
+                catalog-container">
+                <div class="side-catalog">
+                    <hr class="hidden-sm hidden-xs">
+                    <h5>
+                        <a class="catalog-toggle" href="#">CATALOG</a>
+                    </h5>
+                    <ul class="catalog-body"></ul>
+                </div>
+            </div>
+            
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/java" title="java">
+                            java
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/jvm" title="jvm">
+                            jvm
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/spring" title="spring">
+                            spring
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E5%89%8D%E7%AB%AF" title="前端">
+                            前端
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F" title="操作系统">
+                            操作系统
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93" title="数据库">
+                            数据库
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95" title="数据结构与算法">
+                            数据结构与算法
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B" title="网络编程">
+                            网络编程
+                        </a>
+                        
+                        
+                    </div>
+                </section>
+                
+
+                
+                
+                <section>
+                    <hr>
+                    <h5>FRIENDS</h5>
+                    <ul class="list-inline">
+                        
+                        <li><a target="_blank" href="https://fan-bu-fan.github.io/">FELL &amp; ENJOY</a></li>
+                        
+                    </ul>
+                </section>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">                  
+                    
+                    <li>
+                        <a href="mailto:huanruiz@foxmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		           
+                    
+                    
+                    
+                    
+
+		            
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/xqt01">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		            
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+            
+            
+            
+           
+                   <li>
+                       <a href='' rel="alternate" type="application/rss+xml" title="PunchCode" >
+                           <span class="fa-stack fa-lg">
+                               <i class="fas fa-circle fa-stack-2x"></i>
+                               <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                           </span>
+                       </a>
+                   </li>
+            
+             </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; PunchCode 2024
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function loadAsync(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        loadAsync("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    loadAsync("https://cdn.jsdelivr.net/npm/fastclick@1.0.6/lib/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+    function generateCatalog(selector) {
+
+        
+        
+        
+        
+            _containerSelector = 'div.post-container'
+        
+
+        
+        var P = $(_containerSelector), a, n, t, l, i, c;
+        a = P.find('h1,h2,h3,h4,h5,h6');
+
+        
+        $(selector).html('')
+
+        
+        a.each(function () {
+            n = $(this).prop('tagName').toLowerCase();
+            i = "#" + $(this).prop('id');
+            t = $(this).text();
+            c = $('<a href="' + i + '" rel="nofollow">' + t + '</a>');
+            l = $('<li class="' + n + '_nav"></li>').append(c);
+            $(selector).append(l);
+        });
+        return true;
+    }
+
+    generateCatalog(".catalog-body");
+
+    
+    $(".catalog-toggle").click((function (e) {
+        e.preventDefault();
+        $('.side-catalog').toggleClass("fold")
+    }))
+
+    
+
+
+    loadAsync("\/js\/jquery.nav.js", function () {
+        $('.catalog-body').onePageNav({
+            currentClass: "active",
+            changeHash: !1,
+            easing: "swing",
+            filter: "",
+            scrollSpeed: 700,
+            scrollOffset: 0,
+            scrollThreshold: .2,
+            begin: null,
+            end: null,
+            scrollChange: null,
+            padding: 80
+        });
+    });
+</script>
+
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="PunchCode">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://xqt01.github.io/front.png">
+    <meta property="twitter:image" content="https://xqt01.github.io/front.png" />
+    
+
+    
+    <meta name="title" content="操作系统-内存管理" />
+    <meta property="og:title" content="操作系统-内存管理" />
+    <meta property="twitter:title" content="操作系统-内存管理" />
+    
+
+    
+    <meta name="description" content="Software Engineer">
+    <meta property="og:description" content="Software Engineer" />
+    <meta property="twitter:description" content="Software Engineer" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="Harry, 小拳头">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>操作系统-内存管理 | 以终为始</title>
+
+    <link rel="canonical" href="/post/23_%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F_%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/">
+
+    
+    
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hugo-theme-cleanwhite.min.css">
+
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+
+    
+    <link href="https://cdn.jsdelivr.net/gh/FortAwesome/Font-Awesome@5.15.1/css/all.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    
+    <script src="/js/jquery.min.js"></script>
+
+    
+    <script src="/js/bootstrap.min.js"></script>
+
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+
+</head>
+
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">PunchCode</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">All Posts</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/tech">tech</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0">学习笔记</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/%E6%9D%82%E8%B0%88">杂谈</a>
+                        </li>
+                        
+                    
+                    
+		    
+                        <li><a href="/top/archive/">ARCHIVE</a></li>
+                    
+                        <li><a href="/top/about/">ABOUT</a></li>
+                    
+
+                    
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/front.png')
+    }
+</style>
+
+<header class="intro-header" >
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F" title="操作系统">
+                            操作系统
+                        </a>
+                        
+                    </div>
+                    <h1>操作系统-内存管理</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        
+                            Posted by 
+                            
+                                小拳头
+                             
+                            on 
+                            Sunday, October 11, 2020
+                            
+                            
+                            
+                            
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <h2 id="内存使用与分段">内存使用与分段</h2>
+<p>回顾冯诺依曼的取址执行, 计算机取址执行, 也就是<strong>将程序(从磁盘)放到内存中,PC指向开始地址</strong>. 如果有下面的代码, <code>call 40</code>所在的位置是0地址, <code>_main</code>所在的位置是40, 那么<code>call 40</code>就调用了<code>_main</code>所对应的指令. 然而这要求IP指针最初指向的<code>call 40</code>就在0, 显然不灵活, 所以程序中的地址<code>40</code>应该是相对(逻辑)地址. 在执行时, 会修改程序中的地址, 使其成为物理地址, 这就是<strong>重定位</strong>. 如果在<strong>编译时重定位</strong>的程序只能放在内存固定位置, 防止某段地址在编译后被使用了, <strong>载入时重定位的程序</strong>一旦载入内存就不能动了, 把相对地址加上空闲内存的基值, 这就更加灵活了.</p>
+<pre><code>...
+_main: mov [300], 0
+...
+call xx
+call 40
+</code></pre><p>为了充分利用内存, 进程会在内存和磁盘中<strong>交换(swap)</strong>, 也就是说即使程序已经载入了, 他们的物理地址还是会改变的, 所以重定位最合适的时机应该是<strong>运行时重定位(地址翻译)</strong>.
+
+  <img src="/23_1.png" alt="">
+
+</p>
+<p>在PCB中存储<strong>基地址(base)</strong>, 物理地址就是base+offset(逻辑地址). 进程切换时根据PCB切换一起切换这个基地址, 每次取址执行都要计算真实的物理内存地址. 下图中的两个进程都有<code>mov ax, [100]</code>指令, 但实际上对应着2100和1100.
+
+  <img src="/23_2.png" alt="">
+
+</p>
+<p>整个程序不是一起载入内存中的, 而是由若干部分(段)组成, 将各段分别放入内存. 每个段有各自的特点和用途. 比如有些库只读(写保护), 有些库可写, 对不同的库, 用户都可独立地考虑. 这里我也联想到了JVM, 栈空间如果只考虑自身, 那么实际上我们就可以扩展它本身而不考虑对其他如堆空间的影响(这只是我的猜测). 所以对同一个进程的不同段, 都有所对应的<strong>段的基值DS</strong>. 之前讲的GDT表所对应的就是os的段表, 而进程所对应的段表就是LDT表, 记录一些基值. 在程序分段进入内存之后, 就会找到段的基地址, 放在LDT表(存储在ldtr寄存机中)中并赋给PCB.</p>
+<h2 id="内存分区与分页">内存分区与分页</h2>
+<p>那么内存如何分割呢. 怎么找到内存中空闲的区域(分区)呢? 段的大小不能确定, 固定分区不够灵活, 所以需要<strong>可变分区</strong>, 如下图中的表, 包含了起始地址和分区长度. 如果有多个空闲分区, 该怎么选? 一般有<strong>首先适配</strong>(快), <strong>最佳适配</strong>(快), <strong>最差适配</strong>(可能就是首先适配的那一个区域). 如果段内存请求很不规则, 那么最佳适配就比较好.
+
+  <img src="/23_3.png" alt="">
+
+</p>
+<p>实际的os中, 一般实际的物理内存是用的<strong>分页</strong>. 而分区针对的是虚拟内存, 在后面会见到. 分区下会有过多的内存碎片, 导致即使总空闲分区大, 但是每个空闲分区却不够, 这时候需要<strong>内存紧缩</strong>来使空闲分区合并, 但是这会花费大量时间. <strong>所以把内存分页, 针对每个段内存请求，系统一页一页地分配给这个段</strong>. 如果一页大小是4k, 那么一个段最多就浪费4k.</p>
+<p>与段表对应, 分页就需要用到页表, 存储在每个进程的cr3中. 页中的地址依然是逻辑地址, 对于4k的页面, 如果逻辑地址是0x2240, 右移12位($1024*4=^{12}$)就是0x02, 这就是页号, 对应一个页框号, 后三位这个余数0x240就是偏移地址. 最后的物理地址就是0x3240.
+
+  <img src="/23_4.png" alt="">
+
+</p>
+<h2 id="多级页表与快表multilevel-paging">多级页表与快表(Multilevel Paging)</h2>
+<p>为了提高内存空间利用率, 页应该小, 但是页小了页表就大了. 所以, 因为很多逻辑地址不会用到, 自然就想到在<strong>用到逻辑页时才加入页表项</strong>. 但是如果页表项不连续, 去查找页号就会很慢(通过访问内存本来就慢, 额外访问就更慢, 连续则直接算偏移多少就可以了). 所以就有了<strong>多级页表</strong>, 也就是页目录表+页表, 就像书分章节一样去实现快速查找. <strong>空的页目录的映射/页表项就不用去记录</strong>, 节省空间. 但是多级页表也增加了访问的次数, 每多一级, 就要多访问一次内存.
+
+  <img src="/23_5.png" alt="">
+
+</p>
+<p><strong>快表TLB</strong>可以记住最近使用的页表项. TLB是一组<strong>相联快速存储</strong>. 从硬件上就可以通过一次比对来找到物理地址. 题外话, 我感觉这种思想挺通用的, 就像DNS缓存一样, 用一点点额外的空间来换时间. TLB通常大小只有64到1024, 虽然小, 但是程序的地址访问存在局部性(循环/顺序结构), 逻辑页号通常就是那几个, 所以依然可以有比较好的命中率.
+
+  <img src="/23_6.png" alt="">
+
+</p>
+<h2 id="段页结合的实际内存管理">段页结合的实际内存管理</h2>
+<p>实际上, 程序希望用段而物理内存希望用页, 所以这两者需要结合在一起. cs:ip指向的逻辑地址指向虚拟内存的某一段, 而用户代码段指向物理内存的物理地址(一些页), 这样就把的代码放在了真实的内存.
+
+  <img src="/23_7.png" alt="">
+
+</p>
+<p>这种情况下如何重定位呢, 因为既分段, 又分页, 那么就需要两个表. 从用户角度来看, 依然是使用段号+偏移. 从操作系统的角度看, 就是物理页号+偏移.
+
+  <img src="/23_8.png" alt="">
+
+</p>
+<h3 id="步骤todo">步骤(todo)</h3>
+<p><del>这一段还是有点迷惑, 真正理解需要做实验, 这里我写了一点大致的理解.</del></p>
+<p>在linux/kernel/fork.c中, 分配虚拟内存, 建段表. linux0.11分段都是64M的, 并且不重叠, 较为简单.</p>
+<pre><code>int copy_process(int nr, long ebp, ...) { ... // 复制进程
+    copy_mem(nr, p); ...
+}
+
+int copy_mem(int nr, task_struct *p) {
+    unsigned long new_data_base;
+    new_data_base=nr*0x4000000; // 64M * nr(进程id), 分割虚拟内存, 64M为一段
+    set_base(p-&gt;ldt[1],new_data_base); // PCB的ldt被赋值, 被分段, 进程切换段表也要切换
+    set_base(p-&gt;ldt[2],new_data_base); // 代码段/数据段
+}
+</code></pre><p>
+  <img src="/23_9.png" alt="">
+
+</p>
+<p>分配内存/物理页(父进程已经分配好, 这里复制即可), 建页表. 因为之前的虚拟地址是<strong>不重叠</strong>的, 所以可以用相同的一个页表.</p>
+<pre><code>int copy_mem(int nr, task_struct *p) {
+    unsigned long old_data_base;
+    old_data_base=get_base(current-&gt;ldt[2]);
+    copy_page_tables(old_data_base,new_data_base,data_limit); // 传递虚拟地址, 分配/复制内存
+}
+
+int copy_page_tables(unsigned long from,unsigned long to, long size) { 
+    from_dir = (unsigned long *)((from&gt;&gt;20)&amp;0xffc); // from是来自父进程的32位虚拟地址(10bits页目录号, 10bits页号, 12bit soffset). 
+    // 右移20位相当于右移22位乘以4, 因为右移22位得到的是目录号, 乘以4byte才能得到当前项
+    to_dir = (unsigned long *)((to&gt;&gt;20)&amp;0xffc);
+    size = (unsigned long)(size+0x3fffff)&gt;&gt;22;
+    for(; size--&gt;0; from_dir++, to_dir++) { // size: 有多个页目录(64M下的多个4M页目录), to_dir就是子进程页目录, 给子进程页目录分配实际内存
+        from_page_table=(0xfffff000&amp;*from_dir);
+        to_page_table=get_free_page(); 分配物理内存页(让页目录指向实际页), 这体现多级页表的优势, 如果没有映射就不分配物理内存页
+    }
+</code></pre><p>
+  <img src="/23_10.png" alt="">
+
+</p>
+<p>页目录新建好了, 就需要把的页实际内容拷贝过来. 让子进程和父进程对应的位置指向相同页.</p>
+<pre><code>for(;nr--&gt;0;from_page_table++,to_page_table++) {
+    this_page = *from_page_table; // 把from_page_table中的内容(页表项)取出
+    this_page&amp;=~2; //只读
+    *to_page_table=this_page;
+    *from_page_table=this_page;
+    this_page -= LOW_MEM; this_page &gt;&gt;= 12;
+    mem_map[this_page]++; 
+}
+</code></pre><p>1是父进程, 2是子进程. LDT表的基值从0x00400到0x00800. 因为只读, 保证了子进程不会写到7的位置, 而是新建页写到8的位置. MMU是内存管理单元. 通过重定位来真正使用内存.
+
+  <img src="/23_11.png" alt="">
+
+</p>
+<h2 id="内存换入-请求调页">内存换入-请求调页</h2>
+<p>对用户来说, 能看到的值规整的虚拟内存, 虚拟内存比物理内存大是怎么实现的呢. 那就需要<strong>换入换出</strong>. 虚拟内存(磁盘)就像是仓库, 而物理内存就像是店面. 所以有换入换出, 才会有虚拟内存. 执行代码时, 如果发现页表对应项没有在内存中, 那么就需要把需要的页换入, 这里进行一个中断, 步骤如下图.
+
+  <img src="/23_12.png" alt="">
+
+</p>
+<h2 id="内存换出">内存换出</h2>
+<p>物理内存是有限的, 所以并不能总是获得新的页, 那么就需要把页换出. 那么怎么选择淘汰的页呢.</p>
+<p>基础的是<strong>FIFO</strong>, 如下. 产生了7次缺页, D换A不合适, 理想的是换C.
+
+  <img src="/23_13.png" alt="">
+
+</p>
+<p>就有了<strong>MIN</strong>, 选最远将使用的页淘汰, 这是最最优的, 但是预测未来是不可能的.
+
+  <img src="/23_14.png" alt="">
+
+</p>
+<p>所以要通过之前的历史来预测将来, 就有了<strong>LRU页面置换</strong>: 选最近最长一段时间没有使用的页淘汰(最近最少使用). 实际上在这个例子和MIN的图一样, 只会产生5次缺页.</p>
+<p>从实现来看, 如果用<strong>时间戳</strong>, 也就是给每页都维护一个时间戳, 每次加1, 每执行一条指令都需要修改时间戳, 实现代价过大. 如果用<strong>用页码栈</strong>, 每次地址访问都需要修改栈, 实现代价依然太大. 这两种方法都是准确实现, 在实际系统中都不太实用, 所以在操作系统中要用近似实现.</p>
+<p>给每个页加一个<strong>引用位</strong>, 每次访问一页时, 硬件自动设置该位. 是1时清0, 并继续扫描, 本来就是0时淘汰该页. 也就是说从最近最少访问近似成了最近没有访问. 这就是<strong>Clock算法</strong>.
+
+  <img src="/23_15.png" alt="">
+
+</p>
+<p>但是如果缺页少, 就会让几乎所有R=1, 造成这个现象的原因是记录了太长的历史信息. 所以概要一个移动速度快的扫描指针用来定时清除R位. 而之前的指针移动速度慢, 用来选择淘汰页. 两个指针也更像clock了.</p>
+<p>当进程逐渐变多的过程中, CPU的利用率会上升, 但是当进程数量达到某个值的时候, CPU的利用率会急剧下降, 这个现象叫<strong>颠簸(thrashing)</strong>. 产生颠簸的原因是进程过多导致分到的页少, 进程就总是在等待调页完成, CPU一直不工作. 所以分配进程的页框数量也需要好好选择.</p>
+<h2 id="参考">参考</h2>
+<ol>
+<li>操作系统-李志军</li>
+<li><a href="https://www.lanqiao.cn/courses/115">配套实验</a></li>
+<li>汇编语言-王爽</li>
+</ol>
+
+
+                
+
+                
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/post/22_%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F_%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B/" data-toggle="tooltip" data-placement="top" title="操作系统-进程与线程">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/post/17_java%E5%A6%82%E4%BD%95%E8%87%AA%E5%AE%9A%E4%B9%89%E6%8E%92%E5%BA%8F/" data-toggle="tooltip" data-placement="top" title="Java如何自定义排序">Next
+                            Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+                
+
+                
+
+
+<div id="disqus-comment"></div>
+<div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "xqt01" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+            </div>
+
+            
+            
+            <div class="
+                col-lg-2 col-lg-offset-0
+                visible-lg-block
+                sidebar-container
+                catalog-container">
+                <div class="side-catalog">
+                    <hr class="hidden-sm hidden-xs">
+                    <h5>
+                        <a class="catalog-toggle" href="#">CATALOG</a>
+                    </h5>
+                    <ul class="catalog-body"></ul>
+                </div>
+            </div>
+            
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/java" title="java">
+                            java
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/jvm" title="jvm">
+                            jvm
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/spring" title="spring">
+                            spring
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E5%89%8D%E7%AB%AF" title="前端">
+                            前端
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F" title="操作系统">
+                            操作系统
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93" title="数据库">
+                            数据库
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95" title="数据结构与算法">
+                            数据结构与算法
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B" title="网络编程">
+                            网络编程
+                        </a>
+                        
+                        
+                    </div>
+                </section>
+                
+
+                
+                
+                <section>
+                    <hr>
+                    <h5>FRIENDS</h5>
+                    <ul class="list-inline">
+                        
+                        <li><a target="_blank" href="https://fan-bu-fan.github.io/">FELL &amp; ENJOY</a></li>
+                        
+                    </ul>
+                </section>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">                  
+                    
+                    <li>
+                        <a href="mailto:huanruiz@foxmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		           
+                    
+                    
+                    
+                    
+
+		            
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/xqt01">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		            
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+            
+            
+            
+           
+                   <li>
+                       <a href='' rel="alternate" type="application/rss+xml" title="PunchCode" >
+                           <span class="fa-stack fa-lg">
+                               <i class="fas fa-circle fa-stack-2x"></i>
+                               <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                           </span>
+                       </a>
+                   </li>
+            
+             </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; PunchCode 2024
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function loadAsync(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        loadAsync("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    loadAsync("https://cdn.jsdelivr.net/npm/fastclick@1.0.6/lib/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+    function generateCatalog(selector) {
+
+        
+        
+        
+        
+            _containerSelector = 'div.post-container'
+        
+
+        
+        var P = $(_containerSelector), a, n, t, l, i, c;
+        a = P.find('h1,h2,h3,h4,h5,h6');
+
+        
+        $(selector).html('')
+
+        
+        a.each(function () {
+            n = $(this).prop('tagName').toLowerCase();
+            i = "#" + $(this).prop('id');
+            t = $(this).text();
+            c = $('<a href="' + i + '" rel="nofollow">' + t + '</a>');
+            l = $('<li class="' + n + '_nav"></li>').append(c);
+            $(selector).append(l);
+        });
+        return true;
+    }
+
+    generateCatalog(".catalog-body");
+
+    
+    $(".catalog-toggle").click((function (e) {
+        e.preventDefault();
+        $('.side-catalog').toggleClass("fold")
+    }))
+
+    
+
+
+    loadAsync("\/js\/jquery.nav.js", function () {
+        $('.catalog-body').onePageNav({
+            currentClass: "active",
+            changeHash: !1,
+            easing: "swing",
+            filter: "",
+            scrollSpeed: 700,
+            scrollOffset: 0,
+            scrollThreshold: .2,
+            begin: null,
+            end: null,
+            scrollChange: null,
+            padding: 80
+        });
+    });
+</script>
+
+
+
+
+
+
+</body>
+</html>

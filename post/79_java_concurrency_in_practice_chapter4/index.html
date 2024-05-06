@@ -1,0 +1,1261 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="PunchCode">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://xqt01.github.io/front.png">
+    <meta property="twitter:image" content="https://xqt01.github.io/front.png" />
+    
+
+    
+    <meta name="title" content="Java Concurrency in Practice Chapter4-Composing Objects" />
+    <meta property="og:title" content="Java Concurrency in Practice Chapter4-Composing Objects" />
+    <meta property="twitter:title" content="Java Concurrency in Practice Chapter4-Composing Objects" />
+    
+
+    
+    <meta name="description" content="Software Engineer">
+    <meta property="og:description" content="Software Engineer" />
+    <meta property="twitter:description" content="Software Engineer" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="Harry, 小拳头">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>Java Concurrency in Practice Chapter4-Composing Objects | 以终为始</title>
+
+    <link rel="canonical" href="/post/79_java_concurrency_in_practice_chapter4/">
+
+    
+    
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hugo-theme-cleanwhite.min.css">
+
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+
+    
+    <link href="https://cdn.jsdelivr.net/gh/FortAwesome/Font-Awesome@5.15.1/css/all.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    
+    <script src="/js/jquery.min.js"></script>
+
+    
+    <script src="/js/bootstrap.min.js"></script>
+
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+
+</head>
+
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">PunchCode</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">All Posts</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/tech">tech</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0">学习笔记</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/%E6%9D%82%E8%B0%88">杂谈</a>
+                        </li>
+                        
+                    
+                    
+		    
+                        <li><a href="/top/archive/">ARCHIVE</a></li>
+                    
+                        <li><a href="/top/about/">ABOUT</a></li>
+                    
+
+                    
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/front.png')
+    }
+</style>
+
+<header class="intro-header" >
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/java" title="Java">
+                            Java
+                        </a>
+                        
+                    </div>
+                    <h1>Java Concurrency in Practice Chapter4-Composing Objects</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        
+                            Posted by 
+                            
+                                小拳头
+                             
+                            on 
+                            Tuesday, February 1, 2022
+                            
+                            
+                            
+                            
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <p>这一章介绍一些组合模式, 让我们把一个类设计成线程安全的类, 避免在每一次访问内存时都要去分析线程安全性, 平切在维护这些类时不会破坏线程安全性.</p>
+<h3 id="designing-a-thread-safe-class">Designing a thread-safe class</h3>
+<p>设计线程安全的类, 需要考虑3个基本要素. <em>e.g. Counter</em>.</p>
+<ul>
+<li>构成对象状态的<strong>所有变量</strong></li>
+<li>约束状态变量的<strong>不变性条件</strong></li>
+<li>建立对象状态的并发访问管理策略</li>
+</ul>
+<pre><code>/**
+ * 监视器模式的线程安全计数器
+ * synchronization policy defines how an object coordinates access to its state without
+ * violating its invariants or postconditions. It specifies the combination of immutability,
+ * thread confinement, and locking.
+ */
+public final class Counter {
+
+    /**
+     * long是primitive type, 所以value是构成这个对象的所有状态
+     */
+    private long value = 0;
+
+    public synchronized long getValue() {
+        return value;
+    }
+
+    public synchronized long increment() {
+        if (value == Long.MAX_VALUE) {
+            throw new IllegalStateException(&quot;counter overflow&quot;);
+        }
+        return ++value;
+    }
+}
+</code></pre><h3 id="instance-confinement">Instance confinement</h3>
+<p>确保一个对象只能有单个线程访问. 封装在对象内部的数据, 可以把数据的访问限制在对象的方法上. <em>e.g. PersonSet</em>.</p>
+<pre><code>public class PersonSet {
+
+    /**
+     * HashSet不是线程安全, 但是访问的方法线程安全, 保证了mySet线程安全
+     * 注意这里的Person的线程安全性没有做假设
+     */
+    private final Set&lt;Person&gt; mySet = new HashSet&lt;&gt;();
+
+    public synchronized void addPerson(Person p) {
+        mySet.add(p);
+    }
+
+    public synchronized boolean containsPerson(Person p) {
+        return mySet.contains(p);
+    }
+}
+</code></pre><p>Java的监视器模式, 用一把内部锁来封装内部的mutable state. <em>e.g. PrivateLock</em>.  <em>e.g. MonitorVehicleTracker</em>.</p>
+<pre><code>/**
+ * Guarding state with a private lock
+ */
+public class PrivateLock {
+
+    private final Object myLock = new Object();
+
+    Widget widget;
+
+    void someMethod() {
+        synchronized (myLock) {
+            // Access or modify the state of widget...
+        }
+    }
+}
+</code></pre><pre><code>/**
+ * 车辆追踪器, 监视器模式, 保证在修改MutablePoint时线程安全
+ */
+public class MonitorVehicleTracker {
+
+    /**
+     * 坐标, 这个locations和MutablePoint都不会publish
+     */
+    private final Map&lt;String, MutablePoint&gt; locations;
+
+    public MonitorVehicleTracker(Map&lt;String, MutablePoint&gt; locations) {
+        this.locations = deepCopy(locations);
+    }
+    
+    /**
+     * 传的是new出来的locations, 而不是这个类的域
+     */
+    public synchronized Map&lt;String, MutablePoint&gt; getLocations() {
+        return deepCopy(locations);
+    }
+    
+    /**
+     * 每次都传出新的对象, 保证内部的MutablePoint不被发布
+     */
+    public synchronized MutablePoint getLocation(String id) {
+        MutablePoint loc = locations.get(id);
+        return loc == null ? null : new MutablePoint(loc);
+    }
+
+    public synchronized void setLocation(String id, int x, int y) {
+        MutablePoint loc = locations.get(id);
+        if (loc == null) {
+            throw new IllegalArgumentException(&quot;No such ID: &quot; + id);
+        }
+        loc.x = x;
+        loc.y = y;
+    }
+
+    private static Map&lt;String, MutablePoint&gt; deepCopy(Map&lt;String, MutablePoint&gt; m) {
+        Map&lt;String, MutablePoint&gt; result = new HashMap&lt;&gt;(5);
+        for (String id : m.keySet()) {
+            result.put(id, new MutablePoint(m.get(id)));
+        }
+        return Collections.unmodifiableMap(result);
+    }
+}
+
+/**
+ * 这个类不是线程安全的, 但是追踪器类安全
+ */
+public class MutablePoint {
+
+    public int x, y;
+
+    public MutablePoint() {
+        x = 0;
+        y = 0;
+    }
+
+    public MutablePoint(MutablePoint p) {
+        this.x = p.x;
+        this.y = p.y;
+    }
+}
+</code></pre><h3 id="delegating-thread-safety">Delegating thread safety</h3>
+<p>基于委托的车辆追踪器, <em>DelegatingVehicleTracker</em>. locations委托给ConcurrentMap保证线程安全. 这个类中只有单个状态. 还有一种情况是一个类需要多个独立且线程安全的状态变量, 那么可以把主类的线程安全委托给这些变量. 但如果这些变量互相有依赖关系, 限制条件(比如一个必须大于另一个). 那么仍然需要加锁.</p>
+<pre><code>public class DelegatingVehicleTracker {
+
+    /**
+     * Point is immutable, 线程安全
+     */
+    private final ConcurrentMap&lt;String, Point&gt; locations;
+
+    /**
+     * unmodifiableMap is immutable
+     */
+    private final Map&lt;String, Point&gt; unmodifiableMap;
+
+    public DelegatingVehicleTracker(Map&lt;String, Point&gt; points) {
+        locations = new ConcurrentHashMap&lt;&gt;(points);
+        // unmodifiableMap是locations的view, 虽然可以实时更新, 但可能存在不一致的view, 因为view会跟着locations变.
+        unmodifiableMap = Collections.unmodifiableMap(locations);
+    }
+
+    public Map&lt;String, Point&gt; getLocations() {
+        return unmodifiableMap;
+        // 返回浅拷贝, 因为value不可变, 所以只需要赋值结构即可. 这样保证复制过来的view不发生变化.
+        // return Collections.unmodifiableMap(new HashMap&lt;String, Point&gt;(locations));
+    }
+
+    public Point getLocation(String id) {
+        return locations.get(id);
+    }
+
+    public void setLocation(String id, int x, int y) {
+        if (locations.replace(id, new Point(x, y)) == null) {
+            throw new IllegalArgumentException(&quot;invalid vehicle name: &quot; + id);
+        }
+    }
+}
+
+/**
+ * immutable class
+ */
+public class Point {
+
+    public final int x, y;
+
+    public Point(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+}
+</code></pre><p>如果保证Point的线程安全, 也可以发布Point, <em>e.g. PublishingVehicleTracker</em>. 和DelegatingVehicleTracker的区别是这个<code>SafePoint</code>是可以改变的, 因为读写的方法都加了锁, 所以还是能保证线程安全.</p>
+<pre><code>/**
+ * SafePoint被发布的版本, SafePoint本身线程安全, 所以允许可变. 可以改变车辆的位置.
+ */
+public class PublishingVehicleTracker {
+
+    private final Map&lt;String, SafePoint&gt; locations;
+
+    private final Map&lt;String, SafePoint&gt; unmodifiableMap;
+
+    public PublishingVehicleTracker(Map&lt;String, SafePoint&gt; locations) {
+        this.locations = new ConcurrentHashMap&lt;&gt;(locations);
+        this.unmodifiableMap = Collections.unmodifiableMap(this.locations);
+    }
+
+    public Map&lt;String, SafePoint&gt; getLocations() {
+        return unmodifiableMap;
+    }
+
+    public SafePoint getLocation(String id) {
+        return locations.get(id);
+    }
+
+    public void setLocation(String id, int x, int y) {
+        if (!locations.containsKey(id)) {
+            throw new IllegalArgumentException(&quot;invalid vehicle name: &quot; + id);
+        }
+        locations.get(id).set(x, y);
+    }
+}
+
+/**
+ * 可变, 但依然线程安全
+ */
+public class SafePoint {
+
+    private int x, y;
+
+    private SafePoint(int[] a) {
+        this(a[0], a[1]);
+    }
+
+    public SafePoint(SafePoint p) {
+        this(p.get());
+    }
+
+    public SafePoint(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    public synchronized int[] get() {
+        return new int[] {x, y};
+    }
+
+    public synchronized void set(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+}
+</code></pre><h3 id="adding-functionality-to-existing-thread-safe-classes">Adding functionality to existing thread-safe classes</h3>
+<p>如何对已经有的线程安全类增加更多的功能, 比如给一个list增加<code>如果没有该元素则添加的功能</code>. 最简单的方法是用子类去扩展基类的方法, 并对子类的方法进行加锁, 这种方法的问题是如果基类的同步策略改变, 会破怪子类的线程安全性. 还第一种方式是在使用端进行加锁, 但是要注意这个锁需要锁实例, 否则这个锁是无效的. 如<em>e.g. ListHelper</em>, 这样使用的问题是破坏封装性, 耦合度更高了. 更好的方法是Composition. <em>e.g. ImprovedList</em>. 这个例子使用监视器模式封装了List.</p>
+<pre><code>public class ListHelper {
+
+    public List&lt;String&gt; list = Collections.synchronizedList(new ArrayList&lt;&gt;());
+    
+    /**
+     * synchronized如果加载方法上, 锁就是ListHelper的实例, 和list中其他方法的锁不一样了, 无法保证线程安全
+     */
+    public boolean putIfAbsent(String x) {
+        synchronized (list) {
+            boolean absent = !list.contains(x);
+            if (absent) {
+                // do something
+                return true;
+            }
+            return false;
+        }
+    }
+}
+</code></pre><pre><code>public class ImprovedList&lt;T&gt; { //implements List&lt;T&gt; {
+
+    private final List&lt;T&gt; list;
+    
+    /**
+     * 这个地方传入后, 客户端就应该停止使用list
+     * @param list
+     */
+    public ImprovedList(List&lt;T&gt; list) {
+        this.list = list;
+    }
+
+    public synchronized boolean putIfAbsent(T x) {
+        boolean contains = list.contains(x);
+        if (contains) {
+            list.add(x);
+        }
+        return !contains;
+    }
+
+    public synchronized void clear() {
+        list.clear();
+    }
+
+    // ... similarly delegate other List methods
+}
+</code></pre><h3 id="documenting-synchronization-policies">Documenting synchronization policies</h3>
+<p>对类的线程安全性应该写文档, 同步策略是什么, 锁保护了哪些变量, 都应该注明. 如果遇到了没有写线程安全的类, 就假设不是线程安全的.</p>
+<h2 id="chapter5-building-blocks">Chapter5-Building Blocks</h2>
+<p>上一章讲如何设计线程安全类, 这一章就介绍JDK中已有的线程安全类, 把线程安全性委托给这些类, 并让这些类区管理所有的状态, 从而使模块线程安全.</p>
+<h3 id="problems-with-synchronized-collections">Problems with synchronized collections</h3>
+<p>同之前提到过的一样, 同步容器类进行复合操作, 对调用方也可能是线程不安全的. 比如下面的代码. 解决方式是在调用端对复合操作加锁, 锁用<code>list</code>对象.</p>
+<pre><code>public static Object getLast(Vector list) {
+    int lastIndex = list.size() - 1;
+    return list.get(lastIndex);
+}   
+
+public static void deleteLast(Vector list) {
+    int lastIndex = list.size() - 1;
+    list.remove(lastIndex);
+}
+</code></pre><p>即使是现在常用的并发容器类, 也会有复合操作带来的并发问题, 如下代码. 如果我们希望迭代期间加锁, 可以克隆这个容器, 去迭代副本, 因为副本封闭在单线程内, 保证线程安全. 还应注意如toString, hashCode, equals这些方法会隐式地进行迭代, 可能会带来线程安全问题. <em>e.g. HiddenIterator</em>.</p>
+<pre><code>public class HiddenIterator {
+
+    private final Set&lt;Integer&gt; set = new HashSet&lt;&gt;();
+
+    public synchronized void add(Integer i) {
+        set.add(i);
+    }
+
+    public synchronized void remove(Integer i) {
+        set.remove(i);
+    }
+
+    public void addTenThings() {
+        Random r = new Random();
+        // 这里的迭代加锁了, 线程安全
+        for (int i = 0; i &lt; 10; i++) {
+            add(r.nextInt());
+        }
+        // 调用toString, 进行了间接的迭代操作, 线程不安全
+        System.out.println(&quot;DEBUG: added ten elements to &quot; + set);
+    }
+}
+</code></pre><pre><code>List&lt;Widget&gt; widgetList = Collections.synchronizedList(new ArrayList&lt;&gt;());
+...
+// May throw ConcurrentModificationException(一直持有锁消耗资源, 也有死锁的风险)
+for (Widget w : widgetList) {
+    doSomething(w);
+}
+</code></pre><h3 id="concurrent-collections">Concurrent collections</h3>
+<p>用并发容器替代同步容器, 可以极大提高伸缩性并降低风险. 比如使用<code>ConcurrentHashMap</code>, 它的原理是用了更细粒度的锁, 从而实现最大程度的共享. 但是对一些但是size/isEmpty的值不一定准确(这些方法在并发场景作用较小).</p>
+<h3 id="blocking-queues-and-the-producer-consumer-pattern">Blocking queues and the producer-consumer pattern</h3>
+<p>阻塞队列可以用来实现生产者-消费者模式. <em>e.g. FileCrawler/Indexer</em>. 让对象安全地从生产者线程发布到消费者线程, 实现Serial thread confinement(串行的线程封闭). 对象虽然只属于单个线程, 但是可以通过安全地publish对象来转移所有权. 书里面还介绍了通过Deque实现work stealing, 也就是消费者访问自己的双端队列, 如果完成了工作, 就送其他消费者消费的双端队列末尾秘密地获取工作, 这就是工作密取.</p>
+<pre><code>/**
+ * 扫描本地文件并建立索引方便以后搜索, FileCrawler是生产者
+ */
+public class FileCrawler implements Runnable {
+
+    private final BlockingQueue&lt;File&gt; fileQueue;
+
+    private final FileFilter fileFilter;
+
+    private final File root;
+
+    public FileCrawler(BlockingQueue&lt;File&gt; fileQueue, FileFilter fileFilter, File root) {
+        this.fileQueue = fileQueue;
+        this.fileFilter = fileFilter;
+        this.root = root;
+    }
+
+    @Override
+    public void run() {
+        try {
+            crawl(root);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    private void crawl(File root) throws InterruptedException {
+        File[] entries = root.listFiles(fileFilter);
+        if (entries != null) {
+            for (File entry : entries) {
+                if (entry.isDirectory()) {
+                    crawl(entry);
+                } else if (!alreadyIndexed(entry)) {
+                    fileQueue.put(entry);
+                }
+            }
+        }
+    }
+
+    private boolean alreadyIndexed(File file) {
+        return true;
+    }
+}
+
+/**
+ * Indexer是消费者, 拿消息队列的文件进行index
+ */
+public class Indexer {
+
+    private final BlockingQueue&lt;File&gt; queue;
+
+    public Indexer(BlockingQueue&lt;File&gt; queue) {
+        this.queue = queue;
+    }
+
+    public void run() {
+        try {
+            while (true) {
+                indexFile(queue.take());
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    private void indexFile(File file) {
+        // do indexing
+    }
+}
+</code></pre><h3 id="blocking-and-interruptible-methods">Blocking and interruptible methods</h3>
+<p>线程可能会因为等待i/o操作结束/等待获得一个锁等等而暂停执行, 如果方法被阻塞并抛出<code>InterruptedException</code>, 说明该方法是一个阻塞方法. 当阻塞方法被调用时, 最好的办法是传递<code>InterruptedException</code>给调用者(不捕获异常, 或捕获异常后再次抛出). 如果需要恢复中断(不能抛错的情况), 可以捕获Exception并尝试恢复中断<em>e.g. TaskRunnable</em>.</p>
+<pre><code>/**
+ * 恢复中断
+ */
+public class TaskRunnable implements Runnable {
+
+    BlockingQueue&lt;String&gt; queue;
+
+    @Override
+    public void run() {
+        try {
+            processTask(queue.take());
+        } catch (InterruptedException e) {
+            // restore interrupted status
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    private void processTask(String take) {
+        // do something
+    }
+}
+</code></pre><h3 id="synchronizers">Synchronizers</h3>
+<p>这一小节介绍了一些基本的同步工具类. 第一种是<code>Latches</code>, 它是一种<strong>闭锁(这种锁在到达结束状态之前不会允许线程通过, 结束状态之后允许所有线程通过并且不再关闭)</strong>. <em>e.g. TestHarness</em>. <code>FutureTask</code>也可以用作闭锁, 调用get时, 若任务已完成, 则立刻返回结果. 若任务还未完成, 就会阻塞, 直到任务完成后返回结果或者抛出异常. <em>e.g. Preloader</em>.</p>
+<pre><code>/**
+ * 闭锁
+ */
+public class TestHarness {
+
+    public long timeTasks(int nThreads, final Runnable task) throws InterruptedException {
+        // 初始值为1
+        final CountDownLatch startGate = new CountDownLatch(1);
+        // 初始值为线程数
+        final CountDownLatch endGate = new CountDownLatch(nThreads);
+        for (int i = 0; i &lt; nThreads; i++) {
+            Thread t = new Thread() {
+
+                @Override
+                public void run() {
+                    try {
+                        // 在启动门上等待
+                        startGate.await();
+                        try {
+                            task.run();
+                        } finally {
+                            // 结束门在每个线程结束后减1
+                            endGate.countDown();
+                        }
+                    } catch (InterruptedException ignored) {
+                    }
+                }
+            };
+            t.start();
+        }
+        long start = System.nanoTime();
+        // 启动门减1, 其他线程开始运行
+        startGate.countDown();
+        // 主线程等待, 其他线程全部运行结束后才会运行
+        endGate.await();
+        long end = System.nanoTime();
+        return end - start;
+    }
+}
+</code></pre><pre><code>/**
+ * 闭锁, 通过FutureTask
+ */
+public class Preloader {
+
+    private final Thread thread = new Thread();
+
+    private final FutureTask&lt;ProductInfo&gt; future = new FutureTask&lt;&gt;(new Callable&lt;ProductInfo&gt;() {
+
+        @Override
+        public ProductInfo call() {
+            return loadProductInfo();
+        }
+    });
+
+    public void start() {
+        thread.start();
+    }
+
+    public ProductInfo get() throws InterruptedException, DataLoadException {
+        try {
+            // 在完成计算后返回结果(异步)
+            return future.get();
+        } catch (ExecutionException e) {
+            Throwable cause = e.getCause();
+            if (cause instanceof DataLoadException) {
+                // 数据加载出错导致的exception(已知异常)
+                throw (DataLoadException)cause;
+            } else {
+                throw launderThrowable(cause);
+            }
+        }
+    }
+
+    /**
+     * 加载商品信息(一些运算逻辑)
+     */
+    private ProductInfo loadProductInfo() {
+        return new ProductInfo();
+    }
+
+    /**
+     * 一些异常处理
+     */
+    public static RuntimeException launderThrowable(Throwable t) {
+        if (t instanceof RuntimeException) {
+            return (RuntimeException) t;
+        } else if (t instanceof Error) {
+            throw (Error) t;
+        } else {
+            throw new IllegalStateException(&quot;Not unchecked&quot;, t);
+        }
+    }
+}
+</code></pre><p><code>Semaphore</code>可以通过<code>permit</code>来实现资源池/对容器加边界. 通过构造函数传一个初值, 每次尝试调用<code>acquire</code>就会获取一个许可, 当调用结束后再次调用<code>release</code>释放许可. <em>e.g. BoundedHashSet</em>.</p>
+<pre><code>public class BoundedHashSet&lt;T&gt; {
+
+    private final Set&lt;T&gt; set;
+
+    private final Semaphore sem;
+
+    /**
+     * @param bound 信号量的限制值
+     */
+    public BoundedHashSet(int bound) {
+        this.set = Collections.synchronizedSet(new HashSet&lt;T&gt;());
+        sem = new Semaphore(bound);
+    }
+
+    public boolean add(T o) throws InterruptedException {
+        sem.acquire();
+        boolean wasAdded = false;
+        try {
+            wasAdded = set.add(o);
+            return wasAdded;
+        }
+        finally {
+            if (!wasAdded) {
+                sem.release();
+            }
+        }
+    }
+
+    public boolean remove(Object o) {
+        boolean wasRemoved = set.remove(o);
+        if (wasRemoved) {
+            sem.release();
+        }
+        return wasRemoved;
+    }
+}
+</code></pre><h3 id="building-an-efficient-scalable-result-cache">Building an efficient, scalable result cache</h3>
+<p>一步一步设计一个带缓存的计算系统.</p>
+<pre><code>/**
+ * A为输入, V为输出
+ */
+public interface Computable&lt;A, V&gt; {
+
+    /**
+     * 计算逻辑
+     */
+    V compute(A arg) throws InterruptedException;
+}
+
+/**
+ * 对整个compute进行加锁, 如果单个线程的操作时间很长, 导致阻塞其他线程, 反而可能比不缓存还慢. 不推荐这种写法
+ */
+public class Memoizer1&lt;A, V&gt; implements Computable&lt;A, V&gt; {
+
+    private final Map&lt;A, V&gt; cache = new HashMap&lt;A, V&gt;();
+
+    private final Computable&lt;A, V&gt; c;
+
+    public Memoizer1(Computable&lt;A, V&gt; c) {
+        this.c = c;
+    }
+
+    @Override
+    public synchronized V compute(A arg) throws InterruptedException {
+        V result = cache.get(arg);
+        if (result == null) {
+            result = c.compute(arg);
+            cache.put(arg, result);
+        }
+        return result;
+    }
+}
+
+/**
+ * 相比Memoizer1, 虽然compute本身不会阻塞, 但是如果有某个消耗大量资源的运算在线程1,
+ * 线程2不知道线程1正在计算, 会再次进行这个计算. 最好的方式是等待线程1计算结束后直接用
+ * 缓存中线程1已计算好的结果
+ */
+public class Memoizer2&lt;A, V&gt; implements Computable&lt;A, V&gt; {
+
+    private final Map&lt;A, V&gt; cache = new ConcurrentHashMap&lt;A, V&gt;();
+
+    private final Computable&lt;A, V&gt; c;
+
+    public Memoizer2(Computable&lt;A, V&gt; c) {
+        this.c = c;
+    }
+
+    @Override
+    public V compute(A arg) throws InterruptedException {
+        V result = cache.get(arg);
+        if (result == null) {
+            result = c.compute(arg);
+            cache.put(arg, result);
+        }
+        return result;
+    }
+}
+
+public class Memoizer3&lt;A, V&gt; implements Computable&lt;A, V&gt; {
+
+    private final Map&lt;A, Future&lt;V&gt;&gt; cache = new ConcurrentHashMap&lt;&gt;();
+
+    private final Computable&lt;A, V&gt; c;
+
+    public Memoizer3(Computable&lt;A, V&gt; c) {
+        this.c = c;
+    }
+
+    @Override
+    public V compute(final A arg) throws InterruptedException {
+        Future&lt;V&gt; f = cache.get(arg);
+        // 这里的if非原子, 所以两个线程可能依然会算相同的值(概率比Memoizer2小), 因为这个check-then-act复合操作不原子, 两
+        // 个线程很有可能拿到相同的值, 重复计算
+        if (f == null) {
+            Callable&lt;V&gt; eval = new Callable&lt;V&gt;() {
+
+                @Override
+                public V call() throws InterruptedException {
+                    return c.compute(arg);
+                }
+            };
+            FutureTask&lt;V&gt; ft = new FutureTask&lt;V&gt;(eval);
+            f = ft;
+            cache.put(arg, ft);
+            ft.run(); // call to c.compute happens here
+        }
+        try {
+            // 计算结束了, 直接返回. 若未计算结束, 则等这个线程计算结果
+            return f.get();
+        } catch (ExecutionException e) {
+            throw launderThrowable(e.getCause());
+        }
+    }
+}
+
+/**
+ * 比Memoizer3更好的实现, 但是没有解决缓存缓存的问题. 可以通过Future的子类来设置过期时间从而实现过期
+ */
+public class Memoizer&lt;A, V&gt; implements Computable&lt;A, V&gt; {
+
+    private final ConcurrentMap&lt;A, Future&lt;V&gt;&gt; cache = new ConcurrentHashMap&lt;&gt;();
+
+    private final Computable&lt;A, V&gt; c;
+
+    public Memoizer(Computable&lt;A, V&gt; c) {
+        this.c = c;
+    }
+
+    @Override
+    public V compute(final A arg) throws InterruptedException {
+        while (true) {
+            Future&lt;V&gt; f = cache.get(arg);
+            if (f == null) {
+                Callable&lt;V&gt; eval = new Callable&lt;V&gt;() {
+
+                    @Override
+                    public V call() throws InterruptedException {
+                        return c.compute(arg);
+                    }
+                };
+                FutureTask&lt;V&gt; ft = new FutureTask&lt;V&gt;(eval);
+                // 避免重算
+                f = cache.putIfAbsent(arg, ft);
+                if (f == null) {
+                    f = ft;
+                    ft.run();
+                }
+            }
+            try {
+                return f.get();
+            } catch (CancellationException e) {
+                // 防止cache pollution, 因为异步计算可能会取消
+                cache.remove(arg, f);
+            } catch (ExecutionException e) {
+                throw launderThrowable(e.getCause());
+            }
+        }
+    }
+}
+</code></pre>
+
+                
+
+                
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/post/78_java_concurrency_in_practice_chapter3/" data-toggle="tooltip" data-placement="top" title="Java Concurrency in Practice Chapter3-Sharing Objects">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/post/80_java_concurrency_in_practice_chapter5/" data-toggle="tooltip" data-placement="top" title="Java Concurrency in Practice Chapter5-Building Blocks">Next
+                            Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+                
+
+                
+
+
+<div id="disqus-comment"></div>
+<div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "xqt01" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+            </div>
+
+            
+            
+            <div class="
+                col-lg-2 col-lg-offset-0
+                visible-lg-block
+                sidebar-container
+                catalog-container">
+                <div class="side-catalog">
+                    <hr class="hidden-sm hidden-xs">
+                    <h5>
+                        <a class="catalog-toggle" href="#">CATALOG</a>
+                    </h5>
+                    <ul class="catalog-body"></ul>
+                </div>
+            </div>
+            
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/java" title="java">
+                            java
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/jvm" title="jvm">
+                            jvm
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/spring" title="spring">
+                            spring
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E5%89%8D%E7%AB%AF" title="前端">
+                            前端
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F" title="操作系统">
+                            操作系统
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93" title="数据库">
+                            数据库
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95" title="数据结构与算法">
+                            数据结构与算法
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B" title="网络编程">
+                            网络编程
+                        </a>
+                        
+                        
+                    </div>
+                </section>
+                
+
+                
+                
+                <section>
+                    <hr>
+                    <h5>FRIENDS</h5>
+                    <ul class="list-inline">
+                        
+                        <li><a target="_blank" href="https://fan-bu-fan.github.io/">FELL &amp; ENJOY</a></li>
+                        
+                    </ul>
+                </section>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">                  
+                    
+                    <li>
+                        <a href="mailto:huanruiz@foxmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		           
+                    
+                    
+                    
+                    
+
+		            
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/xqt01">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		            
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+            
+            
+            
+           
+                   <li>
+                       <a href='' rel="alternate" type="application/rss+xml" title="PunchCode" >
+                           <span class="fa-stack fa-lg">
+                               <i class="fas fa-circle fa-stack-2x"></i>
+                               <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                           </span>
+                       </a>
+                   </li>
+            
+             </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; PunchCode 2024
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function loadAsync(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        loadAsync("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    loadAsync("https://cdn.jsdelivr.net/npm/fastclick@1.0.6/lib/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+    function generateCatalog(selector) {
+
+        
+        
+        
+        
+            _containerSelector = 'div.post-container'
+        
+
+        
+        var P = $(_containerSelector), a, n, t, l, i, c;
+        a = P.find('h1,h2,h3,h4,h5,h6');
+
+        
+        $(selector).html('')
+
+        
+        a.each(function () {
+            n = $(this).prop('tagName').toLowerCase();
+            i = "#" + $(this).prop('id');
+            t = $(this).text();
+            c = $('<a href="' + i + '" rel="nofollow">' + t + '</a>');
+            l = $('<li class="' + n + '_nav"></li>').append(c);
+            $(selector).append(l);
+        });
+        return true;
+    }
+
+    generateCatalog(".catalog-body");
+
+    
+    $(".catalog-toggle").click((function (e) {
+        e.preventDefault();
+        $('.side-catalog').toggleClass("fold")
+    }))
+
+    
+
+
+    loadAsync("\/js\/jquery.nav.js", function () {
+        $('.catalog-body').onePageNav({
+            currentClass: "active",
+            changeHash: !1,
+            easing: "swing",
+            filter: "",
+            scrollSpeed: 700,
+            scrollOffset: 0,
+            scrollThreshold: .2,
+            begin: null,
+            end: null,
+            scrollChange: null,
+            padding: 80
+        });
+    });
+</script>
+
+
+
+
+
+
+</body>
+</html>

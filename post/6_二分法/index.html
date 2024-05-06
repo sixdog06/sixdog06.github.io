@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="PunchCode">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://xqt01.github.io/front.png">
+    <meta property="twitter:image" content="https://xqt01.github.io/front.png" />
+    
+
+    
+    <meta name="title" content="二分法" />
+    <meta property="og:title" content="二分法" />
+    <meta property="twitter:title" content="二分法" />
+    
+
+    
+    <meta name="description" content="Software Engineer">
+    <meta property="og:description" content="Software Engineer" />
+    <meta property="twitter:description" content="Software Engineer" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="Harry, 小拳头">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>二分法 | 以终为始</title>
+
+    <link rel="canonical" href="/post/6_%E4%BA%8C%E5%88%86%E6%B3%95/">
+
+    
+    
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hugo-theme-cleanwhite.min.css">
+
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+
+    
+    <link href="https://cdn.jsdelivr.net/gh/FortAwesome/Font-Awesome@5.15.1/css/all.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    
+    <script src="/js/jquery.min.js"></script>
+
+    
+    <script src="/js/bootstrap.min.js"></script>
+
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+
+</head>
+
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">PunchCode</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">All Posts</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/tech">tech</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0">学习笔记</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/%E6%9D%82%E8%B0%88">杂谈</a>
+                        </li>
+                        
+                    
+                    
+		    
+                        <li><a href="/top/archive/">ARCHIVE</a></li>
+                    
+                        <li><a href="/top/about/">ABOUT</a></li>
+                    
+
+                    
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/front.png')
+    }
+</style>
+
+<header class="intro-header" >
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95" title="数据结构与算法">
+                            数据结构与算法
+                        </a>
+                        
+                    </div>
+                    <h1>二分法</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        
+                            Posted by 
+                            
+                                小拳头
+                             
+                            on 
+                            Sunday, December 27, 2020
+                            
+                            
+                            
+                            
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <p>先用<a href="https://leetcode-cn.com/leetbook/detail/binary-search/">leetcode专题</a>进行练习. 只要遇到了排了序的数组, 实际上都可以考虑能否用二分法加速.</p>
+<h2 id="704-二分查找">704. 二分查找</h2>
+<p>首先做最基本的二分查找.</p>
+<pre><code>class Solution {
+    public int search(int[] nums, int target) {
+        int left = 0, right = nums.length - 1;
+        while (left &lt;= right) {
+            int mid = (right + left) / 2;
+            if (nums[mid] == target) return mid;
+            else if (nums[mid] &lt; target) left = mid + 1;
+            else if (nums[mid] &gt; target) right = mid - 1;
+        }
+        return -1;
+    }
+}
+</code></pre><p>可以发现一共有三步:</p>
+<ul>
+<li>预处理 — 如果集合未排序,则进行排序</li>
+<li>二分查找 — 使用循环或递归在每次比较后将查找空间划分为两半</li>
+<li>后处理 — 在剩余空间中确定可行的候选者</li>
+</ul>
+<p>leetcode给出了三个模板, 我们分别练习. 我稍微修改了模板的源码, 更加符合我的思路.</p>
+<h2 id="模板1">模板1</h2>
+<ul>
+<li>初始条件: left = 0, right = length - 1</li>
+<li>终止: left &gt; right</li>
+<li>向左查找: right = mid - 1</li>
+<li>向右查找: left = mid + 1</li>
+</ul>
+<p>最基础的模板</p>
+<pre><code>int binarySearch(int[] nums, int target){
+    if (nums == null || nums.length == 0) return -1;
+    int left = 0, right = nums.length - 1;
+    while(left &lt;= right){
+        int mid = (right + left) / 2; //等价于left + (right - left) / 2, 后者不会越界
+        if (nums[mid] == target) return mid;
+        else if (nums[mid] &lt; target) left = mid + 1;
+        else if (nums[mid] &gt; target) right = mid - 1;
+    }
+    return -1;
+}
+</code></pre><h3 id="69-x的平方根">69. x的平方根</h3>
+<p><code>mid</code>平方后可能超出int范围, 所以用long转个类型.</p>
+<pre><code>class Solution {
+    public int mySqrt(int x) {
+        int left = 0, right = x;
+        int res = 0;
+        while (left &lt;= right) {
+            int mid = (left + right) / 2;
+            if (mid * mid == x) {
+                return mid;
+            } else if ((long)mid * mid &lt; x) {
+                res = mid;
+                left = mid + 1;
+            } else if ((long)mid * mid &gt; x) {
+                right = mid - 1;
+            }
+        }
+        return res;
+    }
+}
+</code></pre><h3 id="374-猜数字大小">374. 猜数字大小</h3>
+<p>注意不要越界.</p>
+<pre><code>public class Solution extends GuessGame {
+    public int guessNumber(int n) {
+        int left = 1, right = n;
+        while (left &lt;= right) {
+            int mid = left + (right - left) / 2; //这样写才不会越界
+            // 或者 int mid = (int)(((long)left + (long)right) / 2);
+            int res = guess(mid);
+            if (res == 0) {
+                return mid;
+            }
+            else if (res == 1) left = mid + 1;
+            else if (res == -1) right = mid - 1;
+        }
+        return -1;
+    }
+}
+</code></pre><h3 id="33-搜索旋转排序数组">33. 搜索旋转排序数组</h3>
+<p>首先要知道无旋转的范围, 再判断target是否在无旋转的范围内, 否则就在另一边.</p>
+<pre><code>class Solution {
+    public int search(int[] nums, int target) {
+        int left = 0, right = nums.length - 1;
+        while (left &lt;= right) {
+            int mid = left + (right - left) / 2;
+            if (nums[mid] == target) return mid;
+            else if (nums[0] &lt;= nums[mid]) { //0到mid无旋转
+                if (target &lt; nums[mid] &amp;&amp; target &gt;= nums[0]) right = mid - 1; //target在左边较大的有序范围内
+                else left = mid + 1;
+            } else if (nums[0] &gt; nums[mid]) { //mid到后面无旋转
+                if (target &gt; nums[mid] &amp;&amp; target &lt;= nums[nums.length - 1]) left = mid + 1; //target在右边较小的有序范围内
+                else right = mid - 1;
+            }
+        }
+        return -1;
+    }
+}
+</code></pre><h2 id="模板ii">模板II</h2>
+<ul>
+<li>初始条件: left = 0, right = length</li>
+<li>终止: left == right</li>
+<li>向左查找: right = mid</li>
+<li>向右查找: left = mid + 1</li>
+</ul>
+<p>right的条件变了, while中的判断等号没有了.</p>
+<pre><code>int binarySearch(int[] nums, int target) {
+    if(nums == null || nums.length == 0)
+        return -1;
+
+    int left = 0, right = nums.length;
+    while(left &lt; right) {
+        int mid = left + (right - left) / 2;
+        if (nums[mid] == target) return mid;
+        else if (nums[mid] &lt; target) left = mid + 1;
+        else right = mid;
+    }
+
+    if (left != nums.length &amp;&amp; nums[left] == target) return left;
+    return -1;
+}
+</code></pre><h3 id="278-第一个错误的版本">278. 第一个错误的版本</h3>
+<p>正确答案可能也包含right自身, 所以不能让<code>right = mid - 1</code>.</p>
+<pre><code>public class Solution extends VersionControl {
+    public int firstBadVersion(int n) {
+        int left = 1, right = n;
+        while (left &lt; right) {
+            int mid = left + (right - left) / 2;
+            if (isBadVersion(mid) == false) left = mid + 1;
+            else right = mid; //自身也可能是答案
+        }
+        return left; //right也行
+    }
+}
+</code></pre><h3 id="162-寻找峰值">162. 寻找峰值</h3>
+<p>left到不了右边, 所以<code>mid + 1</code>永远在数组的index范围内.</p>
+<pre><code>class Solution {
+    public int findPeakElement(int[] nums) {
+        int left = 0, right = nums.length - 1;
+        while (left &lt; right) {
+            int mid = left + (right - left) / 2;
+            if (nums[mid] &gt; nums[mid + 1]) right = mid;
+            else left = mid + 1;
+        }
+        return left; //right也行
+    }
+}
+</code></pre><h3 id="153-寻找旋转排序数组中的最小值154-寻找旋转排序数组中的最小值ii剑指offer11-旋转数组的最小数字">153. 寻找旋转排序数组中的最小值/154. 寻找旋转排序数组中的最小值II/剑指Offer11. 旋转数组的最小数字</h3>
+<p>注意154中有重复值, 也有可能没有旋转, 所以最好就是用<code>right</code>去比较. 如果相等的话, 用<code>left</code>比较就不知道到底在哪边了.</p>
+<pre><code>class Solution {
+    public int findMin(int[] nums) {
+        int left = 0, right  = nums.length - 1;
+        while (left &lt; right) {
+            int mid = left + (right - left) / 2;
+            if (nums[right] &lt; nums[mid]) left = mid + 1;
+            else if (nums[right] &gt; nums[mid]) right = mid;
+            else right--;
+        }
+        return nums[left];
+    }
+}
+</code></pre><h2 id="模板三">模板三</h2>
+<ul>
+<li>初始条件: left = 0, right = length - 1</li>
+<li>终止: left + 1 == right</li>
+<li>向左查找: right = mid</li>
+<li>向右查找: left = mid</li>
+</ul>
+<p>每一步有三个元素, 最后也会剩下两个元素.</p>
+<pre><code>int binarySearch(int[] nums, int target) {
+    if (nums == null || nums.length == 0)
+        return -1;
+
+    int left = 0, right = nums.length - 1;
+    while (left + 1 &lt; right){
+        int mid = left + (right - left) / 2;
+        if (nums[mid] == target) {
+            return mid;
+        } else if (nums[mid] &lt; target) {
+            left = mid;
+        } else {
+            right = mid;
+        }
+    }
+
+    if(nums[left] == target) return left;
+    if(nums[right] == target) return right;
+    return -1;
+}
+</code></pre><h3 id="34-在排序数组中查找元素的第一个和最后一个位置">34. 在排序数组中查找元素的第一个和最后一个位置</h3>
+<p>我这个似乎不是模板三的做法, <del>怎么用模板三思想一步搞定呢?</del>. <strong>注意右边界要取上界, 所以要加1</strong>. 思考[1, 2, 2, 3]的情况, $0 + 3 / 2$永远不大于1, 右边界就找不到了.</p>
+<pre><code>class Solution {
+    public int[] searchRange(int[] nums, int target) {
+        if (nums.length == 0) return new int[]{-1, -1};
+        int left = 0, right = nums.length - 1;
+        while (left &lt; right) {
+            int mid = left + (right - left) / 2;
+            if (nums[mid] &lt; target) left = mid + 1;
+            else right = mid;
+        }
+        int l = left;
+        left = 0;
+        right = nums.length - 1;
+        while (left &lt; right) {
+            int mid = left + (right - left) / 2 + 1; // 右边界要取上界, 所以这里加1
+            if (nums[mid] &gt; target) right = mid - 1;
+            else left = mid;
+        }
+        if (nums[l] != target) return new int[]{-1, -1};
+        return new int[]{l, right};
+    }
+}
+</code></pre><blockquote>
+<p>要包含上界记得计算mid整除的时候加1</p>
+</blockquote>
+<h3 id="658-找到k个最接近的元素">658. 找到K个最接近的元素</h3>
+<p>其实就是去找窗口大小为k的, 这些窗口的左边界.</p>
+<pre><code>class Solution {
+    public List&lt;Integer&gt; findClosestElements(int[] arr, int k, int x) {
+        int left = 0, right = arr.length - k - 1;
+        while (left &lt;= right) {
+            int mid = left + (right - left) / 2;
+            if (x - arr[mid] &gt; arr[mid + k] - x) { //左边离x远, 向右靠近
+                left = mid + 1;
+            } else {
+                right = mid - 1;
+            }
+        }
+        List&lt;Integer&gt; res = new LinkedList&lt;&gt;();
+        for (int i = left; i &lt; left + k; i++) {
+            res.add(arr[i]);
+        }
+        return res;
+    }
+}
+</code></pre><h3 id="287-寻找重复数">287. 寻找重复数</h3>
+<p>通过<code>count</code>来查找有重复数组的范围, <code>left/right/mid</code>这些数字不仅是指针, 也是我们猜测的数.</p>
+<pre><code>class Solution {
+    public int findDuplicate(int[] nums) {
+        int left = 0, right = nums.length - 1;
+        while (left &lt; right) {
+            int mid = (right - left) / 2 + left;
+            int count = 0;
+            for (int num : nums) {
+                if (num &lt;= mid) {
+                    count += 1;
+                }
+            }
+            if (count &gt; mid) {
+                right = mid;
+            } else {
+                left = mid + 1;
+            }
+        }
+        return left;
+    }
+}
+</code></pre><h2 id="其他题">其他题</h2>
+<h3 id="875-爱吃香蕉的珂珂">875. 爱吃香蕉的珂珂</h3>
+<p>这道题的启发是, 当我们遇到顺序遍历的时候, 都可以想一下能否用二分法加速. 这一道题顺序遍历会超时, 自然就想到用二分法缩短时间. 这里的<code>left</code>和<code>right</code>指的就是速度.</p>
+<pre><code>class Solution {
+    public int minEatingSpeed(int[] piles, int H) {
+        int max = getMax(piles);
+        /*
+        for (int i = 1; i &lt; max; i++) {
+            if (canFinish(piles, i, H)) return i;
+        }
+        return max;
+        */
+        //顺序的遍历就可以用二分法代替
+        int left = 1, right = max + 1;
+        while (left &lt; right) {
+            int mid = left + (right - left) / 2;
+            if (canFinish(piles, mid, H)) {
+                right = mid;
+            } else {
+                left = mid + 1;
+            }
+        }
+        return left;
+    }
+
+    private int getMax(int[] arr) {
+        int max = -1;
+        for (int num: arr) {
+            max = Math.max(num, max);
+        }
+        return max;
+    }
+
+    private boolean canFinish(int[] piles, int speed, int H) {
+        for (int n: piles) {
+            H -= (n / speed) + (((n % speed) &gt; 0) ? 1 : 0);
+            if (H &lt; 0) return false;
+        }
+        return true;
+    }
+}
+</code></pre><h3 id="1011-在d天内送达包裹的能力">1011. 在D天内送达包裹的能力</h3>
+<p>同上, 本来是需要暴力法去搜索最低运载能力, 也就是从1到整个<code>weights</code>之和, 因为是递增的数列, 那么实际上就可以用二分法.</p>
+<pre><code>class Solution {
+    public int shipWithinDays(int[] weights, int D) {
+        int left = 1, right = 0;
+        for (int num : weights) {
+            right += num;
+        }
+        right++;
+        while (left &lt; right) {
+            int mid = left + (right - left) / 2;
+            if (canFinish(weights, D, mid)) {
+                right = mid;
+            } else {
+                left = mid + 1;
+            }
+        }
+        return left;
+    }
+
+    boolean canFinish(int[] weights, int D, int weight) {
+        int j = 0;
+        for (int i = 0; i &lt; D; i++) { //天数
+            int w = weight; //假设的最低装载量
+            while ((w -= weights[j]) &gt;= 0) { //还有剩余则继续装下一个, 没有剩余就放到第二天装
+                j++;
+                if (j &gt;= weights.length) return true;
+            }
+        }
+        return false;
+    }
+}
+</code></pre><h2 id="参考">参考</h2>
+<ol>
+<li><a href="https://mp.weixin.qq.com/s/1221AWsL7G89RtaHyHjRPNJENA">labuladong算法-二分法</a></li>
+<li><a href="https://www.bilibili.com/video/BV15441117yb">大雪菜LeetCode暑期刷题打卡2019—Week1二分专题</a></li>
+<li><a href="https://leetcode-cn.com">leetcode</a></li>
+<li><a href="https://www.acwing.com/problem/">acwing</a></li>
+</ol>
+
+
+                
+
+                
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/post/5_%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/" data-toggle="tooltip" data-placement="top" title="动态规划">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/post/7_%E6%A0%88%E9%98%9F%E5%88%97%E5%A0%86/" data-toggle="tooltip" data-placement="top" title="栈队列堆">Next
+                            Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+                
+
+                
+
+
+<div id="disqus-comment"></div>
+<div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "xqt01" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+            </div>
+
+            
+            
+            <div class="
+                col-lg-2 col-lg-offset-0
+                visible-lg-block
+                sidebar-container
+                catalog-container">
+                <div class="side-catalog">
+                    <hr class="hidden-sm hidden-xs">
+                    <h5>
+                        <a class="catalog-toggle" href="#">CATALOG</a>
+                    </h5>
+                    <ul class="catalog-body"></ul>
+                </div>
+            </div>
+            
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/java" title="java">
+                            java
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/jvm" title="jvm">
+                            jvm
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/spring" title="spring">
+                            spring
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E5%89%8D%E7%AB%AF" title="前端">
+                            前端
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F" title="操作系统">
+                            操作系统
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93" title="数据库">
+                            数据库
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95" title="数据结构与算法">
+                            数据结构与算法
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B" title="网络编程">
+                            网络编程
+                        </a>
+                        
+                        
+                    </div>
+                </section>
+                
+
+                
+                
+                <section>
+                    <hr>
+                    <h5>FRIENDS</h5>
+                    <ul class="list-inline">
+                        
+                        <li><a target="_blank" href="https://fan-bu-fan.github.io/">FELL &amp; ENJOY</a></li>
+                        
+                    </ul>
+                </section>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">                  
+                    
+                    <li>
+                        <a href="mailto:huanruiz@foxmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		           
+                    
+                    
+                    
+                    
+
+		            
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/xqt01">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		            
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+            
+            
+            
+           
+                   <li>
+                       <a href='' rel="alternate" type="application/rss+xml" title="PunchCode" >
+                           <span class="fa-stack fa-lg">
+                               <i class="fas fa-circle fa-stack-2x"></i>
+                               <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                           </span>
+                       </a>
+                   </li>
+            
+             </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; PunchCode 2024
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function loadAsync(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        loadAsync("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    loadAsync("https://cdn.jsdelivr.net/npm/fastclick@1.0.6/lib/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+    function generateCatalog(selector) {
+
+        
+        
+        
+        
+            _containerSelector = 'div.post-container'
+        
+
+        
+        var P = $(_containerSelector), a, n, t, l, i, c;
+        a = P.find('h1,h2,h3,h4,h5,h6');
+
+        
+        $(selector).html('')
+
+        
+        a.each(function () {
+            n = $(this).prop('tagName').toLowerCase();
+            i = "#" + $(this).prop('id');
+            t = $(this).text();
+            c = $('<a href="' + i + '" rel="nofollow">' + t + '</a>');
+            l = $('<li class="' + n + '_nav"></li>').append(c);
+            $(selector).append(l);
+        });
+        return true;
+    }
+
+    generateCatalog(".catalog-body");
+
+    
+    $(".catalog-toggle").click((function (e) {
+        e.preventDefault();
+        $('.side-catalog').toggleClass("fold")
+    }))
+
+    
+
+
+    loadAsync("\/js\/jquery.nav.js", function () {
+        $('.catalog-body').onePageNav({
+            currentClass: "active",
+            changeHash: !1,
+            easing: "swing",
+            filter: "",
+            scrollSpeed: 700,
+            scrollOffset: 0,
+            scrollThreshold: .2,
+            begin: null,
+            end: null,
+            scrollChange: null,
+            padding: 80
+        });
+    });
+</script>
+
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,1273 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="PunchCode">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://xqt01.github.io/front.png">
+    <meta property="twitter:image" content="https://xqt01.github.io/front.png" />
+    
+
+    
+    <meta name="title" content="动态规划" />
+    <meta property="og:title" content="动态规划" />
+    <meta property="twitter:title" content="动态规划" />
+    
+
+    
+    <meta name="description" content="Software Engineer">
+    <meta property="og:description" content="Software Engineer" />
+    <meta property="twitter:description" content="Software Engineer" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="Harry, 小拳头">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>动态规划 | 以终为始</title>
+
+    <link rel="canonical" href="/post/5_%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/">
+
+    
+    
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hugo-theme-cleanwhite.min.css">
+
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+
+    
+    <link href="https://cdn.jsdelivr.net/gh/FortAwesome/Font-Awesome@5.15.1/css/all.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    
+    <script src="/js/jquery.min.js"></script>
+
+    
+    <script src="/js/bootstrap.min.js"></script>
+
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+
+</head>
+
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">PunchCode</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">All Posts</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/tech">tech</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0">学习笔记</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/%E6%9D%82%E8%B0%88">杂谈</a>
+                        </li>
+                        
+                    
+                    
+		    
+                        <li><a href="/top/archive/">ARCHIVE</a></li>
+                    
+                        <li><a href="/top/about/">ABOUT</a></li>
+                    
+
+                    
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/front.png')
+    }
+</style>
+
+<header class="intro-header" >
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95" title="数据结构与算法">
+                            数据结构与算法
+                        </a>
+                        
+                    </div>
+                    <h1>动态规划</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        
+                            Posted by 
+                            
+                                小拳头
+                             
+                            on 
+                            Saturday, December 26, 2020
+                            
+                            
+                            
+                            
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <h2 id="简单题">简单题</h2>
+<h3 id="509-斐波那契数剑指offer10-i-斐波那契数列">509. 斐波那契数/剑指Offer10-I. 斐波那契数列</h3>
+<p>没有用数列存储, 因为转台转移过程只与前两个值有关.</p>
+<pre><code>class Solution {
+    public int fib(int n) {
+        if (n == 0) return 0;
+        if (n == 1 || n == 2) return 1;
+        int pre1 = 1, pre2 = 1, sum = 2;
+        for (int i = 3; i &lt;= n; i++) {
+            sum = (pre1 + pre2) % 1000000007;//剑指的题要取余
+            pre1 = pre2;
+            pre2 = sum;
+        }
+        return sum;
+    }
+}
+</code></pre><h3 id="322-零钱兑换">322. 零钱兑换</h3>
+<pre><code>class Solution {
+    public int coinChange(int[] coins, int amount) {
+        int[] dp = new int[amount + 1];
+        Arrays.fill(dp, amount + 1);
+        dp[0] = 0;
+        for (int i = 1; i &lt;= amount; i++) {
+            for (int coin: coins) {
+                if (i - coin &lt; 0) continue;
+                dp[i] = Math.min(dp[i], dp[i - coin] + 1);
+            }
+        }
+        return dp[amount] == amount + 1 ? -1 : dp[amount];
+    }
+}
+</code></pre><p>这些题如果正向写, 这两道题就是递归. 而递归实际上可以看作是用树去枚举, 时间复杂度是指数级的, 为了简化运算, 就需要带记忆的递归来减少计算. 这不由得会让人想起前序遍历, 而动态规划则是自底向上, 像后序遍历. 做的时候要清楚子问题是什么, 根据最小子问题的条件判断动态规划的迭代方向.</p>
+<p>状态转移方程和base case应当是一起想的, 而不是分步骤, 但是知道了状态转移方程之后写代码的时候要先想base case. 状态的数量也要清楚.</p>
+<h2 id="子序列">子序列</h2>
+<p>对于子序列问题, 甚至不需要真正把dp数组看成数组, 而是看成抽象的范围. 通过范围的关系解题, 而不是想象数组上一个方向, 左边右边的含义.</p>
+<h3 id="300-最长递增子序列">300. 最长递增子序列</h3>
+<p>每一个点和前面的所有点有关, base case是只有一个数, 长度为1.</p>
+<pre><code>class Solution {
+    public int lengthOfLIS(int[] nums) {
+        if (nums.length &lt;= 1) return nums.length;
+        int[] dp = new int[nums.length];
+        int res = 1;
+        Arrays.fill(dp, 1);
+        for (int i = 1; i &lt; dp.length; i++) {
+            for (int j = 0; j &lt; i; j++) {
+                if (nums[i] &gt; nums[j]) {
+                    dp[i] = Math.max(dp[i], dp[j] + 1);
+                }
+                if (dp[i] &gt; res) res = dp[i];
+            }
+        }
+        return res;
+    }
+}
+</code></pre><h3 id="53-最大子序和剑指offer42-连续子数组的最大和">53. 最大子序和/剑指Offer42. 连续子数组的最大和</h3>
+<p>base case只有一个数, 最大和永远是自己. <code>dp</code>数组代表前面的数到这个数, 最大子序列的和是多少, 也就是可以选择不要前面的序列和(如果前面为负), 或者要前面的序列和, 有点language model的味道. 因为每次计算只与前面的数有关, 所以可以只用两个值来完成计算.</p>
+<pre><code>class Solution {
+    public int maxSubArray(int[] nums) {
+        if (nums.length == 0) return 0;
+        int[] dp = Arrays.copyOf(nums, nums.length);
+        int res = dp[0];
+        for (int i = 1; i &lt; dp.length; i++) {
+            if (dp[i] &lt; dp[i - 1] + dp[i]) dp[i] = dp[i - 1] + dp[i];
+            if (dp[i] &gt; res) res = dp[i];
+        }
+        return res;
+    }
+}
+</code></pre><h3 id="5-最长回文子串">5. 最长回文子串</h3>
+<p>双指针解法较为简单.</p>
+<pre><code>class Solution {
+    public String longestPalindrome(String s) {
+        String res = &quot;&quot;;
+        for (int i = 0; i &lt; s.length(); i++) {
+            String temp = parlindrome(s, i, i);
+            res = temp.length() &gt; res.length() ? temp : res;
+            temp = parlindrome(s, i, i + 1);
+            res = temp.length() &gt; res.length() ? temp : res;           
+        }
+        return res;
+    }
+
+    String parlindrome(String str, int i, int j) {
+        while (i &gt;= 0 &amp;&amp; j &lt; str.length() &amp;&amp; str.charAt(i) == str.charAt(j)) {
+            i--;
+            j++;
+        }
+        return str.substring(i + 1, j);
+    }
+}
+</code></pre><p>用dp做, 这是一个<strong>单序列用二维数组解</strong>的题. base case是单个字母为true, 两个相同的字母也是true. 类似双指针, dp(i,j)=dp(i+1,j-1) and (s(i)=s(j)), 每个状态和左下角的子状态有关.</p>
+<pre><code>class Solution {
+    public String longestPalindrome(String s) {
+        boolean[][] dp = new boolean[s.length()][s.length()];
+        for (int i = 0; i &lt; s.length(); i++) {
+            dp[i][i] = true;
+        }
+        int length = 1;
+        int begin = 0;
+        for (int i = s.length() - 2; i &gt;= 0; i--) {
+            for (int j = i + 1; j &lt; s.length(); j++) {
+                if (j - i == 1 || j - i == 2) {
+                    if (s.charAt(i) == s.charAt(j)) { 
+                        dp[i][j] = true;
+                        if (j - i + 1 &gt; length) {
+                            begin = i;
+                            length = j - i + 1;
+                        }
+                    }
+                } else {
+                    if (dp[i + 1][j - 1] &amp;&amp; s.charAt(i) == s.charAt(j)) {
+                        dp[i][j] = true;
+                        if (j - i + 1 &gt; length) {
+                            begin = i;
+                            length = j - i + 1;
+                        }
+                    }
+                }
+            }
+        }
+        return s.substring(begin, begin + length);
+    }
+}
+</code></pre><h3 id="516-最长回文子序列">516. 最长回文子序列</h3>
+<p>这也是一个<strong>单序列用二维数组解</strong>的题. 注意序列是可以不连续的, 子串是连续的, 所以这道题实际上简单一点, 只要<code>s.charAt(i) == s.charAt(j)</code>, 那么就可以通过左下角的长度计算, 否则只能在左边或者下边选一个最大值.</p>
+<pre><code>class Solution {
+    public int longestPalindromeSubseq(String s) {
+        int[][] dp = new int[s.length()][s.length()];
+        for (int i = 0; i &lt; s.length(); i++) {
+            dp[i][i] = 1;
+        }
+        for (int i = s.length() - 2; i &gt;= 0; i--) {
+            for (int j = i + 1; j &lt; s.length(); j++) {
+                if (s.charAt(i) == s.charAt(j)) {
+                    dp[i][j] += dp[i + 1][j - 1] + 2;
+                } else {
+                    dp[i][j] = Math.max(dp[i + 1][j], dp[i][j - 1]);
+                }
+            }
+        }
+        return dp[0][s.length() - 1];
+    }
+}
+</code></pre><blockquote>
+<p>单序列用二维数组解, 就把<code>i</code>和<code>j</code>当成序列的左右边界, 通过这个边界去扩张.</p>
+<p>题目中的串一般都是指连续的, 而序列是可以不连续的</p>
+</blockquote>
+<h3 id="1143-最长公共子序列">1143. 最长公共子序列</h3>
+<p>接下来几道都是一个<strong>双序列用二维数组解</strong>的题. 递归法:</p>
+<pre><code>class Solution {
+    int[][] memo;
+    public int longestCommonSubsequence(String text1, String text2) {
+        int m = text1.length(), n = text2.length();
+        memo = new int[m][n];
+        for (int[] row: memo) Arrays.fill(row, -1);
+        return dp(text1, text2, 0, 0);
+    }
+
+    private int dp(String s1, String s2, int i, int j) {
+        if (i &gt;= s1.length() || j &gt;= s2.length()) {
+            return 0;
+        }
+        if (memo[i][j] != -1) return memo[i][j];
+        if (s1.charAt(i) == s2.charAt(j)) {
+            memo[i][j] = 1 + dp(s1, s2, i + 1, j + 1);
+        } else {
+            memo[i][j] = Math.max(dp(s1, s2, i, j + 1), dp(s1, s2, i + 1, j)); //另外一个情况已经包含
+        }
+        return memo[i][j];
+    }
+}
+</code></pre><p>自底向上dp法如下, 同递归, 每个子状态只与左, 上, 左上有关. 多加了一行和一列为0的数组, 当做base case.</p>
+<pre><code>class Solution {
+    public int longestCommonSubsequence(String text1, String text2) {
+        int m = text1.length(), n = text2.length();
+        int[][] dp = new int[m + 1][n + 1];
+        for (int i = 1; i &lt;= m; i++) {
+            for (int j = 1; j &lt;= n; j++) {
+                if (text1.charAt(i - 1) == text2.charAt(j - 1)) {
+                    dp[i][j] = 1 + dp[i - 1][j - 1];
+                } else {
+                    dp[i][j] = Math.max(dp[i][j - 1], dp[i - 1][j]);
+                }
+            }
+        }
+        return dp[m][n];
+    }
+}
+</code></pre><h3 id="583-两个字符串的删除操作">583. 两个字符串的删除操作</h3>
+<p>这道题实际上就是等价于lcs问题. 算出了lcs再根据lcs长度反推即可.</p>
+<pre><code>class Solution {
+    public int minDistance(String word1, String word2) {
+        int m = word1.length(), n = word2.length();
+        int[][] dp = new int[m + 1][n + 1];
+        for (int i = 1; i &lt;= m; i++) {
+            for (int j = 1; j &lt;= n; j++) {
+                if (word1.charAt(i - 1) == word2.charAt(j - 1)) {
+                    dp[i][j] = dp[i - 1][j - 1] + 1;
+                } else {
+                    dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+                }
+            }
+        }
+        return m + n - 2 * dp[m][n];
+    }
+}
+</code></pre><h3 id="712-两个字符串的最小ascii删除和">712. 两个字符串的最小ASCII删除和</h3>
+<p>递归.</p>
+<pre><code>class Solution {
+    int memo[][];
+    public int minimumDeleteSum(String s1, String s2) {
+        int m = s1.length(), n = s2.length();
+        memo = new int[m][n];
+        for (int[] row: memo) {
+            Arrays.fill(row, -1);
+        }
+        return dp(s1, s2, 0, 0);
+    }
+
+    private int dp(String s1, String s2, int i, int j) {
+        int res = 0;
+        if (i &gt;= s1.length()) {
+            while (j &lt; s2.length()) {
+                res += s2.charAt(j);
+                j++;
+            }
+            return res;
+        }
+        if (j &gt;= s2.length()) {
+            while (i &lt; s1.length()) {
+                res += s1.charAt(i);
+                i++;
+            }
+            return res;
+        }
+        if (memo[i][j] != -1) return memo[i][j];
+        if (s1.charAt(i) == s2.charAt(j)) {
+            memo[i][j] = dp(s1, s2, i + 1, j + 1);
+        } else {
+            memo[i][j] = Math.min(dp(s1, s2, i, j + 1) + s2.charAt(j), dp(s1, s2, i + 1, j) + s1.charAt(i));
+        }
+        return memo[i][j];
+    }
+}
+</code></pre><p>dp. 这里其实可以感受到dp的本质依然是穷举, 二维数组实际上就是列举出了所有的情况. base case是把所有的字母全部删除, 也就是把ascii码累加(最差值). <strong>ascii是unicode的子集, 所以这里这么说没问题</strong>.</p>
+<pre><code>class Solution {
+    public int minimumDeleteSum(String s1, String s2) {
+        int m = s1.length(), n = s2.length();
+        int[][] dp = new int[m + 1][n + 1];
+        for (int i = 1; i &lt;= m; i++) {
+            dp[i][0] = dp[i - 1][0] + s1.charAt(i - 1);
+        }
+        for (int j = 1; j &lt;= n; j++) {
+            dp[0][j] = dp[0][j - 1] + s2.charAt(j - 1);
+        }
+        for (int i = 1; i &lt;= m; i++) {
+            for (int j = 1; j &lt;= n; j++) {
+                if (s1.charAt(i - 1) == s2.charAt(j - 1)) {
+                    dp[i][j] = dp[i - 1][j - 1];
+                } else {
+                    dp[i][j] = Math.min(dp[i - 1][j] + s1.charAt(i - 1), dp[i][j - 1] + s2.charAt(j - 1));
+                }
+            }
+        }
+        return dp[m][n];
+    }
+}
+</code></pre><h3 id="72-编辑距离">72. 编辑距离</h3>
+<p>和上一题差不多, 增删改都要计入操作, 增对应上, 删对应左, 改对应左上.</p>
+<pre><code>class Solution {
+    public int minDistance(String word1, String word2) {
+        int m = word1.length(), n = word2.length();
+        int[][] dp = new int[m + 1][n + 1];
+        for (int i = 1; i &lt;= m; i++) dp[i][0] = i;
+        for (int j = 1; j &lt;= n; j++) dp[0][j] = j;
+        for (int i = 1; i &lt;= m; i++) {
+            for (int j = 1; j &lt;= n; j++) {
+                if (word1.charAt(i - 1) == word2.charAt(j - 1)) {
+                    dp[i][j] = dp[i - 1][j - 1];
+                } else {
+                    dp[i][j] = Math.min(dp[i - 1][j], Math.min(dp[i][j - 1], dp[i - 1][j - 1])) + 1;
+                }
+            }
+        }
+        return dp[m][n];
+    }
+}
+</code></pre><blockquote>
+<p>要记录用了什么状态就把int替换成包含<code>int val</code>和<code>int choice</code>的Node即可, 然后倒着推.</p>
+</blockquote>
+<h2 id="背包九讲">背包九讲</h2>
+<p>题目在acwing2~12.</p>
+<h3 id="0-1背包">0-1背包</h3>
+<p>两个状态, 容量和可选择物品. 选择是是否放进背包. 二维数组<code>j</code>表示当前容量, <code>i</code>表示第<strong>前</strong>几个物品, 二维数组的内容就表示在前<code>i</code>个物品里面, 价值最大的选择.</p>
+<pre><code>import java.util.*;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        String[] arr = sc.nextLine().split(&quot; &quot;);
+        int N = Integer.parseInt(arr[0]), V = Integer.parseInt(arr[1]);
+        int[][] inputs = new int[N][2];
+        for (int i = 0; i &lt; N; i++) {
+            arr = sc.nextLine().split(&quot; &quot;);
+            inputs[i][0] = Integer.parseInt(arr[0]); //体积
+            inputs[i][1] = Integer.parseInt(arr[1]); //价值
+        }
+        int[][] dp = new int[N + 1][V + 1];
+        for (int i = 1; i &lt;= N; i++) {
+            for (int j = 1; j &lt;= V; j++) {
+                if (inputs[i - 1][0] &gt; j) dp[i][j] = dp[i - 1][j];
+                else {
+                    dp[i][j] = Math.max(dp[i - 1][j], dp[i - 1][j - inputs[i - 1][0]] + inputs[i - 1][1]); //不装or装
+                }
+            }
+        }
+        System.out.println(dp[N][V]);
+    }
+}
+</code></pre><h3 id="416-分割等和子集0-1背包">416. 分割等和子集(0-1背包)</h3>
+<p>如果和为偶数, 那么相当于转换成<code>nums</code>中的数(背包体积)能否组成<code>sum/2</code>大小的数字(总体积).</p>
+<pre><code>class Solution {
+    public boolean canPartition(int[] nums) {
+        int n = Arrays.stream(nums).sum();
+        if (n % 2 != 0) return false;
+        int sum = n / 2;
+        boolean[][] dp = new boolean[nums.length + 1][sum + 1];
+        for (int i = 0; i &lt;= nums.length; i++) dp[i][0] = true;
+        for (int i = 1; i &lt;= nums.length; i++) {
+            for (int j = 1; j &lt;= sum; j++) {
+                if (nums[i - 1] &gt; j) {
+                    dp[i][j] = dp[i - 1][j];
+                } else {
+                    dp[i][j] = dp[i - 1][j] || dp[i - 1][j - nums[i - 1]];
+                }
+            }
+        }
+        return dp[nums.length][sum];
+    }
+}
+</code></pre><pre><code>//状态压缩后
+class Solution {
+    public boolean canPartition(int[] nums) {
+        int n = Arrays.stream(nums).sum();
+        if (n % 2 != 0) return false;
+        int sum = n / 2;
+        boolean[] dp = new boolean[sum + 1];
+        dp[0] = true;
+        for (int i = 0; i &lt; nums.length; i++) {
+            for (int j = sum; j &gt;= 0; j--) {
+                if (j - nums[i] &gt;= 0)
+                    dp[j] = dp[j] || dp[j - nums[i]];
+            }
+        }
+        return dp[sum];
+    }
+}
+</code></pre><h3 id="完全背包">完全背包</h3>
+<p>物品数量没有限制. 在0-1背包的基础上, 多考虑当前<code>i</code>重复使用的情况.</p>
+<pre><code>import java.util.*;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        String[] arr = sc.nextLine().split(&quot; &quot;);
+        int N = Integer.parseInt(arr[0]), V = Integer.parseInt(arr[1]);
+        int[][] inputs = new int[N][2];
+        for (int i = 0; i &lt; N; i++) {
+            arr = sc.nextLine().split(&quot; &quot;);
+            inputs[i][0] = Integer.parseInt(arr[0]); //体积
+            inputs[i][1] = Integer.parseInt(arr[1]); //价值
+        }
+        int[][] dp = new int[N + 1][V + 1];
+        for (int i = 1; i &lt;= N; i++) {
+            for (int j = 1; j &lt;= V; j++) {
+                if (inputs[i - 1][0] &gt; j) dp[i][j] = dp[i - 1][j];
+                else {
+                    dp[i][j] = Math.max(dp[i][j - inputs[i - 1][0]] + inputs[i - 1][1], Math.max(dp[i - 1][j], dp[i - 1][j - inputs[i - 1][0]] + inputs[i - 1][1])); //重复装or不装or新装
+                }
+            }
+        }
+        System.out.println(dp[N][V]);
+    }
+}
+</code></pre><h3 id="322-零钱兑换完全背包">322. 零钱兑换(完全背包)</h3>
+<p>前面的零钱兑换其实可以用完全背包的思路来. 前面做这道题的时候, 将<code>amount</code>作为大循环的条件, 但是对大多数题来说, 用<code>coins</code>作为大循环条件更好, 防止重叠的情况(我的意思是指考虑到我们做背包问题的遍历顺序来说, 当然二维数组只要遍历顺序改变了也可以达到等效的效果). 这里压缩了维度.</p>
+<pre><code>class Solution {
+    public int coinChange(int[] coins, int amount) {
+        int[] dp = new int[amount + 1];
+        Arrays.fill(dp, amount + 1);
+        dp[0] = 0;
+        for (int i = 0; i &lt; coins.length; i++) {
+            for (int j = coins[i]; j &lt;= amount; j++) {
+                dp[j] = Math.min(dp[j], dp[j - coins[i]] + 1);
+            }
+        }
+        return dp[amount] == amount + 1 ? -1 : dp[amount];
+    }
+}
+</code></pre><h3 id="518-零钱兑换ii完全背包">518. 零钱兑换II(完全背包)</h3>
+<p>转换成完全背包问题, 条件有可选择的硬币(背包), 金额总量(容量). 那么<code>i</code>代表前<code>i</code>个硬币, <code>j</code>代表金额. 这里没有压缩维度.</p>
+<pre><code>class Solution {
+    public int change(int amount, int[] coins) {
+        int[][] dp = new int[coins.length + 1][amount + 1];
+        for (int i = 0; i &lt;= coins.length; i++)
+            dp[i][0] = 1;
+        for (int i = 1; i &lt;= coins.length; i++) {
+            for (int j = 1; j &lt;= amount; j++) {
+                if (j &lt; coins[i - 1]) dp[i][j] = dp[i - 1][j];
+                else dp[i][j] = dp[i - 1][j] + dp[i][j - coins[i - 1]];
+            }
+        }
+        return dp[coins.length][amount];
+    }
+}
+</code></pre><h3 id="多重背包">多重背包</h3>
+<p>物品的数量有限制了. 实际上就是0-1背包加了k这个循环. 这里用了状态压缩, <code>j</code>这个维度需要倒过来遍历, 相当于自动地从上一层循环继承了值, 如果超出范围就自动完成了之前的<code>if (inputs[i - 1][0] &gt; j) dp[i][j] = dp[i - 1][j];</code>操作, 并且防止重复计算. <del>这里不状态压缩的方法我没写出来</del>. <del>有二进制和单调队列优化方法, 暂跳过.</del></p>
+<pre><code>import java.util.*;
+
+public class Main {
+    
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        String[] arr = sc.nextLine().split(&quot; &quot;);
+        int n = Integer.parseInt(arr[0]);
+        int v = Integer.parseInt(arr[1]);
+        int[] volumes = new int[n + 1];
+        int[] values = new int[n + 1];
+        int[] amounts = new int[n + 1];
+        for (int i = 1; i &lt;= n; i++) {
+            arr = sc.nextLine().split(&quot; &quot;);
+            volumes[i] = Integer.parseInt(arr[0]);
+            values[i] = Integer.parseInt(arr[1]);
+            amounts[i] = Integer.parseInt(arr[2]);
+        }
+        int[] dp = new int[v + 1];
+        for (int i = 1; i &lt;= n; i++) {
+            for (int j = v; j &gt;= 0; j--) {
+                for (int k = 0; k &lt;= amounts[i] &amp;&amp; k * volumes[i] &lt;= j; k++) {
+                    dp[j] = Math.max(dp[j], dp[j - k * volumes[i]] + k * values[i]);
+                }
+            }
+        }
+        System.out.print(dp[v]);
+    }
+}
+</code></pre><p>二进制</p>
+<pre><code>import java.util.*;
+
+public class Main {
+    
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        String[] arr = sc.nextLine().split(&quot; &quot;);
+        int n = Integer.parseInt(arr[0]);
+        int v = Integer.parseInt(arr[1]);
+        List&lt;Integer&gt; volumes = new LinkedList&lt;&gt;();
+        List&lt;Integer&gt; values = new LinkedList&lt;&gt;();
+        for (int i = 1; i &lt;= n; i++) {
+            arr = sc.nextLine().split(&quot; &quot;);
+            int volume = Integer.parseInt(arr[0]);
+            int value = Integer.parseInt(arr[1]);
+            int total = Integer.parseInt(arr[2]);
+            for (int j = 1; j &lt;= total; j *= 2) {
+                total -= j;
+                volumes.add(j * volume);
+                values.add(j * value);
+            }
+            if (total &gt; 0) {
+                volumes.add(total * volume);
+                values.add(total * value);
+            }
+        }
+        int[] dp = new int[v + 1];
+        for (int i = 0; i &lt; volumes.size(); i++) {
+            for (int j = v; j &gt;= volumes.get(i); j--) {
+                dp[j] = Math.max(dp[j], dp[j - volumes.get(i)] + values.get(i));
+            }
+        }
+        System.out.print(dp[v]);
+    }
+}
+</code></pre><h3 id="混合背包">混合背包</h3>
+<p>结合0-1背包, 完全背包, 多重背包. 我这里都用一维数组演示了, 可以和前三道题对比.</p>
+<pre><code>import java.util.*;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        String[] arr = sc.nextLine().split(&quot; &quot;);
+        int N = Integer.parseInt(arr[0]), V = Integer.parseInt(arr[1]);
+        int[][] inputs = new int[N][3];
+        for (int i = 0; i &lt; N; i++) {
+            arr = sc.nextLine().split(&quot; &quot;);
+            inputs[i][0] = Integer.parseInt(arr[0]); //体积
+            inputs[i][1] = Integer.parseInt(arr[1]); //价值
+            inputs[i][2] = Integer.parseInt(arr[2]); //数量
+        }
+        int[] dp = new int[V + 1];
+        for (int i = 0; i &lt; N; i++) {
+            if (inputs[i][2] == -1) {
+                for (int j = V; j &gt;= 0; j--) {
+                    if (j &lt; inputs[i][0]) break;
+                    dp[j] = Math.max(dp[j], dp[j - inputs[i][0]] + inputs[i][1]);
+                }
+            } else if (inputs[i][2] == 0) {
+                for (int j = inputs[i][0]; j &lt;= V; j++) { //反过来了就不能用break了, 直接跳过边界条件即可
+                    dp[j] = Math.max(dp[j], dp[j - inputs[i][0]] + inputs[i][1]);
+                }
+            } else {
+                for (int j = V; j &gt;= 0; j--) {
+                    for (int k = 1; k &lt;= inputs[i][2] &amp;&amp; inputs[i][0] * k &lt;= j; k++) {
+                        dp[j] = Math.max(dp[j], dp[j - inputs[i][0] * k] + inputs[i][1] * k); //不装or装
+                    }
+                }
+            }
+        }
+        System.out.println(dp[V]);
+    }
+}
+</code></pre><h2 id="打家劫舍">打家劫舍</h2>
+<h3 id="198-打家劫舍">198. 打家劫舍</h3>
+<pre><code>class Solution {
+    public int rob(int[] nums) {
+        if (nums.length == 0) return 0;
+        int[] dp = new int[nums.length + 1];
+        dp[0] = 0;
+        dp[1] = nums[0];
+        for (int i = 2; i &lt;= nums.length; i++) {
+            dp[i] = Math.max(dp[i - 1], dp[i - 2] + nums[i - 1]);
+        }
+
+        return dp[nums.length];
+    }
+}
+</code></pre><h3 id="213-打家劫舍ii">213. 打家劫舍II</h3>
+<p>等价于在上一道题的基础上, 取[0, nums.length - 1)和[1, nums.length)这两个范围之中的较大值, 因为首尾不能相连.</p>
+<pre><code>class Solution {
+    public int rob(int[] nums) {
+        if (nums.length == 1) return nums[0];
+        return Math.max(rob(nums, 0, nums.length - 1), rob(nums, 1, nums.length));
+    }
+
+    public int rob(int[] nums, int start, int end) {
+        int[] dp = new int[end - start + 1];
+        dp[0] = 0;
+        dp[1] = nums[start];
+        int n = dp.length;
+        for (int i = 2; i &lt; n; i++) {
+            dp[i] = Math.max(nums[i - 1 + start] + dp[i - 2], dp[i - 1]);
+        }
+        return dp[n - 1];
+    }
+}
+</code></pre><h3 id="337-打家劫舍iii">337. 打家劫舍III</h3>
+<p>二叉树的后序遍历 + 递归的动态规划. 递归需要记忆化, 时间复杂度$O(n)$.</p>
+<pre><code>class Solution {
+    Map&lt;TreeNode, Integer&gt; memo = new HashMap&lt;&gt;();
+    public int rob(TreeNode root) {
+        if (root == null) return 0;
+        if (memo.containsKey(root)) return memo.get(root);
+        int yes = root.val + (root.left == null ? 0 : rob(root.left.left) + rob(root.left.right)) + (root.right == null ? 0 : rob(root.right.left) + rob(root.right.right));
+        int no = rob(root.left) + rob(root.right);
+        int res = Math.max(yes, no);
+        memo.put(root, res);
+        return res;
+    }
+} 
+</code></pre><h2 id="股票问题">股票问题</h2>
+<h3 id="121-买卖股票的最佳时机">121. 买卖股票的最佳时机</h3>
+<pre><code>class Solution {
+    public int maxProfit(int[] prices) {
+        int min_price = prices[0];
+        int res = 0;
+        for (int price: prices) {
+            if (min_price &gt; price) min_price = price;
+            if (price - min_price &gt; res) res = price - min_price;
+        }
+        return res;
+    }
+}
+</code></pre><h3 id="122-买卖股票的最佳时机ii">122. 买卖股票的最佳时机II</h3>
+<p>最优解法是贪心, 只要当前时间比前面的时间高, 就</p>
+<pre><code>class Solution {
+    public int maxProfit(int[] prices) {
+        int res = 0;
+        for (int i = 1; i &lt; prices.length; i++) {
+            if (prices[i] &gt; prices[i - 1]) res += prices[i] - prices[i - 1];
+        }
+        return res;
+    }
+}
+</code></pre><h3 id="123-买卖股票的最佳时机iii188-买卖股票的最佳时机iv">123. 买卖股票的最佳时机III/188. 买卖股票的最佳时机IV</h3>
+<p>题意一样, 直接做IV题. <code>dp[i][j][k]</code>表示在第i天, 我们持有股票的状态为j(0代表不持有, 1代表持有), 已经进行了k次交易时能够获取的最大利润.</p>
+<pre><code>class Solution {
+    public int maxProfit(int k, int[] prices) {
+        int n = prices.length;
+        if(n &lt;= 1) return 0;
+
+        int[][][] dp = new int[n][2][k + 1];
+        for(int i = 0; i &lt;= k; i++){
+            dp[0][0][i] = 0;
+            dp[0][1][i] = -prices[0];
+        }
+
+        for(int i = 1; i &lt; n; i++){
+            for(int j = 1; j &lt;= k; j++){
+                dp[i][0][j] = Math.max(dp[i - 1][0][j], dp[i - 1][1][j] + prices[i]);
+                dp[i][1][j] = Math.max(dp[i - 1][1][j], dp[i - 1][0][j - 1] - prices[i]);
+            }
+        }
+        return dp[n - 1][0][k];
+    }
+}
+</code></pre><h3 id="309-最佳买卖股票时机含冷冻期">309. 最佳买卖股票时机含冷冻期</h3>
+<p>dp[i][0]: 持有股票; dp[i][1]: 不持有股票, 处于冷冻期; dp[i][2]: 不持有股票, 不处于冷冻期.</p>
+<pre><code>class Solution {
+    public int maxProfit(int[] prices) {
+        if (prices.length &lt;= 1) return 0;
+        int[][] dp = new int[prices.length][3];
+        dp[0][0] = -prices[0];
+        for (int i = 1; i &lt; prices.length; i++) {
+            dp[i][0] = Math.max(dp[i - 1][0], dp[i - 1][2] - prices[i]);
+            dp[i][1] = dp[i - 1][0] + prices[i]; //当天是冷冻期
+            dp[i][2] = Math.max(dp[i - 1][1], dp[i - 1][2]);
+        }
+        return Math.max(dp[prices.length - 1][1], dp[prices.length - 1][2]);
+    }
+}
+</code></pre><h3 id="714-买卖股票的最佳时机含手续费">714. 买卖股票的最佳时机含手续费</h3>
+<p>dp[i][1]: 持有股票; dp[i][0]: 不持有股票.</p>
+<pre><code>class Solution {
+    public int maxProfit(int[] prices, int fee) {
+        int[][] dp = new int[prices.length][2];
+        dp[0][1] = -prices[0];
+        for (int i = 1; i &lt; prices.length; i++) {
+            dp[i][0] = Math.max(dp[i - 1][0], dp[i - 1][1] + prices[i] - fee); 
+            dp[i][1] = Math.max(dp[i - 1][1], dp[i - 1][0] - prices[i]);
+        }
+        return dp[prices.length - 1][0];
+    }
+}
+</code></pre><h2 id="887-鸡蛋掉落">887. 鸡蛋掉落</h2>
+<p>带记忆化的递归, 会超时, 但是思路正确. 复杂度是<code>dp</code>函数本身的复杂度$O(n)$, 乘上不同状态组合的总数$O(kn)$.</p>
+<pre><code>class Solution {
+
+    int[][] dp;
+    public int superEggDrop(int K, int N) {
+        dp = new int[K + 1][N + 1];
+        for (int[] arr: dp) {
+            Arrays.fill(arr, -1);
+        }
+        return dp(K, N);
+    }
+
+    public int dp(int k, int n) {
+        if (k == 1) return n;
+        if (n == 0) return 0;
+        if (dp[k][n] != -1) return dp[k][n];
+        int res = n;
+        for (int i = 1; i &lt;= n; i++) {
+            res = Math.min(res, Math.max(dp(k, n - i), dp(k - 1, i - 1)) + 1);
+        }
+        dp[k][n] = res;
+        return res;
+    }
+}
+</code></pre><p><code>for (int i = 1; i &lt;= n; i++)</code>这个顺序遍历条件, 可以用二分法来优化, 防止超时. 复杂度$O(KNlogN)$.</p>
+<pre><code>class Solution {
+
+    int[][] dp;
+    public int superEggDrop(int K, int N) {
+        dp = new int[K + 1][N + 1];
+        for (int[] arr: dp) {
+            Arrays.fill(arr, -1);
+        }
+        return dp(K, N);
+    }
+
+    public int dp(int k, int n) {
+        if (k == 1) return n;
+        if (n == 0) return 0;
+        if (dp[k][n] != -1) return dp[k][n];
+        int res = n;
+        // for (int i = 1; i &lt;= n; i++) {
+        //     res = Math.min(res, Math.max(dp(k, n - i), dp(k - 1, i - 1)) + 1);
+        // }
+
+        int left = 1, right = n;
+        while (left &lt;= right) {
+            int mid = (left + right) / 2;
+            int broken = dp(k - 1, mid - 1);
+            int unbroken = dp(k, n - mid);
+            if (broken &gt; unbroken) {
+                right = mid - 1;
+                res = Math.min(res, broken + 1);
+            } else {
+                left = mid + 1;
+                res = Math.min(res, unbroken + 1);
+            }
+        }
+        dp[k][n] = res;
+        return res;
+    }
+}
+</code></pre><h2 id="参考">参考</h2>
+<ol>
+<li><a href="https://mp.weixin.qq.com/s/1221AWsL7G89RtaHyHjRPNJENA">labuladong算法-动态规划</a></li>
+<li><a href="https://www.bilibili.com/video/BV15441117yb">大雪菜LeetCode暑期刷题打卡2019—Week8动态规划</a></li>
+<li><a href="https://leetcode-cn.com">leetcode</a></li>
+<li><a href="https://github.com/tianyicui/pack/blob/master/V2.pdf">背包九讲</a></li>
+<li><a href="https://www.acwing.com/problem/">acwing</a></li>
+</ol>
+
+
+                
+
+                
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/post/4_%E9%93%BE%E8%A1%A8/" data-toggle="tooltip" data-placement="top" title="数据结构-链表">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/post/6_%E4%BA%8C%E5%88%86%E6%B3%95/" data-toggle="tooltip" data-placement="top" title="二分法">Next
+                            Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+                
+
+                
+
+
+<div id="disqus-comment"></div>
+<div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "xqt01" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+            </div>
+
+            
+            
+            <div class="
+                col-lg-2 col-lg-offset-0
+                visible-lg-block
+                sidebar-container
+                catalog-container">
+                <div class="side-catalog">
+                    <hr class="hidden-sm hidden-xs">
+                    <h5>
+                        <a class="catalog-toggle" href="#">CATALOG</a>
+                    </h5>
+                    <ul class="catalog-body"></ul>
+                </div>
+            </div>
+            
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/java" title="java">
+                            java
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/jvm" title="jvm">
+                            jvm
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/spring" title="spring">
+                            spring
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E5%89%8D%E7%AB%AF" title="前端">
+                            前端
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F" title="操作系统">
+                            操作系统
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93" title="数据库">
+                            数据库
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95" title="数据结构与算法">
+                            数据结构与算法
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B" title="网络编程">
+                            网络编程
+                        </a>
+                        
+                        
+                    </div>
+                </section>
+                
+
+                
+                
+                <section>
+                    <hr>
+                    <h5>FRIENDS</h5>
+                    <ul class="list-inline">
+                        
+                        <li><a target="_blank" href="https://fan-bu-fan.github.io/">FELL &amp; ENJOY</a></li>
+                        
+                    </ul>
+                </section>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">                  
+                    
+                    <li>
+                        <a href="mailto:huanruiz@foxmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		           
+                    
+                    
+                    
+                    
+
+		            
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/xqt01">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		            
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+            
+            
+            
+           
+                   <li>
+                       <a href='' rel="alternate" type="application/rss+xml" title="PunchCode" >
+                           <span class="fa-stack fa-lg">
+                               <i class="fas fa-circle fa-stack-2x"></i>
+                               <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                           </span>
+                       </a>
+                   </li>
+            
+             </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; PunchCode 2024
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function loadAsync(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        loadAsync("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    loadAsync("https://cdn.jsdelivr.net/npm/fastclick@1.0.6/lib/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+    function generateCatalog(selector) {
+
+        
+        
+        
+        
+            _containerSelector = 'div.post-container'
+        
+
+        
+        var P = $(_containerSelector), a, n, t, l, i, c;
+        a = P.find('h1,h2,h3,h4,h5,h6');
+
+        
+        $(selector).html('')
+
+        
+        a.each(function () {
+            n = $(this).prop('tagName').toLowerCase();
+            i = "#" + $(this).prop('id');
+            t = $(this).text();
+            c = $('<a href="' + i + '" rel="nofollow">' + t + '</a>');
+            l = $('<li class="' + n + '_nav"></li>').append(c);
+            $(selector).append(l);
+        });
+        return true;
+    }
+
+    generateCatalog(".catalog-body");
+
+    
+    $(".catalog-toggle").click((function (e) {
+        e.preventDefault();
+        $('.side-catalog').toggleClass("fold")
+    }))
+
+    
+
+
+    loadAsync("\/js\/jquery.nav.js", function () {
+        $('.catalog-body').onePageNav({
+            currentClass: "active",
+            changeHash: !1,
+            easing: "swing",
+            filter: "",
+            scrollSpeed: 700,
+            scrollOffset: 0,
+            scrollThreshold: .2,
+            begin: null,
+            end: null,
+            scrollChange: null,
+            padding: 80
+        });
+    });
+</script>
+
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,1521 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="PunchCode">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://xqt01.github.io/front.png">
+    <meta property="twitter:image" content="https://xqt01.github.io/front.png" />
+    
+
+    
+    <meta name="title" content="Java Collection" />
+    <meta property="og:title" content="Java Collection" />
+    <meta property="twitter:title" content="Java Collection" />
+    
+
+    
+    <meta name="description" content="Software Engineer">
+    <meta property="og:description" content="Software Engineer" />
+    <meta property="twitter:description" content="Software Engineer" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="Harry, 小拳头">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>Java Collection | 以终为始</title>
+
+    <link rel="canonical" href="/post/18_java%E9%9B%86%E5%90%88%E7%B1%BB/">
+
+    
+    
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hugo-theme-cleanwhite.min.css">
+
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+
+    
+    <link href="https://cdn.jsdelivr.net/gh/FortAwesome/Font-Awesome@5.15.1/css/all.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    
+    <script src="/js/jquery.min.js"></script>
+
+    
+    <script src="/js/bootstrap.min.js"></script>
+
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+
+</head>
+
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">PunchCode</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">All Posts</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/tech">tech</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0">学习笔记</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/%E6%9D%82%E8%B0%88">杂谈</a>
+                        </li>
+                        
+                    
+                    
+		    
+                        <li><a href="/top/archive/">ARCHIVE</a></li>
+                    
+                        <li><a href="/top/about/">ABOUT</a></li>
+                    
+
+                    
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/front.png')
+    }
+</style>
+
+<header class="intro-header" >
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/java" title="Java">
+                            Java
+                        </a>
+                        
+                    </div>
+                    <h1>Java Collection</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        
+                            Posted by 
+                            
+                                小拳头
+                             
+                            on 
+                            Friday, January 8, 2021
+                            
+                            
+                            
+                            
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <h2 id="collection-framework">Collection Framework</h2>
+<p>首先根据图片感受一下整个collection的架构.
+
+  <img src="/18_1.png" alt="">
+
+</p>
+<h2 id="iterator-interface">Iterator Interface</h2>
+<p><code>Collection</code>接口扩展了<code>Iterable</code>接口, 目的还是为了操作其中的<code>Iterator&lt;T&gt; iterator();</code>这里主要关注<code>Iterator</code>而不是<code>Iterable</code>. 主要的抽象方法就是前两个, 如果<code>c</code>是某个对象, 用的时候一般直接写<code>Iterator&lt;String&gt; iter = c.iterator();</code>, 再通过这两个方法遍历.</p>
+<pre><code>public interface Iterator&lt;E&gt; {
+
+    boolean hasNext();
+    E next();
+    default void remove() { //删除上一个next返回的元素
+        throw new UnsupportedOperationException(&quot;remove&quot;);
+    }
+    default void forEachRemaining(Consumer&lt;? super E&gt; action) {
+        Objects.requireNonNull(action);
+        while (hasNext())
+            action.accept(next());
+    }
+}
+</code></pre><h2 id="collection-interface">Collection Interface</h2>
+<p><code>Collection</code>接口最主要就是定义了增删的功能, 也可以判断元素是否存在等. <code>AbstractCollection</code>类去实现了<code>Collection</code>接口的一些通用的方法, 保留size和Iterator为抽象方法.</p>
+<h2 id="list-interface">List Interface</h2>
+<p><code>List</code>接口继承了<code>Collection</code>接口, 并且<strong>定义了一些随机访问的方法</strong>, 比如增删改查: <code>void add(int index, E element);</code>, <code>E remove(int index);</code>, <code>E set(int index, E element);</code>, <code>E get(int index);</code>.</p>
+<p>而<code>AbstractList</code>类去继承了了<code>AbstractColle 1ction</code>类, 并且实现了<code>List</code>接口. 后面的<code>ArrayList</code>则继承了这个<code>AbstractList</code>, 而<code>LinkedList</code>通过继承<code>AbstractSequentialList</code>, 再继承<code>AbstractList</code>.
+
+  <img src="/18_2.jpeg" alt="">
+
+</p>
+<p>这两个List都声明了<code>public ListIterator&lt;E&gt; listIterator()</code>, 可以用来反向遍历.</p>
+<h2 id="arraylist">ArrayList</h2>
+<p>值得注意的一点是, <code>ArrayList</code>继承了<code>RandomAccess</code>, 说明它是支持随机访问的. 判断的时候就可以用<code>if (list instanceof RandomAccess)</code>来知道其是否是<code>RandomAccess</code>的实例, 从而判断是否可以用<code>Collections.indexedBinarySearch(list, key)</code>, 否则就只能用<code>Collections.iteratorBinarySearch(list, key)</code>.</p>
+<pre><code>public class ArrayList&lt;E&gt; extends AbstractList&lt;E&gt;
+        implements List&lt;E&gt;, RandomAccess, Cloneable, java.io.Serializable
+{
+    private static final long serialVersionUID = 8683452581122892189L;
+    
+    //初始容量
+    private static final int DEFAULT_CAPACITY = 10;
+
+    //空实例数组
+    private static final Object[] EMPTY_ELEMENTDATA = {};
+
+    //对应默认无参构造器, 和大小为0的ArrayList区分
+    private static final Object[] DEFAULTCAPACITY_EMPTY_ELEMENTDATA = {};
+
+    //存储数据的地方
+    transient Object[] elementData; // non-private to simplify nested class access
+
+    //ArrayList大小
+    private int size;
+
+    //构造器
+    public ArrayList(int initialCapacity) {
+        if (initialCapacity &gt; 0) {
+            this.elementData = new Object[initialCapacity];
+        } else if (initialCapacity == 0) {
+            this.elementData = EMPTY_ELEMENTDATA;
+        } else {
+            throw new IllegalArgumentException(&quot;Illegal Capacity: &quot;+initialCapacity);
+        }
+    }
+
+    //无参构造器
+    public ArrayList() {
+        this.elementData = DEFAULTCAPACITY_EMPTY_ELEMENTDATA;
+    }
+
+    // 指定的集合作为参数的构造器
+    public ArrayList(Collection&lt;? extends E&gt; c) {
+        elementData = c.toArray(); //转换为数组
+        if ((size = elementData.length) != 0) {
+            // c.toArray might (incorrectly) not return Object[]. Object[]数组默认为null
+            if (elementData.getClass() != Object[].class)
+                elementData = Arrays.copyOf(elementData, size, Object[].class);
+        } else {
+            // 不是Object就替换成空数组.
+            this.elementData = EMPTY_ELEMENTDATA;
+        }
+    }
+
+    //将ArrayList容量减小到实际包含数据大小
+    public void trimToSize() {
+        modCount++;
+        if (size &lt; elementData.length) {
+            elementData = (size == 0)
+              ? EMPTY_ELEMENTDATA
+              : Arrays.copyOf(elementData, size);
+        }
+    }
+
+    //扩容, 可以用来提前声明好所需空间, 避免重复扩容(内部没有用过, 是给用户用的)
+    public void ensureCapacity(int minCapacity) {
+        int minExpand = (elementData != DEFAULTCAPACITY_EMPTY_ELEMENTDATA)
+            // any size if not default element table
+            ? 0
+            // larger than default for default empty table. It's already
+            // supposed to be at default size.
+            : DEFAULT_CAPACITY;
+        //所需的最小容量大于已申请的最大容量(10)
+        if (minCapacity &gt; minExpand) {
+            ensureExplicitCapacity(minCapacity);
+        }
+    }
+
+    //求最小扩容的容量大小
+    private static int calculateCapacity(Object[] elementData, int minCapacity) {
+        if (elementData == DEFAULTCAPACITY_EMPTY_ELEMENTDATA) {
+            return Math.max(DEFAULT_CAPACITY, minCapacity);//选择默认初始容量和现在需要容量的大者
+        }
+        return minCapacity;
+    }
+
+    //求最小扩容的容量大小
+    private void ensureCapacityInternal(int minCapacity) {
+        ensureExplicitCapacity(calculateCapacity(elementData, minCapacity));
+    }
+
+    private void ensureExplicitCapacity(int minCapacity) {
+        modCount++; //迭代器遍历的时候, 会检查这个值, 防止其他线程对这个ArrayList有了修改, 重复度
+
+        //overflow-conscious code -&gt; 意思就是说忽略溢出, 如果minCapacity - elementData.length
+        //溢出int范围, 那么执行不了
+        if (minCapacity - elementData.length &gt; 0)
+            grow(minCapacity); //扩容算法
+    }
+
+
+    private static final int MAX_ARRAY_SIZE = Integer.MAX_VALUE - 8;
+
+    //真正的扩容算法
+    private void grow(int minCapacity) {
+        // overflow-conscious code
+        int oldCapacity = elementData.length;
+        int newCapacity = oldCapacity + (oldCapacity &gt;&gt; 1); //新容量是旧容量的1.5倍
+        if (newCapacity - minCapacity &lt; 0) //依然小于所需容量, 直接让新容量等于所需容量
+            newCapacity = minCapacity;
+        if (newCapacity - MAX_ARRAY_SIZE &gt; 0) //是否超出定义的MAX_ARRAY_SIZE最大容量, 若超过, 通过minCapacity用hugeCapacity去判断返回Integer.MAX_VALUE还是MAX_ARRAY_SIZE
+            newCapacity = hugeCapacity(minCapacity);
+        // minCapacity is usually close to size, so this is a win:
+        elementData = Arrays.copyOf(elementData, newCapacity);
+    }
+
+    private static int hugeCapacity(int minCapacity) {
+        if (minCapacity &lt; 0) // overflow
+            throw new OutOfMemoryError();
+        return (minCapacity &gt; MAX_ARRAY_SIZE) ?
+            Integer.MAX_VALUE :
+            MAX_ARRAY_SIZE;
+    }
+
+    public boolean add(E e) {
+        ensureCapacityInternal(size + 1);  // Increments modCount!!
+        //这里看到ArrayList添加元素的实质就相当于为数组赋值
+        elementData[size++] = e;
+        return true;
+    }
+
+    //从index开始之后的所有成员后移一个位置, 将element插入index位置
+    public void add(int index, E element) {
+        rangeCheckForAdd(index);
+
+        ensureCapacityInternal(size + 1);  // Increments modCount!!
+        System.arraycopy(elementData, index, elementData, index + 1,
+                         size - index); //源数组, 起始位置, 目标数组, 目标数组中的起始位置, 长度
+        elementData[index] = element;
+        size++;
+    }
+}
+</code></pre><blockquote>
+<p>copyOf是浅拷贝, 用int这种基本类型没法测试. 但是数组如果存的是对象, 那么实际上复制的是指向对象的引用(对象的地址). 但是修改复制后数组, 把引用换成了新的, 并不会对对象内部进行修改.</p>
+</blockquote>
+<h2 id="linkedlist">LinkedList</h2>
+<p>本质是双向链表. 实现了List和Deque, 所以可以当成栈和队列的实现基础.</p>
+<p>Deque接口继承了Queue接口, queue接口实际上就是包含了增删改查, 而Deque将其扩展成了针对头尾的增删改查.</p>
+<pre><code>public class LinkedList&lt;E&gt;
+    extends AbstractSequentialList&lt;E&gt;
+    implements List&lt;E&gt;, Deque&lt;E&gt;, Cloneable, java.io.Serializable
+{
+    transient int size = 0;
+
+    //头尾指针
+    transient Node&lt;E&gt; first;
+    transient Node&lt;E&gt; last;
+
+    public LinkedList() {
+    }
+
+    //将集合中的元素添加进LinkedList
+    public LinkedList(Collection&lt;? extends E&gt; c) {
+        this();
+        addAll(c);
+    }
+
+    //连接e到链表的头
+    private void linkFirst(E e) {
+        final Node&lt;E&gt; f = first;
+        final Node&lt;E&gt; newNode = new Node&lt;&gt;(null, e, f); //前面连null, 后面连f
+        first = newNode;
+        if (f == null)
+            last = newNode;
+        else
+            f.prev = newNode;
+        size++;
+        modCount++;
+    }
+
+    //连接e到链表的尾
+    void linkLast(E e) {
+        final Node&lt;E&gt; l = last;
+        final Node&lt;E&gt; newNode = new Node&lt;&gt;(l, e, null);
+        last = newNode;
+        if (l == null)
+            first = newNode;
+        else
+            l.next = newNode;
+        size++;
+        modCount++;
+    }
+
+    //连接e到某个结点的前面
+    void linkBefore(E e, Node&lt;E&gt; succ) {
+        // assert succ != null;
+        final Node&lt;E&gt; pred = succ.prev;
+        final Node&lt;E&gt; newNode = new Node&lt;&gt;(pred, e, succ);
+        succ.prev = newNode;
+        if (pred == null)
+            first = newNode;
+        else
+            pred.next = newNode;
+        size++;
+        modCount++;
+    }
+
+    //删掉头结点并返回头中实际的item
+    private E unlinkFirst(Node&lt;E&gt; f) {
+        // assert f == first &amp;&amp; f != null;
+        final E element = f.item;
+        final Node&lt;E&gt; next = f.next;
+        f.item = null;
+        f.next = null; // help GC
+        first = next;
+        if (next == null)
+            last = null;
+        else
+            next.prev = null;
+        size--;
+        modCount++;
+        return element;
+    }
+
+    //删掉尾结点并返回尾中实际的item
+    private E unlinkLast(Node&lt;E&gt; l) {
+        // assert l == last &amp;&amp; l != null;
+        final E element = l.item;
+        final Node&lt;E&gt; prev = l.prev;
+        l.item = null;
+        l.prev = null; // help GC
+        last = prev;
+        if (prev == null)
+            first = null;
+        else
+            prev.next = null;
+        size--;
+        modCount++;
+        return element;
+    }
+
+    //删掉某个结点
+    E unlink(Node&lt;E&gt; x) {
+        // assert x != null;
+        final E element = x.item;
+        final Node&lt;E&gt; next = x.next;
+        final Node&lt;E&gt; prev = x.prev;
+
+        if (prev == null) {
+            first = next;
+        } else {
+            prev.next = next;
+            x.prev = null;
+        }
+
+        if (next == null) {
+            last = prev;
+        } else {
+            next.prev = prev;
+            x.next = null;
+        }
+
+        x.item = null;
+        size--;
+        modCount++;
+        return element;
+    }
+
+    //返回头结点的item
+    public E getFirst() {
+        final Node&lt;E&gt; f = first;
+        if (f == null)
+            throw new NoSuchElementException();
+        return f.item;
+    }
+
+    public E getLast() {
+        final Node&lt;E&gt; l = last;
+        if (l == null)
+            throw new NoSuchElementException();
+        return l.item;
+    }
+
+    public E removeFirst() {
+        final Node&lt;E&gt; f = first;
+        if (f == null)
+            throw new NoSuchElementException();
+        return unlinkFirst(f);
+    }
+
+    public E removeLast() {
+        final Node&lt;E&gt; l = last;
+        if (l == null)
+            throw new NoSuchElementException();
+        return unlinkLast(l);
+    }
+
+    public void addFirst(E e) {
+        linkFirst(e);
+    }
+
+    public void addLast(E e) {
+        linkLast(e);
+    }
+
+    public boolean contains(Object o) {
+        return indexOf(o) != -1;
+    }
+
+    public int size() {
+        return size;
+    }
+
+    //add带返回值
+    public boolean add(E e) {
+        linkLast(e);
+        return true;
+    }
+
+    //删掉某个结点, 有相等的就删除第一个
+    public boolean remove(Object o) {
+        if (o == null) {
+            for (Node&lt;E&gt; x = first; x != null; x = x.next) {
+                if (x.item == null) {
+                    unlink(x);
+                    return true;
+                }
+            }
+        } else {
+            for (Node&lt;E&gt; x = first; x != null; x = x.next) {
+                if (o.equals(x.item)) {
+                    unlink(x);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    //将集合插到链表的尾部
+    public boolean addAll(Collection&lt;? extends E&gt; c) {
+        return addAll(size, c);
+    }
+
+    //将集合插到指定位置
+    public boolean addAll(int index, Collection&lt;? extends E&gt; c) {
+        checkPositionIndex(index);
+
+        Object[] a = c.toArray();
+        int numNew = a.length;
+        if (numNew == 0)
+            return false;
+
+        Node&lt;E&gt; pred, succ;
+        if (index == size) { //插入的位置其实是尾部
+            succ = null;
+            pred = last;
+        } else {
+            succ = node(index);//插入位置的前后结点
+            pred = succ.prev;
+        }
+
+        for (Object o : a) {
+            @SuppressWarnings(&quot;unchecked&quot;) E e = (E) o;
+            Node&lt;E&gt; newNode = new Node&lt;&gt;(pred, e, null);
+            if (pred == null)
+                first = newNode;
+            else
+                pred.next = newNode;
+            pred = newNode;
+        }
+
+        if (succ == null) {
+            last = pred;
+        } else {
+            pred.next = succ;
+            succ.prev = pred;
+        }
+
+        size += numNew;
+        modCount++;
+        return true;
+    }
+
+    //链表的结点
+    private static class Node&lt;E&gt; {
+        E item;
+        Node&lt;E&gt; next;
+        Node&lt;E&gt; prev;
+
+        Node(Node&lt;E&gt; prev, E element, Node&lt;E&gt; next) {
+            this.item = element;
+            this.next = next;
+            this.prev = prev;
+        }
+    }
+}
+
+</code></pre><blockquote>
+<p>最后总结一下方法. 增: <code>add()</code>就好, 成功会返回true. <code>offer()</code>与<code>add</code>等价. <code>push()</code>与<code>addFirst()</code>等价; 删: <code>remove()</code>若为空会报NoSuchElementException, 而<code>poll</code>会返回null. <code>pop()</code>与<code>removeFirst()</code>等价; 改: <code>set()</code>会先检查index, 如果合法就可以添加. 并返回老的item值; 查: <code>getFirst()</code>和<code>element()</code>等价, 如果链表为空会报NoSuchElementException, 而<code>peek()</code>会返回null;</p>
+</blockquote>
+<h2 id="set-interface">Set Interface</h2>
+<p>主要有三种实现类<code>HashSet</code>, <code>LinkedHashSet</code>(HashSet的子类, 可以按照添加顺序遍历元素), <code>TreeSet</code>(可以对元素进行排序). Set本身如下.</p>
+<pre><code>public interface Set&lt;E&gt; extends Collection&lt;E&gt; {
+
+    // Query Operations
+    int size();
+    boolean isEmpty();
+    boolean contains(Object o);
+    Iterator&lt;E&gt; iterator();
+    Object[] toArray();
+    &lt;T&gt; T[] toArray(T[] a);
+
+    // Modification Operations
+    boolean add(E e);
+    boolean remove(Object o);
+
+    // Bulk Operations
+    boolean containsAll(Collection&lt;?&gt; c);
+    boolean addAll(Collection&lt;? extends E&gt; c);
+    boolean retainAll(Collection&lt;?&gt; c);
+    boolean removeAll(Collection&lt;?&gt; c);
+    void clear();
+
+    // Comparison and hashing
+    boolean equals(Object o);
+    int hashCode();
+
+    @Override
+    default Spliterator&lt;E&gt; spliterator() {
+        return Spliterators.spliterator(this, Spliterator.DISTINCT);
+    }
+}
+</code></pre><h2 id="hashset">HashSet</h2>
+<p>本质上还是利用了HashMap. 添加元素的时候, 会用该元素的<code>hashCode()</code>计算哈希值, 如果该哈希值没有其他元素, 就可以成功添加. 如果有元素, 就用<code>equals()</code>比较.</p>
+<pre><code>public class HashSet&lt;E&gt;
+    extends AbstractSet&lt;E&gt;
+    implements Set&lt;E&gt;, Cloneable, java.io.Serializable
+{
+    static final long serialVersionUID = -5024744406713321676L;
+
+    private transient HashMap&lt;E,Object&gt; map; //value用Object替代
+
+    // Dummy value to associate with an Object in the backing Map
+    private static final Object PRESENT = new Object();
+
+    /**
+     * HashSet的本质还是HashMap
+     * default initial capacity (16) and load factor (0.75).
+     */
+    public HashSet() {
+        map = new HashMap&lt;&gt;();
+    }
+
+    //用初始集合构造HashSet
+    public HashSet(Collection&lt;? extends E&gt; c) {
+        map = new HashMap&lt;&gt;(Math.max((int) (c.size()/.75f) + 1, 16));
+        addAll(c);
+    }
+
+    public HashSet(int initialCapacity, float loadFactor) {
+        map = new HashMap&lt;&gt;(initialCapacity, loadFactor);
+    }
+
+    /**
+     * Constructs a new, empty set; the backing &lt;tt&gt;HashMap&lt;/tt&gt; instance has
+     * the specified initial capacity and default load factor (0.75).
+     */
+    public HashSet(int initialCapacity) {
+        map = new HashMap&lt;&gt;(initialCapacity);
+    }
+
+    HashSet(int initialCapacity, float loadFactor, boolean dummy) {
+        map = new LinkedHashMap&lt;&gt;(initialCapacity, loadFactor);
+    }
+
+    public Iterator&lt;E&gt; iterator() {
+        return map.keySet().iterator();
+    }
+
+    public int size() {
+        return map.size();
+    }
+
+    public boolean isEmpty() {
+        return map.isEmpty();
+    }
+
+    public boolean contains(Object o) {
+        return map.containsKey(o);
+    }
+
+    public boolean add(E e) {
+        return map.put(e, PRESENT)==null;
+    }
+
+    public boolean remove(Object o) {
+        return map.remove(o)==PRESENT;
+    }
+
+    public void clear() {
+        map.clear();
+    }
+
+    @SuppressWarnings(&quot;unchecked&quot;)
+    public Object clone() {
+        try {
+            HashSet&lt;E&gt; newSet = (HashSet&lt;E&gt;) super.clone();
+            newSet.map = (HashMap&lt;E, Object&gt;) map.clone();
+            return newSet;
+        } catch (CloneNotSupportedException e) {
+            throw new InternalError(e);
+        }
+    }
+}
+
+</code></pre><blockquote>
+<p>LinkedHashSet存放依然是无序的, 但是在添加元素的时候用了双向链表来链接不同元素. TreeSet底层是红黑树, 自然排序就要去实现Comparable接口, 自定义排序就要实现Comparator接口, 直接把Comparator的实现对象当做构造器的参数.</p>
+</blockquote>
+<h2 id="map-interface">Map Interface</h2>
+<p>主要被HashMap(和子类LinkedHashMap), TreeMap(用key排序), Hashtable实现. Map的一对key-value共同构成了一个Entry对象.</p>
+<pre><code>public interface Map&lt;K,V&gt; {
+    // Query Operations
+    int size();
+    boolean isEmpty();
+    boolean containsKey(Object key);
+    boolean containsValue(Object value);
+    V get(Object key);
+
+    // Modification Operations
+    V put(K key, V value);
+    V remove(Object key);
+
+    // Bulk Operations
+    void putAll(Map&lt;? extends K, ? extends V&gt; m);
+    void clear();
+
+    // Views
+    Set&lt;K&gt; keySet();
+    Collection&lt;V&gt; values();
+    Set&lt;Map.Entry&lt;K, V&gt;&gt; entrySet();
+
+    interface Entry&lt;K,V&gt; {
+        K getKey();
+        V getValue();
+        V setValue(V value);
+        boolean equals(Object o);
+        int hashCode();
+
+        public static &lt;K extends Comparable&lt;? super K&gt;, V&gt; Comparator&lt;Map.Entry&lt;K,V&gt;&gt; comparingByKey() {
+            return (Comparator&lt;Map.Entry&lt;K, V&gt;&gt; &amp; Serializable)
+                (c1, c2) -&gt; c1.getKey().compareTo(c2.getKey());
+        }
+
+        public static &lt;K, V extends Comparable&lt;? super V&gt;&gt; Comparator&lt;Map.Entry&lt;K,V&gt;&gt; comparingByValue() {
+            return (Comparator&lt;Map.Entry&lt;K, V&gt;&gt; &amp; Serializable)
+                (c1, c2) -&gt; c1.getValue().compareTo(c2.getValue());
+        }
+
+        public static &lt;K, V&gt; Comparator&lt;Map.Entry&lt;K, V&gt;&gt; comparingByKey(Comparator&lt;? super K&gt; cmp) {
+            Objects.requireNonNull(cmp);
+            return (Comparator&lt;Map.Entry&lt;K, V&gt;&gt; &amp; Serializable)
+                (c1, c2) -&gt; cmp.compare(c1.getKey(), c2.getKey());
+        }
+
+        public static &lt;K, V&gt; Comparator&lt;Map.Entry&lt;K, V&gt;&gt; comparingByValue(Comparator&lt;? super V&gt; cmp) {
+            Objects.requireNonNull(cmp);
+            return (Comparator&lt;Map.Entry&lt;K, V&gt;&gt; &amp; Serializable)
+                (c1, c2) -&gt; cmp.compare(c1.getValue(), c2.getValue());
+        }
+    }
+
+    // Comparison and hashing
+    boolean equals(Object o);
+    int hashCode();
+
+    // Defaultable methods
+
+    default V getOrDefault(Object key, V defaultValue) {
+        V v;
+        return (((v = get(key)) != null) || containsKey(key))
+            ? v
+            : defaultValue;
+    }
+
+    default void forEach(BiConsumer&lt;? super K, ? super V&gt; action) {
+        Objects.requireNonNull(action);
+        for (Map.Entry&lt;K, V&gt; entry : entrySet()) {
+            K k;
+            V v;
+            try {
+                k = entry.getKey();
+                v = entry.getValue();
+            } catch(IllegalStateException ise) {
+                // this usually means the entry is no longer in the map.
+                throw new ConcurrentModificationException(ise);
+            }
+            action.accept(k, v);
+        }
+    }
+
+    default void replaceAll(BiFunction&lt;? super K, ? super V, ? extends V&gt; function) {
+        Objects.requireNonNull(function);
+        for (Map.Entry&lt;K, V&gt; entry : entrySet()) {
+            K k;
+            V v;
+            try {
+                k = entry.getKey();
+                v = entry.getValue();
+            } catch(IllegalStateException ise) {
+                // this usually means the entry is no longer in the map.
+                throw new ConcurrentModificationException(ise);
+            }
+
+            // ise thrown from function is not a cme.
+            v = function.apply(k, v);
+
+            try {
+                entry.setValue(v);
+            } catch(IllegalStateException ise) {
+                // this usually means the entry is no longer in the map.
+                throw new ConcurrentModificationException(ise);
+            }
+        }
+    }
+
+    default V putIfAbsent(K key, V value) {
+        V v = get(key);
+        if (v == null) {
+            v = put(key, value);
+        }
+
+        return v;
+    }
+
+    default boolean remove(Object key, Object value) {
+        Object curValue = get(key);
+        if (!Objects.equals(curValue, value) ||
+            (curValue == null &amp;&amp; !containsKey(key))) {
+            return false;
+        }
+        remove(key);
+        return true;
+    }
+
+    default boolean replace(K key, V oldValue, V newValue) {
+        Object curValue = get(key);
+        if (!Objects.equals(curValue, oldValue) ||
+            (curValue == null &amp;&amp; !containsKey(key))) {
+            return false;
+        }
+        put(key, newValue);
+        return true;
+    }
+
+    default V replace(K key, V value) {
+        V curValue;
+        if (((curValue = get(key)) != null) || containsKey(key)) {
+            curValue = put(key, value);
+        }
+        return curValue;
+    }
+}
+</code></pre><h2 id="hashmap">HashMap</h2>
+<p>jdk7和之前用的是数组和链表实现, jdk8以后是用的数组+链表+红黑树.</p>
+<p>对于jdk7之前. 实例化之后, 创建长度是16的数组<code>Entry[] table</code>. 执行<code>map.put(key, value)</code>, 通过<code>hashCode()</code>计算key的哈希值. 如果此位置没有元素, 直接放入. 如果为不为空, 则用当前的key去和此位置的<strong>链表上</strong>的元素进行哈希值比较, 如果都不相同, 则放入; 如果相同再用<code>equals()</code>比较, 返回false就可以插入. 如果返回true就去替换相同key的value. 默认扩容是扩容原容量两倍, 被赋值所有数据到新的数组.</p>
+<p>对于jdk8后, 实例化后, 首次调用<code>put()</code>的时候, 才会创建长度为16的数组, 数组是<code>Node[]</code>. 如果当前位置上以链表为形式存在的数据个数大于8并且当前数组长度大于64, 该索引位置上的所有数据就用红黑树存储.</p>
+<p>对于<code>hash()</code>, 高低位混合, 我个人觉得是因为做<code>(n - 1) &amp; hash</code>(取余)的时候, 如果n比较小, 那么hash的高位就失去效果了, 所以要异或一下.</p>
+<p>长度8才转化红黑树, 源码的解释是树的节点大小通常书链表的爱你干杯, 所以要桶有足够多的节点才转化</p>
+<h3 id="jdk18后">JDK1.8后</h3>
+<p>主要看JDK1.8的源码. 对于<code>hash()</code>来说, 用整个int范围来做是不现实的(空间不允许), 虽然如果哈希映射比较sparse, 遇到碰撞的概率极小, 所以需要取模. 高16位和低16位异或实际上是扰动函数, 使其包含了高位和低位的特征.</p>
+<pre><code>public class HashMap&lt;K,V&gt; extends AbstractMap&lt;K,V&gt;
+    implements Map&lt;K,V&gt;, Cloneable, Serializable {
+
+    /* ---------------- Fields -------------- */
+    private static final long serialVersionUID = 362498820763181265L;
+    //The default initial capacity - MUST be a power of two.
+    static final int DEFAULT_INITIAL_CAPACITY = 1 &lt;&lt; 4; //默认的初始容量16
+    static final int MAXIMUM_CAPACITY = 1 &lt;&lt; 30; //最大容量
+    static final float DEFAULT_LOAD_FACTOR = 0.75f; //填充因子
+    static final int TREEIFY_THRESHOLD = 8; //桶中节点转成红黑树的阈值
+    static final int UNTREEIFY_THRESHOLD = 6; //桶中节点转成链表的阈值
+    static final int MIN_TREEIFY_CAPACITY = 64; //桶中节点转化为红黑树对应的table的最小大小
+        
+    transient Node&lt;K,V&gt;[] table; //存数据的数组, 长度必须是power of two
+    //Holds cached entrySet(). Note that AbstractMap fields are used for keySet() and values()
+    transient Set&lt;Map.Entry&lt;K,V&gt;&gt; entrySet;
+    transient int size;
+    transient int modCount;
+    int threshold; //The next size value at which to resize (capacity * load factor). 超过则数组需要扩容
+    final float loadFactor; //加载因子, 约大则数组存放的数据越密
+
+    /**
+     * Basic hash bin(桶) node, used for most entries.  (See below for
+     * TreeNode subclass, and in LinkedHashMap for its Entry subclass.)
+     * 通过entrySet可以得到entry的集合
+     */
+    static class Node&lt;K,V&gt; implements Map.Entry&lt;K,V&gt; { 
+        final int hash; //哈希值
+        final K key;
+        V value;
+        Node&lt;K,V&gt; next; //指向下一个节点的指针
+
+        Node(int hash, K key, V value, Node&lt;K,V&gt; next) {
+            this.hash = hash;
+            this.key = key;
+            this.value = value;
+            this.next = next;
+        }
+
+        public final K getKey()        { return key; }
+        public final V getValue()      { return value; }
+        public final String toString() { return key + &quot;=&quot; + value; }
+
+        public final int hashCode() {
+            return Objects.hashCode(key) ^ Objects.hashCode(value);
+        }
+
+        public final V setValue(V newValue) {
+            V oldValue = value;
+            value = newValue;
+            return oldValue;
+        }
+
+        public final boolean equals(Object o) {
+            if (o == this)
+                return true;
+            if (o instanceof Map.Entry) {
+                Map.Entry&lt;?,?&gt; e = (Map.Entry&lt;?,?&gt;)o;
+                if (Objects.equals(key, e.getKey()) &amp;&amp;
+                    Objects.equals(value, e.getValue()))
+                    return true;
+            }
+            return false;
+        }
+    }
+
+    /* ---------------- Static utilities -------------- */
+    //扰动函数
+    static final int hash(Object key) {
+        int h;
+        return (key == null) ? 0 : (h = key.hashCode()) ^ (h &gt;&gt;&gt; 16); //先赋值, 再异或, 混合哈希值高位和低位
+    }
+
+    //returns a power of two size for the given target capacity. 从高位开始把低位为0的位都变成1, 最后n+1进位, 使大小是2的整数倍
+    static final int tableSizeFor(int cap) {
+        int n = cap - 1;
+        n |= n &gt;&gt;&gt; 1;
+        n |= n &gt;&gt;&gt; 2;
+        n |= n &gt;&gt;&gt; 4;
+        n |= n &gt;&gt;&gt; 8;
+        n |= n &gt;&gt;&gt; 16;
+        return (n &lt; 0) ? 1 : (n &gt;= MAXIMUM_CAPACITY) ? MAXIMUM_CAPACITY : n + 1;
+    }
+
+    /* ---------------- 构造器 -------------- */
+    public HashMap(int initialCapacity, float loadFactor) {
+        if (initialCapacity &lt; 0)
+            throw new IllegalArgumentException(&quot;Illegal initial capacity: &quot; +
+                                               initialCapacity);
+        if (initialCapacity &gt; MAXIMUM_CAPACITY)
+            initialCapacity = MAXIMUM_CAPACITY;
+        if (loadFactor &lt;= 0 || Float.isNaN(loadFactor))
+            throw new IllegalArgumentException(&quot;Illegal load factor: &quot; +
+                                               loadFactor);
+        this.loadFactor = loadFactor;
+        this.threshold = tableSizeFor(initialCapacity);
+    }
+    public HashMap(int initialCapacity) {
+        this(initialCapacity, DEFAULT_LOAD_FACTOR);
+    }
+    public HashMap() {
+        this.loadFactor = DEFAULT_LOAD_FACTOR; // all other fields defaulted
+    }
+    public HashMap(Map&lt;? extends K, ? extends V&gt; m) {
+        this.loadFactor = DEFAULT_LOAD_FACTOR;
+        putMapEntries(m, false);
+    }
+
+    //Implements Map.putAll and Map constructor
+    final void putMapEntries(Map&lt;? extends K, ? extends V&gt; m, boolean evict) {
+        int s = m.size(); //m的元素个数
+        if (s &gt; 0) {
+            if (table == null) { //还没有实例化table
+                float ft = ((float)s / loadFactor) + 1.0F;
+                int t = ((ft &lt; (float)MAXIMUM_CAPACITY) ?
+                         (int)ft : MAXIMUM_CAPACITY);
+                if (t &gt; threshold)
+                    threshold = tableSizeFor(t);//超过则需要threshold
+            }
+            else if (s &gt; threshold)
+                resize();
+            for (Map.Entry&lt;? extends K, ? extends V&gt; e : m.entrySet()) {  //元素放进HashMap中
+                K key = e.getKey();
+                V value = e.getValue();
+                putVal(hash(key), key, value, false, evict);
+            }
+        }
+    }
+
+    public int size() {
+        return size;
+    }
+
+    public boolean isEmpty() {
+        return size == 0;
+    }
+
+    // 查
+    public V get(Object key) {
+        Node&lt;K,V&gt; e;
+        return (e = getNode(hash(key), key)) == null ? null : e.value;
+    }
+
+    final Node&lt;K,V&gt; getNode(int hash, Object key) {
+        Node&lt;K,V&gt;[] tab; Node&lt;K,V&gt; first, e; int n; K k;
+        if ((tab = table) != null &amp;&amp; (n = tab.length) &gt; 0 &amp;&amp;
+            (first = tab[(n - 1) &amp; hash]) != null) {
+            if (first.hash == hash &amp;&amp; // always check first node
+                ((k = first.key) == key || (key != null &amp;&amp; key.equals(k))))
+                return first;
+            if ((e = first.next) != null) {
+                if (first instanceof TreeNode)
+                    return ((TreeNode&lt;K,V&gt;)first).getTreeNode(h ash, key);
+                do {
+                    if (e.hash == hash &amp;&amp;
+                        ((k = e.key) == key || (key != null &amp;&amp; key.equals(k))))
+                        return e;
+                } while ((e = e.next) != null);
+            }
+        }
+        return null;
+    }
+
+    public boolean containsKey(Object key) {
+        return getNode(hash(key), key) != null;
+    }
+
+    // 增
+    public V put(K key, V value) {
+        return putVal(hash(key), key, value, false, true);
+    }
+
+    //实际调用只能用public V put
+    final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
+                   boolean evict) {
+        Node&lt;K,V&gt;[] tab; Node&lt;K,V&gt; p; int n, i;
+        //table没有初始化或者长度为0就需要扩容
+        if ((tab = table) == null || (n = tab.length) == 0)
+            n = (tab = resize()).length;
+        // n为长度, 根据计算得到i, 也就是应该放入的位置. 与操作其实就是截取了低位(相当于取模), 因为是index, 所以要减1
+        if ((p = tab[i = (n - 1) &amp; hash]) == null) // (n - 1) &amp; hash, n是数组长度, -1相当于011111...
+            tab[i] = newNode(hash, key, value, null);
+        else { //桶Node
+            Node&lt;K,V&gt; e; K k;
+            //hash相等并且key相等, p其实就是当前桶的第一个值, 觉可以直接插入
+            if (p.hash == hash &amp;&amp;
+                ((k = p.key) == key || (key != null &amp;&amp; key.equals(k))))
+                e = p;
+            else if (p instanceof TreeNode) //是红黑树结点
+                e = ((TreeNode&lt;K,V&gt;)p).putTreeVal(this, tab, hash, key, value);
+            else { //是链表节点
+                for (int binCount = 0; ; ++binCount) {
+                    if ((e = p.next) == null) {
+                        p.next = newNode(hash, key, value, null);
+                        //超过阈值, 转为红黑树(treeifyBin内部还会判断table长度是否超过64)
+                        if (binCount &gt;= TREEIFY_THRESHOLD - 1) // -1 for 1st
+                            treeifyBin(tab, hash);
+                        break;
+                    }
+                    //插入结点的key如果和链表中的某个key相等, 则跳出循环, 否则插入
+                    if (e.hash == hash &amp;&amp;
+                        ((k = e.key) == key || (key != null &amp;&amp; key.equals(k))))
+                        break;
+                    p = e;
+                }
+            }
+            if (e != null) { // existing mapping for key
+                V oldValue = e.value;
+                if (!onlyIfAbsent || oldValue == null)
+                    e.value = value;
+                afterNodeAccess(e);
+                return oldValue;
+            }
+        }
+        ++modCount;
+        if (++size &gt; threshold) //大小增加后可能会扩容
+            resize();
+        afterNodeInsertion(evict); //回调
+        return null;
+    }
+
+    // These methods are also used when serializing HashSets
+    final float loadFactor() { return loadFactor; }
+    final int capacity() {
+        return (table != null) ? table.length :
+            (threshold &gt; 0) ? threshold :
+            DEFAULT_INITIAL_CAPACITY;
+    }
+
+    //树节点
+    static final class TreeNode&lt;K,V&gt; extends LinkedHashMap.Entry&lt;K,V&gt; {
+        TreeNode&lt;K,V&gt; parent; // red-black tree links
+        TreeNode&lt;K,V&gt; left;
+        TreeNode&lt;K,V&gt; right;
+        TreeNode&lt;K,V&gt; prev; // needed to unlink next upon deletion
+        boolean red;
+        TreeNode(int hash, K key, V val, Node&lt;K,V&gt; next) {
+            super(hash, key, val, next);
+        }
+
+        // Returns root of tree containing this node.
+        final TreeNode&lt;K,V&gt; root() {
+            for (TreeNode&lt;K,V&gt; r = this, p;;) {
+                if ((p = r.parent) == null)
+                    return r;
+                r = p;
+            }
+        }
+    }
+}
+</code></pre><h2 id="红黑树">红黑树</h2>
+<p>红黑树不是完美平衡二叉查找树. 维持平衡主要有左旋/右旋/变色的操作. 变色的操作只有在当前节点的父亲是红色, 祖父节点的另一个节点也是红色. 左旋发生在, 当点父节点是红色, 且当前节点是在右子树.</p>
+<h2 id="参考">参考</h2>
+<ol>
+<li>Javadoc</li>
+<li><a href="https://www.scientecheasy.com/2020/09/collection-hierarchy-in-java.html/">collection framework图片</a></li>
+<li>Java核心技术-卷I</li>
+<li><a href="https://github.com/Snailclimb/JavaGuide/blob/master/docs/java/collection/Java%E9%9B%86%E5%90%88%E6%A1%86%E6%9E%B6%E5%B8%B8%E8%A7%81%E9%9D%A2%E8%AF%95%E9%A2%98.md">JavaGuide-Java集合框架常见面试题</a></li>
+<li><a href="https://www.bilibili.com/video/BV1Kb411W75N?p=550">尚硅谷Java</a></li>
+<li><a href="https://www.zhihu.com/question/20733617/answer/111577937">JDK源码中HashMap的hash方法原理是什么</a></li>
+<li><a href="https://www.jianshu.com/p/e136ec79235c">30张图带你彻底理解红黑树</a></li>
+</ol>
+
+
+                
+
+                
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/post/8_%E6%95%B0%E7%BB%84%E7%B3%BB%E5%88%97/" data-toggle="tooltip" data-placement="top" title="数据结构与算法-数组系列">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/post/9_dfs%E4%B8%8Ebfs/" data-toggle="tooltip" data-placement="top" title="DFS与BFS">Next
+                            Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+                
+
+                
+
+
+<div id="disqus-comment"></div>
+<div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "xqt01" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+            </div>
+
+            
+            
+            <div class="
+                col-lg-2 col-lg-offset-0
+                visible-lg-block
+                sidebar-container
+                catalog-container">
+                <div class="side-catalog">
+                    <hr class="hidden-sm hidden-xs">
+                    <h5>
+                        <a class="catalog-toggle" href="#">CATALOG</a>
+                    </h5>
+                    <ul class="catalog-body"></ul>
+                </div>
+            </div>
+            
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/java" title="java">
+                            java
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/jvm" title="jvm">
+                            jvm
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/spring" title="spring">
+                            spring
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E5%89%8D%E7%AB%AF" title="前端">
+                            前端
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F" title="操作系统">
+                            操作系统
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93" title="数据库">
+                            数据库
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95" title="数据结构与算法">
+                            数据结构与算法
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B" title="网络编程">
+                            网络编程
+                        </a>
+                        
+                        
+                    </div>
+                </section>
+                
+
+                
+                
+                <section>
+                    <hr>
+                    <h5>FRIENDS</h5>
+                    <ul class="list-inline">
+                        
+                        <li><a target="_blank" href="https://fan-bu-fan.github.io/">FELL &amp; ENJOY</a></li>
+                        
+                    </ul>
+                </section>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">                  
+                    
+                    <li>
+                        <a href="mailto:huanruiz@foxmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		           
+                    
+                    
+                    
+                    
+
+		            
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/xqt01">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		            
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+            
+            
+            
+           
+                   <li>
+                       <a href='' rel="alternate" type="application/rss+xml" title="PunchCode" >
+                           <span class="fa-stack fa-lg">
+                               <i class="fas fa-circle fa-stack-2x"></i>
+                               <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                           </span>
+                       </a>
+                   </li>
+            
+             </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; PunchCode 2024
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function loadAsync(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        loadAsync("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    loadAsync("https://cdn.jsdelivr.net/npm/fastclick@1.0.6/lib/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+    function generateCatalog(selector) {
+
+        
+        
+        
+        
+            _containerSelector = 'div.post-container'
+        
+
+        
+        var P = $(_containerSelector), a, n, t, l, i, c;
+        a = P.find('h1,h2,h3,h4,h5,h6');
+
+        
+        $(selector).html('')
+
+        
+        a.each(function () {
+            n = $(this).prop('tagName').toLowerCase();
+            i = "#" + $(this).prop('id');
+            t = $(this).text();
+            c = $('<a href="' + i + '" rel="nofollow">' + t + '</a>');
+            l = $('<li class="' + n + '_nav"></li>').append(c);
+            $(selector).append(l);
+        });
+        return true;
+    }
+
+    generateCatalog(".catalog-body");
+
+    
+    $(".catalog-toggle").click((function (e) {
+        e.preventDefault();
+        $('.side-catalog').toggleClass("fold")
+    }))
+
+    
+
+
+    loadAsync("\/js\/jquery.nav.js", function () {
+        $('.catalog-body').onePageNav({
+            currentClass: "active",
+            changeHash: !1,
+            easing: "swing",
+            filter: "",
+            scrollSpeed: 700,
+            scrollOffset: 0,
+            scrollThreshold: .2,
+            begin: null,
+            end: null,
+            scrollChange: null,
+            padding: 80
+        });
+    });
+</script>
+
+
+
+
+
+
+</body>
+</html>

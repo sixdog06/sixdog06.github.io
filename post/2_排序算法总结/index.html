@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="PunchCode">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://xqt01.github.io/front.png">
+    <meta property="twitter:image" content="https://xqt01.github.io/front.png" />
+    
+
+    
+    <meta name="title" content="排序算法总结" />
+    <meta property="og:title" content="排序算法总结" />
+    <meta property="twitter:title" content="排序算法总结" />
+    
+
+    
+    <meta name="description" content="Software Engineer">
+    <meta property="og:description" content="Software Engineer" />
+    <meta property="twitter:description" content="Software Engineer" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="Harry, 小拳头">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>排序算法总结 | 以终为始</title>
+
+    <link rel="canonical" href="/post/2_%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95%E6%80%BB%E7%BB%93/">
+
+    
+    
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hugo-theme-cleanwhite.min.css">
+
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+
+    
+    <link href="https://cdn.jsdelivr.net/gh/FortAwesome/Font-Awesome@5.15.1/css/all.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    
+    <script src="/js/jquery.min.js"></script>
+
+    
+    <script src="/js/bootstrap.min.js"></script>
+
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+
+</head>
+
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">PunchCode</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">All Posts</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/tech">tech</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0">学习笔记</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/%E6%9D%82%E8%B0%88">杂谈</a>
+                        </li>
+                        
+                    
+                    
+		    
+                        <li><a href="/top/archive/">ARCHIVE</a></li>
+                    
+                        <li><a href="/top/about/">ABOUT</a></li>
+                    
+
+                    
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/front.png')
+    }
+</style>
+
+<header class="intro-header" >
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95" title="数据结构与算法">
+                            数据结构与算法
+                        </a>
+                        
+                        <a class="tag" href="/tags/%E6%8E%92%E5%BA%8F" title="排序">
+                            排序
+                        </a>
+                        
+                    </div>
+                    <h1>排序算法总结</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        
+                            Posted by 
+                            
+                                小拳头
+                             
+                            on 
+                            Saturday, December 12, 2020
+                            
+                            
+                            
+                            
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <p>总结几大排序算法. 主要对比时间复杂度和空间复杂度. 下图是排序算法属性的总结. (表格中希尔排序的部分存疑)</p>
+<table>
+<thead>
+<tr>
+<th>算法</th>
+<th>平均时间复杂度</th>
+<th>最坏情况</th>
+<th>空间复杂度</th>
+<th>排序方式</th>
+<th>稳定性</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>冒泡排序</td>
+<td>$O(n^{2})$</td>
+<td>$O(n^{2})$</td>
+<td>$O(1)$</td>
+<td>内部</td>
+<td>稳定</td>
+</tr>
+<tr>
+<td>选择排序</td>
+<td>$O(n^{2})$</td>
+<td>$O(n^{2})$</td>
+<td>$O(1)$</td>
+<td>内部</td>
+<td>不稳定</td>
+</tr>
+<tr>
+<td>插入排序</td>
+<td>$O(n^{2})$</td>
+<td>$O(n^{2})$</td>
+<td>$O(1)$</td>
+<td>内部</td>
+<td>稳定</td>
+</tr>
+<tr>
+<td>希尔排序</td>
+<td>$O(nlogn)$</td>
+<td>$O(nlog^{2}n)$</td>
+<td>$O(1)$</td>
+<td>内部</td>
+<td>不稳定</td>
+</tr>
+<tr>
+<td>快速排序</td>
+<td>$O(nlogn)$</td>
+<td>$O(n^{2})$</td>
+<td>$O(nlogn)$</td>
+<td>内部</td>
+<td>不稳定</td>
+</tr>
+<tr>
+<td>归并排序</td>
+<td>$O(nlogn)$</td>
+<td>$O(nlogn)$</td>
+<td>$O(1)$</td>
+<td>外部</td>
+<td>稳定</td>
+</tr>
+<tr>
+<td>堆排序</td>
+<td>$O(nlogn)$</td>
+<td>$O(nlogn)$</td>
+<td>$O(1)$</td>
+<td>内部</td>
+<td>不稳定</td>
+</tr>
+<tr>
+<td>计数排序</td>
+<td>$O(n+k)$</td>
+<td>$O(n+k)$</td>
+<td>$O(k)$</td>
+<td>外部</td>
+<td>稳定</td>
+</tr>
+<tr>
+<td>桶排序</td>
+<td>$O(n)$</td>
+<td>$O(n^{2})$</td>
+<td>$O(n+k)$</td>
+<td>外部</td>
+<td>稳定</td>
+</tr>
+<tr>
+<td>基数排序</td>
+<td>$O(d(n+k))$</td>
+<td>$O(d(n+k))$</td>
+<td>$O(n+k)$</td>
+<td>外部</td>
+<td>稳定</td>
+</tr>
+</tbody>
+</table>
+<p>接下来都以把一个array或者list从小到大排列为基准进行介绍.</p>
+<h2 id="冒泡排序">冒泡排序</h2>
+<p>从前到后比较, 发现逆序则交换, 每次循环都把最大的值放到最后面. 考虑最坏的情况, 比如表示逆序的情况, 需要排序$1+2+&hellip;+(n-1) = \frac{n(n-1)}{2}$次, 所以时间复杂度是$O(n^{2})$. 最好情况就是已经有序, 遍历一次即可. 注意这里的flag可以稍微优化冒泡排序, 因为当子循环没有发生任何交换, 就代表剩下的数据已经成功排列了.</p>
+<pre><code>public void bubbleSort(int[] nums) {
+    for (int i = 0; i &lt; nums.length; i++) {
+        //boolean flag = true; //如果次轮没有交换, 说明已排序成功
+        for (int j = 0; j &lt; nums.length - i - 1; j++) {
+            if (nums[j] &gt; nums[j + 1]) {
+                swap(nums, j, j + 1);
+                //flag = false;
+            }
+        }
+        //if (flag) return;
+    }
+    //System.out.println(Arrays.toString(nums));
+}
+</code></pre><h2 id="选择排序">选择排序</h2>
+<p>每一轮选最小值, 放在未排序的的首位. 不管数组顺序怎样, 比较的次数不变, 也就是$n(n-1)/2$, 所以时间复杂度是$O(n^2)$, 但交换移动的次数少, 所以可以说简单选择排序的性能略优于冒泡排序.</p>
+<pre><code>public void selectSort(int[] nums) {
+    for (int i = 0; i &lt; nums.length; i++) {
+        int min = nums[i];
+        int minIndex = i;
+        for (int j = i; j &lt; nums.length; j++) {
+            if (nums[minIndex] &gt; nums[j]) {
+                min = nums[j];
+                minIndex = j;
+            }
+            swap(nums, i, minIndex);
+        }
+    }
+    //System.out.println(Arrays.toString(nums));
+}
+</code></pre><h2 id="插入排序">插入排序</h2>
+<p>把数组的值往前插, 前面插入的数组是有序的. 已经有序的话只用遍历一次, 也就是$O(n)$, 否则还是需要$O(n^{2})$的时间. 如果排序是随机的, 可以计算到平均比较和移动次数是$n^{2}/4$. 和冒泡和选择相比, 插入排序性能会好一点.</p>
+<pre><code>public void insertSort(int[] nums) {
+    for (int i = 1; i &lt; nums.length; i++) {
+        int j = i - 1;
+        int key = nums[i];
+        while (j &gt;= 0 &amp;&amp; key &lt; nums[j]) {
+            nums[j + 1] = nums[j];
+            j--;
+        }
+        nums[j + 1] = key;
+    }
+    //System.out.println(Arrays.toString(nums));
+}
+</code></pre><h2 id="希尔排序shell-sort">希尔排序(Shell Sort)</h2>
+<p>希尔排序好处就是在宏观的序列上排好了序, 在增量逐渐减小的序列上再排序. 是插入排序升级版, 防止小的数在数组末尾, 就会花很多时间插入. 移位法更加明显的体现了插入排序吗可以看出来形式和插入排序一模一样, 不过把gap从1变成了从大到小的动态gap. 时间复杂度$O(nlogn)$/$O(n^{3/2})$(有待考量, 一般说$O(n^{3/2})$适用于更广泛的增量序列.</p>
+<pre><code>public void shellSortSwap(int[] nums) {
+    for (int gap = nums.length / 2; gap &gt; 0; gap /= 2) {
+        for (int i = gap; i &lt; nums.length; i++) { //遍历每一组
+            for (int j = i - gap; j &gt;= 0; j -= gap) {
+                if (nums[j] &gt; nums[j + gap]) {
+                    swap(nums, j, j + gap);
+                }
+            }
+        }
+    }
+    //System.out.println(Arrays.toString(nums));
+}
+
+public void shellSortInsert(int[] nums) {
+    for (int gap = nums.length / 2; gap &gt; 0; gap /= 2) {
+        for (int i = gap; i &lt; nums.length; i++) { //遍历每一组
+            int j = i;
+            int key = nums[j];
+            while (j &gt;= 0 &amp;&amp; key &lt; nums[j]) {
+                nums[j + gap] = nums[j];
+                j -= gap;
+            }
+            nums[j + gap] = key;
+        }
+    }
+    //System.out.println(Arrays.toString(nums));
+}
+</code></pre><h2 id="快速排序---有问题">快速排序 -&gt; 有问题</h2>
+<p>把数组分为两部分, 保证第一部分比第二部分小, 再接着分. 对于基准点的选择, 一般有三数取中/随机数的方法. 代码中我只是简单地取了第一个数. 可以把快排看作是是<strong>二叉树的先序遍历</strong>.</p>
+<pre><code>public void quickSort(int[] nums, int left, int right) {
+    if (left &lt; right) {
+        int p = partition(nums, left, right);
+        partition(nums, left, p - 1);
+        partition(nums, p + 1, right);
+    }
+}
+
+private int partition(int[] nums, int left, int right) {
+    /* 随机化
+        int index = new Random().nextInt(right - left + 1) + left;
+        int temp = arr[left];
+        arr[left] = arr[index];
+        arr[index] = temp;
+        int p = arr[left];
+    /*
+    int p = nums[left];
+    while (left &lt; right) {
+        while (left &lt; right &amp;&amp; nums[right] &gt;= p) right--;
+        nums[left] = nums[right];
+        while (left &lt; right &amp;&amp; nums[left] &lt;= p) left++;
+        nums[right] = nums[left];
+    }
+    nums[left] = p;
+    return left;
+}
+</code></pre><h3 id="复杂度分析">复杂度分析</h3>
+<p>最坏情况下, 每次划分都包含0个元素和n - 1个元素. $O(0) = 1$, 因为0个元素时直接返回, 划分数组的时间复杂度是$O(n)$, 那么算法运行时间是$T(n) = T(n - 1) + O(0) + O(n) = T(n - 1) + O(n)$. 递归树的方法解, 一共有n层树, 每层划分的负责度是$O(n)$, 所以最后的时间复杂度是$O(n^2)$.</p>
+<p>最好情况下, 每次刚好划分数组$T(n) = 2T(n/2) + O(n)$, 递归树的深度变成了$logn$, 所以时间复杂度是$nlogn$. 一般情况下, 用$T(n) = T(9n/10)+ T(n/10) + O(n)$举例, 实际上树的深度也是对数级别, 时间复杂度依然是$nlogn$. 深度在$log_{10/9}n = O(lgn)$处终止.</p>
+<h2 id="归并排序">归并排序</h2>
+<p>归并排序用了分治的思想, 需要进行logn次循环, 每一趟都会进行n次扫描, 所以时间复杂度总是保持在$nlogn$. 经典的逆序对问题其实就可以通过归并排序的思想来做. 是<strong>二叉树的后序遍历</strong>.</p>
+<pre><code>public void mergeSort(int[] nums, int left, int right) {
+    if (left &lt; right) {
+        int mid = (right + left) / 2;
+        mergeSort(nums, left, mid);
+        mergeSort(nums, mid + 1, right);
+        merge(nums, left, mid, right);
+    }
+}
+
+private void merge(int[] nums, int left, int mid, int right) {
+    int[] temp = new int[right - left + 1];
+    int i = left, j = mid + 1, index = 0;
+    while (i &lt;= mid &amp;&amp; j &lt;= right) {
+        temp[index++] = nums[i] &lt;= nums[j] ? nums[i++] : nums[j++];
+    }
+    while (i &lt;= mid) temp[index++] = nums[i++];
+    while (j &lt;= right) temp[index++] = nums[j++];
+    for (int k = 0; k &lt; temp.length; k++) nums[k + left] = temp[k];
+}
+</code></pre><h2 id="堆排序">堆排序</h2>
+<p>通过大顶堆来排序序列, 每次把最小的取出来之后再做heapify, 直到取出所有点. 最好最坏平均时间复杂度都是$nlogn$, 因为取堆顶重建时间都是$logn$, 而最终需要取$n - 1$次. 但是初始构建堆的时候需要多次比较, 所以如果序列个数比较少就划不来了. 父节点是<code>(i - 1) / 2</code>, 两个子节点是<code>2i + 1</code>和<code>2i + 2</code>.</p>
+<pre><code>public void heapSort(int[] nums, int n) {
+    buildheap(nums, n);
+    for (int i = n - 1; i &gt;= 0; i--) {
+        swap(nums, 0, i); //取最大的一个
+        heapify(nums, i, 0);
+    }
+}
+
+private void buildheap(int[] nums, int n) {
+    int parent = (n - 2) / 2; //n-1是最后一个节点
+    for (int i = parent; i &gt;= 0; i--) {
+        heapify(nums, n, i);
+    }
+}
+
+private void heapify(int[] nums, int n, int index) {
+    if (index &gt;= n) return;
+    int c1 = 2 * index + 1;
+    int c2 = 2 * index + 2;
+    int maxIndex = index;
+    if (c1 &lt; n &amp;&amp; nums[maxIndex] &lt; nums[c1]) maxIndex = c1;
+    if (c2 &lt; n &amp;&amp; nums[maxIndex] &lt; nums[c2]) maxIndex = c2;
+    if (index != maxIndex) {
+        swap(nums, maxIndex, index);
+        heapify(nums, n, maxIndex);
+    }
+}
+</code></pre><h2 id="计数排序">计数排序</h2>
+<p>用一个array来记保存对应index的数字, 空间换时间.</p>
+<pre><code>public void countSort(int[] nums) {
+    int maxValue = -1;
+    for (int num: nums) {
+        if (num &gt; maxValue) {
+            maxValue = num;
+        }
+    }
+    int[] buckets = new int[maxValue + 1];
+    for (int num: nums) {
+        buckets[num]++;
+    }
+    int index = 0;
+    for (int i = 0; i &lt; buckets.length; i++) {
+        while (buckets[i] &gt; 0) {
+            nums[index++] = i;
+            buckets[i]--;
+        }
+    }
+    //System.out.println(Arrays.toString(nums));
+}
+</code></pre><h2 id="桶排序">桶排序</h2>
+<p>思路同计数排序, 把不同的数字按一定规则放在桶中, 对桶内的数据排序.</p>
+<h2 id="基数排序">基数排序</h2>
+<p>根据从个位到十位, 十位到百位进行比较, 把数字放进对应的桶中, 再按顺序填回序列.</p>
+<pre><code>public void radixSort(int[] nums) {
+    //得到最大长度的数字
+    int maxValue = nums[0], maxLength = 0;
+    for (int num: nums) {
+        if (num &gt; maxValue) maxValue = num;
+    }
+    while (maxValue &gt; 0) {
+        maxValue /= 10;
+        maxLength++;
+    }
+    //放入桶
+    int[][] bucket = new int[10][nums.length];
+    int[] bucketLength = new int[10];
+    for (int i = 0, n = 1; i &lt; maxLength; i++, n *= 10) {
+        for (int j = 0; j &lt; nums.length; j++) {
+            int dight = nums[j] / n % 10;
+            bucket[dight][bucketLength[dight]] = nums[j];
+            bucketLength[dight]++; //记录每个bucket已经放了多少数字, 对应下一个该放数字的index
+        }
+        //放入数组
+        int index = 0;
+        for (int k = 0; k &lt; 10; k++) {
+            for (int l = 0; l &lt; bucketLength[k]; l++) {
+                nums[index++] = bucket[k][l];
+            }
+            bucketLength[k] = 0;
+        }
+    }
+    //System.out.println(Arrays.toString(nums));
+}
+</code></pre><h2 id="测试类">测试类</h2>
+<pre><code>public class SortTest {
+    long startTime;
+
+    @Test
+    public void test() {
+        int[] nums = new int[50000];
+        for (int i = 0; i &lt; 50000; i++) {
+            nums[i] = (int)(Math.random() * 5000000);
+        }
+        Sorting sorting = new Sorting();
+
+        //冒泡排序
+        startTime = System.currentTimeMillis();
+        sorting.bubbleSort(Arrays.copyOf(nums, nums.length));
+        System.out.println(&quot;冒泡排序: &quot; + (System.currentTimeMillis() - startTime));
+
+        //选择排序
+        startTime = System.currentTimeMillis();
+        sorting.selectSort(Arrays.copyOf(nums, nums.length));
+        System.out.println(&quot;选择排序: &quot; + (System.currentTimeMillis() - startTime));
+
+        //插入排序
+        startTime = System.currentTimeMillis();
+        sorting.insertSort(Arrays.copyOf(nums, nums.length));
+        System.out.println(&quot;插入排序: &quot; + (System.currentTimeMillis() - startTime));
+
+        //希尔排序(交换)
+        startTime = System.currentTimeMillis();
+        sorting.shellSortSwap(Arrays.copyOf(nums, nums.length));
+        System.out.println(&quot;希尔排序(交换): &quot; + (System.currentTimeMillis() - startTime));
+
+        //希尔排序(插入)
+        startTime = System.currentTimeMillis();
+        sorting.shellSortSwap(Arrays.copyOf(nums, nums.length));
+        System.out.println(&quot;希尔排序(插入): &quot; + (System.currentTimeMillis() - startTime));
+
+        //快速排序
+        startTime = System.currentTimeMillis();
+        int[] quickArray = Arrays.copyOf(nums, nums.length);
+        sorting.quickSort(quickArray, 0, quickArray.length - 1);
+        System.out.println(&quot;快速排序: &quot; + (System.currentTimeMillis() - startTime));
+        //System.out.println(Arrays.toString(quickArray));
+
+        //归并排序
+        startTime = System.currentTimeMillis();
+        int[] mergeArray = Arrays.copyOf(nums, nums.length);
+        sorting.mergeSort(mergeArray, 0, mergeArray.length - 1);
+        System.out.println(&quot;归并排序: &quot; + (System.currentTimeMillis() - startTime));
+        //System.out.println(Arrays.toString(mergeArray));
+
+        //堆排序
+        startTime = System.currentTimeMillis();
+        int[] heapArray = Arrays.copyOf(nums, nums.length);
+        sorting.heapSort(heapArray, heapArray.length);
+        System.out.println(&quot;堆排序: &quot; + (System.currentTimeMillis() - startTime));
+        //System.out.println(Arrays.toString(heapArray));
+
+        startTime = System.currentTimeMillis();
+        int[] heapArray2 = Arrays.copyOf(nums, nums.length);
+        sorting.heapSort2(heapArray2, heapArray.length);
+        System.out.println(&quot;堆排序: &quot; + (System.currentTimeMillis() - startTime));
+        //System.out.println(Arrays.toString(heapArray2));
+
+        //记数排序
+        startTime = System.currentTimeMillis();
+        sorting.countSort(Arrays.copyOf(nums, nums.length));
+        System.out.println(&quot;记数排序: &quot; + (System.currentTimeMillis() - startTime));
+
+        //桶排序
+        startTime = System.currentTimeMillis();
+        sorting.radixSort(Arrays.copyOf(nums, nums.length));
+        System.out.println(&quot;桶排序: &quot; + (System.currentTimeMillis() - startTime));
+    }
+}
+</code></pre><h2 id="排序的算法题">排序的算法题</h2>
+<h3 id="剑指offer51数组中的逆序对">剑指Offer51.数组中的逆序对</h3>
+<p>归并排序, 逆序放入数组的时候计数.</p>
+<pre><code>class Solution {
+
+    int res;
+    public int reversePairs(int[] nums) {
+        res = 0;
+        mergeSort(nums, 0, nums.length - 1);
+        return res;
+    }
+
+    public void mergeSort(int[] nums, int left, int right) {
+        if (left &lt; right) {
+            int mid = (left + right) / 2;
+            mergeSort(nums, left, mid);
+            mergeSort(nums, mid + 1, right);
+            merge(nums, left, mid, right);
+        }
+    }
+
+    public void merge(int[] nums, int left, int mid, int right) {
+        int[] temp = new int[right - left + 1];
+        int i = left, j = mid + 1, index = 0;
+        while (i &lt;= mid &amp;&amp; j &lt;= right) {
+            if (nums[i] &lt;= nums[j]) {
+                temp[index++] = nums[i++];
+            } else {
+                res += mid - i + 1;
+                temp[index++] = nums[j++];
+            }
+        }
+        while (i &lt;= mid) temp[index++] = nums[i++];
+        while (j &lt;= right) temp[index++] = nums[j++];
+        for (int k = 0; k &lt; temp.length; k++) nums[k + left] = temp[k];
+    }
+}
+</code></pre><h3 id="剑指offer40最小的k个数面试题1714最小k个数">剑指Offer40.最小的k个数/面试题17.14.最小K个数</h3>
+<p>快排, 只要筛选的partition点刚好是k, 那么左边就是最小的k个数.</p>
+<pre><code>class Solution {
+    public int[] smallestK(int[] arr, int k) {
+        quickSort(arr, 0, arr.length - 1, k);
+        return Arrays.copyOfRange(arr, 0, k);
+    }
+
+    public void quickSort(int[] arr, int left, int right, int k) {
+        if (left &lt; right) {
+            int p = partition(arr, left, right);
+            if (p + 1 == k) return;
+            else if (p + 1 &lt; k) quickSort(arr, p + 1, right, k);
+            else quickSort(arr, left, p - 1, k);
+        }
+    }
+
+    public int partition(int[] arr, int left, int right) {
+        int p = arr[left];
+        while (left &lt; right) {
+            while (left &lt; right &amp;&amp; arr[right] &gt;= p) right--;
+            arr[left] = arr[right];
+            while (left &lt; right &amp;&amp; arr[left] &lt;= p) left++;
+            arr[right] = arr[left];
+        }
+        arr[left] = p;
+        return left;
+    }
+}
+</code></pre><h3 id="147-对链表进行插入排序">147. 对链表进行插入排序</h3>
+<p><code>last</code>指针及以前都是有序的, <code>cur</code>只要小于<code>last</code>, 就需要向前插入.</p>
+<pre><code>class Solution {
+    public ListNode insertionSortList(ListNode head) {
+        if (head == null) return head;
+        ListNode dummy = new ListNode();
+        dummy.next = head;
+        ListNode last = dummy.next, cur = last.next;
+        while (cur != null) {
+            if (cur.val &gt;= last.val) {
+                last = last.next;
+            } else { //把现在的cur插入到前面的正确位置
+                ListNode pre = dummy;
+                while (pre.next.val &lt;= cur.val) {
+                    pre = pre.next;
+                }
+                last.next = cur.next;
+                cur.next = pre.next;
+                pre.next = cur;
+            }
+            cur = last.next;
+        }
+        return dummy.next;
+    }
+}
+</code></pre><h3 id="148-排序链表">148. 排序链表</h3>
+<p>尝试归并排序.</p>
+<pre><code>class Solution {
+    public ListNode sortList(ListNode head) {
+        return mergeSort(head, null);
+    }
+
+    public ListNode mergeSort(ListNode head, ListNode tail) { //左闭右开
+        if (head == null) return head; //节点数等于0
+        if (head.next == tail) { //节点数等于1
+            head.next = null; //分离前后结因为后面的merge要两个list
+            return head;
+        }
+        ListNode slow = head, fast = head;
+        while (fast != tail) {
+            slow = slow.next;
+            fast = fast.next;
+            if (fast != tail) fast = fast.next;
+        }
+        ListNode mid = slow;
+        ListNode l1 = mergeSort(head, mid);
+        ListNode l2 = mergeSort(mid, tail);
+        return merge(l1, l2);
+    }
+
+    public ListNode merge(ListNode l1, ListNode l2) { //等同leetcode24
+        if (l1 == null) return l2;
+        if (l2 == null) return l1;
+        ListNode head = null;
+        if (l1.val &lt;= l2.val) {
+            head = l1;
+            l1.next = merge(l1.next, l2);
+        } else {
+            head = l2;
+            l2.next = merge(l1, l2.next);
+        }
+        return head;
+    }
+}
+</code></pre>
+
+                
+
+                
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/post/1_%E5%89%91%E6%8C%87offer/" data-toggle="tooltip" data-placement="top" title="剑指offer">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/post/3_%E6%A0%91/" data-toggle="tooltip" data-placement="top" title="数据结构-树">Next
+                            Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+                
+
+                
+
+
+<div id="disqus-comment"></div>
+<div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "xqt01" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+            </div>
+
+            
+            
+            <div class="
+                col-lg-2 col-lg-offset-0
+                visible-lg-block
+                sidebar-container
+                catalog-container">
+                <div class="side-catalog">
+                    <hr class="hidden-sm hidden-xs">
+                    <h5>
+                        <a class="catalog-toggle" href="#">CATALOG</a>
+                    </h5>
+                    <ul class="catalog-body"></ul>
+                </div>
+            </div>
+            
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/java" title="java">
+                            java
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/jvm" title="jvm">
+                            jvm
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/spring" title="spring">
+                            spring
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E5%89%8D%E7%AB%AF" title="前端">
+                            前端
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F" title="操作系统">
+                            操作系统
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93" title="数据库">
+                            数据库
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95" title="数据结构与算法">
+                            数据结构与算法
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B" title="网络编程">
+                            网络编程
+                        </a>
+                        
+                        
+                    </div>
+                </section>
+                
+
+                
+                
+                <section>
+                    <hr>
+                    <h5>FRIENDS</h5>
+                    <ul class="list-inline">
+                        
+                        <li><a target="_blank" href="https://fan-bu-fan.github.io/">FELL &amp; ENJOY</a></li>
+                        
+                    </ul>
+                </section>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">                  
+                    
+                    <li>
+                        <a href="mailto:huanruiz@foxmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		           
+                    
+                    
+                    
+                    
+
+		            
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/xqt01">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		            
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+            
+            
+            
+           
+                   <li>
+                       <a href='' rel="alternate" type="application/rss+xml" title="PunchCode" >
+                           <span class="fa-stack fa-lg">
+                               <i class="fas fa-circle fa-stack-2x"></i>
+                               <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                           </span>
+                       </a>
+                   </li>
+            
+             </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; PunchCode 2024
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function loadAsync(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        loadAsync("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    loadAsync("https://cdn.jsdelivr.net/npm/fastclick@1.0.6/lib/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+    function generateCatalog(selector) {
+
+        
+        
+        
+        
+            _containerSelector = 'div.post-container'
+        
+
+        
+        var P = $(_containerSelector), a, n, t, l, i, c;
+        a = P.find('h1,h2,h3,h4,h5,h6');
+
+        
+        $(selector).html('')
+
+        
+        a.each(function () {
+            n = $(this).prop('tagName').toLowerCase();
+            i = "#" + $(this).prop('id');
+            t = $(this).text();
+            c = $('<a href="' + i + '" rel="nofollow">' + t + '</a>');
+            l = $('<li class="' + n + '_nav"></li>').append(c);
+            $(selector).append(l);
+        });
+        return true;
+    }
+
+    generateCatalog(".catalog-body");
+
+    
+    $(".catalog-toggle").click((function (e) {
+        e.preventDefault();
+        $('.side-catalog').toggleClass("fold")
+    }))
+
+    
+
+
+    loadAsync("\/js\/jquery.nav.js", function () {
+        $('.catalog-body').onePageNav({
+            currentClass: "active",
+            changeHash: !1,
+            easing: "swing",
+            filter: "",
+            scrollSpeed: 700,
+            scrollOffset: 0,
+            scrollThreshold: .2,
+            begin: null,
+            end: null,
+            scrollChange: null,
+            padding: 80
+        });
+    });
+</script>
+
+
+
+
+
+
+</body>
+</html>

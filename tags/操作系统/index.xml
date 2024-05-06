@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>操作系统 on PunchCode</title>
+    <link>https://xqt01.github.io/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/</link>
+    <description>Recent content in 操作系统 on PunchCode</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Sat, 17 Oct 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://xqt01.github.io/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>操作系统-设备驱动与文件系统</title>
+      <link>https://xqt01.github.io/post/24_%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F_%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E4%B8%8E%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/</link>
+      <pubDate>Sat, 17 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/24_%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F_%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E4%B8%8E%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/</guid>
+      <description>I/O与显示器 使用外设通常就是CPU向外设发指令, 当外设完成后做中断处理程序. 有单片机背景的朋友应该会很熟悉这种模式, 通过i2总线, spi总</description>
+    </item>
+    
+    <item>
+      <title>操作系统-内存管理</title>
+      <link>https://xqt01.github.io/post/23_%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F_%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/</link>
+      <pubDate>Sun, 11 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/23_%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F_%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/</guid>
+      <description>内存使用与分段 回顾冯诺依曼的取址执行, 计算机取址执行, 也就是将程序(从磁盘)放到内存中,PC指向开始地址. 如果有下面的代码, call 40所在的位置</description>
+    </item>
+    
+    <item>
+      <title>操作系统-进程与线程</title>
+      <link>https://xqt01.github.io/post/22_%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F_%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B/</link>
+      <pubDate>Sat, 03 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/22_%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F_%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B/</guid>
+      <description>使用CPU 如果CPU只是简单地取址执行, 很多时间就会浪费在IO上, 因为IO通常是机械动作, 而CPU是电路工作, 所以这样就会降低CPU的使用率</description>
+    </item>
+    
+    <item>
+      <title>操作系统-基础</title>
+      <link>https://xqt01.github.io/post/21_%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F_%E5%9F%BA%E7%A1%80/</link>
+      <pubDate>Fri, 02 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/21_%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F_%E5%9F%BA%E7%A1%80/</guid>
+      <description>操作系统的课程来自哈工大的李志军老师, 视频和课件可以在B站找到, 配套的实验在蓝桥可以找到. 课程分为四个部分: 操作系统基础, 进程与线程, 内存管</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="PunchCode">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://xqt01.github.io/front.png">
+    <meta property="twitter:image" content="https://xqt01.github.io/front.png" />
+    
+
+    
+    <meta name="title" content="Java的基本类型" />
+    <meta property="og:title" content="Java的基本类型" />
+    <meta property="twitter:title" content="Java的基本类型" />
+    
+
+    
+    <meta name="description" content="Software Engineer">
+    <meta property="og:description" content="Software Engineer" />
+    <meta property="twitter:description" content="Software Engineer" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="Harry, 小拳头">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>Java的基本类型 | 以终为始</title>
+
+    <link rel="canonical" href="/post/60_java%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%B1%BB%E5%9E%8B/">
+
+    
+    
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hugo-theme-cleanwhite.min.css">
+
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+
+    
+    <link href="https://cdn.jsdelivr.net/gh/FortAwesome/Font-Awesome@5.15.1/css/all.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    
+    <script src="/js/jquery.min.js"></script>
+
+    
+    <script src="/js/bootstrap.min.js"></script>
+
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+
+</head>
+
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">PunchCode</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">All Posts</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/tech">tech</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0">学习笔记</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/%E6%9D%82%E8%B0%88">杂谈</a>
+                        </li>
+                        
+                    
+                    
+		    
+                        <li><a href="/top/archive/">ARCHIVE</a></li>
+                    
+                        <li><a href="/top/about/">ABOUT</a></li>
+                    
+
+                    
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/front.png')
+    }
+</style>
+
+<header class="intro-header" >
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/java" title="Java">
+                            Java
+                        </a>
+                        
+                    </div>
+                    <h1>Java的基本类型</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        
+                            Posted by 
+                            
+                                小拳头
+                             
+                            on 
+                            Sunday, August 8, 2021
+                            
+                            
+                            
+                            
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <p>在刚结束的培训项目中需要把几个指标落库, 我想当然的以为int那21亿的范围应该已经够用了, 结果项目发布后报了一堆out of range. 我发现自己对最最基本的数据类型理解不深入, 而这却是开发天天都会打交道的东西, 于是花了点时间了解了基础的数据类型. 基于Java8.</p>
+<p>Java的基础类型有8种, 包括4种整型, 2种浮点类型, 和Unicode的char, 与boolean. 命名的时候只能以字母/<code>_</code>/<code>$</code>开头, 但是为了可读性, 开发时永远不要用<code>_</code>和<code>$</code>开头, 并保持驼峰式命名. 定值用全大写, 并用下划线分开其中的单词. (这些命名规则都是卸载Java官方文档的原话)</p>
+<table>
+<thead>
+<tr>
+<th>Data Type</th>
+<th>#bits</th>
+<th>Default Value(for fields)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>byte</td>
+<td>8</td>
+<td>0</td>
+</tr>
+<tr>
+<td>short</td>
+<td>16</td>
+<td>0</td>
+</tr>
+<tr>
+<td>int</td>
+<td>32</td>
+<td>0</td>
+</tr>
+<tr>
+<td>long</td>
+<td>64</td>
+<td>0L</td>
+</tr>
+<tr>
+<td>float</td>
+<td>32</td>
+<td>0.0f</td>
+</tr>
+<tr>
+<td>double</td>
+<td>64</td>
+<td>0.0d</td>
+</tr>
+<tr>
+<td>char</td>
+<td>16</td>
+<td>&lsquo;\u0000&rsquo;</td>
+</tr>
+<tr>
+<td>boolean</td>
+<td>未知</td>
+<td>false</td>
+</tr>
+</tbody>
+</table>
+<h2 id="存储原理">存储原理</h2>
+<h3 id="整型">整型</h3>
+<p>Java的整型都是<strong>2的补码</strong>这种类型的整型, 所以整型的范围是$2^{bits - 1}$. 对于byte/short, 通常会用在比较长的数组中, 这个时候不同的数据类型, 对空间的影响就会很大. 而大多数时候都会用int, 当int范围不够时就需要用long了. int和long在Java8及以后再包装类中支持无符号方法, 但是在我们直接初始化整型的时候, 还是没法用类似C语言那样直接写<code>unsigned int a = 1;</code>, 所以大多数情况下都忽略这个无符号的情况.</p>
+<p>原码就是在书之前增加了一位符号位, 而正数的原码/反码/补码相同, 负数的反码就是原码除符号位取反, 补码是其反码加1. 用8位byte举例, 如果原码是<code>00001000</code>, 那么就代表10进制的8. 它的补码是反码加1, 也就是$11110111 + 00000001 = 11111000$. 而<code>11111000</code>就代表10进制的-8. 这种方式下, 8与-8做加法, 就相当于 $00001000 + 11111000 = 100000000$, 最高位溢出, 去掉后结果就是0. 这样使得正负数计算都可以简单地运用一套加法规则. 换个角度看, 我们也就明白了为什么<code>0b10000000</code>支持的是-128, 而不是127, 因为最高位是符号位, 实际上只有7位是真正的数值位.</p>
+<blockquote>
+<p>注意long在初始化的时候, 数字结尾要加L, 而float初始化结尾加f. 是因为JVM在存储时整型和boolean默认是用int存储, 而浮点型用double存储.</p>
+</blockquote>
+<h3 id="浮点型todo">浮点型(todo)</h3>
+<p>Java的浮点数遵循<strong>IEEE-754</strong>标准, float最大支持正负<code>3.40e38</code>(有效位数6~7位), double最大支撑正负<code>1.79x10308</code>(有效位数15位). 浮点型虽然范围大, 但是是不精确的, 业务中涉及的精确计算需要用<code>BigDecimal</code>实现. 浮点数运算在除数为0时不报错, 但是会返回<code>NaN</code>/<code>Infinity</code>/<code>-Infinity</code>, 在debug的时候遇到这种值就能立刻定位程序的问题在哪里.</p>
+<p>有时候我们还回涉及浮点型转换整型, 这个过程实际上就是直接丢弃小数部分, 如果转型后的数字依然超过了整型的最大范围, 那么整型就会取其范围所在的最大值.</p>
+<h2 id="包装类">包装类</h2>
+<p>每一种基本类型都对应了包装类, 在我们写<code>Integer a = 1;</code>/<code>int b = a;</code>的时候回自动得在编译阶段装箱拆箱, 对应<code>Integer.valueOf()</code>/<code>Integer.intValue()</code>方法.</p>
+<table>
+<thead>
+<tr>
+<th>Data Type</th>
+<th>Wrapper Class</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>byte</td>
+<td>java.lang.Byte</td>
+</tr>
+<tr>
+<td>short</td>
+<td>java.lang.Short</td>
+</tr>
+<tr>
+<td>int</td>
+<td>java.lang.Integer</td>
+</tr>
+<tr>
+<td>long</td>
+<td>java.lang.Long</td>
+</tr>
+<tr>
+<td>float</td>
+<td>java.lang.Float</td>
+</tr>
+<tr>
+<td>double</td>
+<td>java.lang.Double</td>
+</tr>
+<tr>
+<td>char</td>
+<td>java.lang.Character</td>
+</tr>
+<tr>
+<td>boolean</td>
+<td>java.lang.Boolean</td>
+</tr>
+</tbody>
+</table>
+<p>包装类比较时必须用<code>equals</code>方法, 因为我们不知道比较的值是由常量池产生或是new的新对象.</p>
+<h2 id="参考">参考</h2>
+<ol>
+<li><a href="https://github.com/Snailclimb/JavaGuide/blob/master/docs/java/basis/Java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86.md#%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B">JavaGuide - Java基础知识</a></li>
+<li><a href="https://docs.oracle.com/javase/tutorial/java/nutsandbolts/variables.html">The Java Tutorials - Variables</a></li>
+<li><a href="https://www.ruanyifeng.com/blog/2009/08/twos_complement.html">关于2的补码</a></li>
+</ol>
+
+
+                
+
+                
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/post/59_%E4%B8%80%E4%B8%AA%E5%85%B3%E4%BA%8Egit%E7%94%A8%E6%88%B7%E5%88%87%E6%8D%A2%E7%9A%84%E5%9D%91/" data-toggle="tooltip" data-placement="top" title="一个关于git用户切换的坑">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/post/57_css%E5%85%A5%E9%97%A8/" data-toggle="tooltip" data-placement="top" title="CSS入门">Next
+                            Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+                
+
+                
+
+
+<div id="disqus-comment"></div>
+<div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "xqt01" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+            </div>
+
+            
+            
+            <div class="
+                col-lg-2 col-lg-offset-0
+                visible-lg-block
+                sidebar-container
+                catalog-container">
+                <div class="side-catalog">
+                    <hr class="hidden-sm hidden-xs">
+                    <h5>
+                        <a class="catalog-toggle" href="#">CATALOG</a>
+                    </h5>
+                    <ul class="catalog-body"></ul>
+                </div>
+            </div>
+            
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/java" title="java">
+                            java
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/jvm" title="jvm">
+                            jvm
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/spring" title="spring">
+                            spring
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E5%89%8D%E7%AB%AF" title="前端">
+                            前端
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F" title="操作系统">
+                            操作系统
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93" title="数据库">
+                            数据库
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95" title="数据结构与算法">
+                            数据结构与算法
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B" title="网络编程">
+                            网络编程
+                        </a>
+                        
+                        
+                    </div>
+                </section>
+                
+
+                
+                
+                <section>
+                    <hr>
+                    <h5>FRIENDS</h5>
+                    <ul class="list-inline">
+                        
+                        <li><a target="_blank" href="https://fan-bu-fan.github.io/">FELL &amp; ENJOY</a></li>
+                        
+                    </ul>
+                </section>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">                  
+                    
+                    <li>
+                        <a href="mailto:huanruiz@foxmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		           
+                    
+                    
+                    
+                    
+
+		            
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/xqt01">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		            
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+            
+            
+            
+           
+                   <li>
+                       <a href='' rel="alternate" type="application/rss+xml" title="PunchCode" >
+                           <span class="fa-stack fa-lg">
+                               <i class="fas fa-circle fa-stack-2x"></i>
+                               <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                           </span>
+                       </a>
+                   </li>
+            
+             </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; PunchCode 2024
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function loadAsync(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        loadAsync("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    loadAsync("https://cdn.jsdelivr.net/npm/fastclick@1.0.6/lib/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+    function generateCatalog(selector) {
+
+        
+        
+        
+        
+            _containerSelector = 'div.post-container'
+        
+
+        
+        var P = $(_containerSelector), a, n, t, l, i, c;
+        a = P.find('h1,h2,h3,h4,h5,h6');
+
+        
+        $(selector).html('')
+
+        
+        a.each(function () {
+            n = $(this).prop('tagName').toLowerCase();
+            i = "#" + $(this).prop('id');
+            t = $(this).text();
+            c = $('<a href="' + i + '" rel="nofollow">' + t + '</a>');
+            l = $('<li class="' + n + '_nav"></li>').append(c);
+            $(selector).append(l);
+        });
+        return true;
+    }
+
+    generateCatalog(".catalog-body");
+
+    
+    $(".catalog-toggle").click((function (e) {
+        e.preventDefault();
+        $('.side-catalog').toggleClass("fold")
+    }))
+
+    
+
+
+    loadAsync("\/js\/jquery.nav.js", function () {
+        $('.catalog-body').onePageNav({
+            currentClass: "active",
+            changeHash: !1,
+            easing: "swing",
+            filter: "",
+            scrollSpeed: 700,
+            scrollOffset: 0,
+            scrollThreshold: .2,
+            begin: null,
+            end: null,
+            scrollChange: null,
+            padding: 80
+        });
+    });
+</script>
+
+
+
+
+
+
+</body>
+</html>

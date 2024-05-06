@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tops on PunchCode</title>
+    <link>https://xqt01.github.io/top/</link>
+    <description>Recent content in Tops on PunchCode</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language><atom:link href="https://xqt01.github.io/top/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title></title>
+      <link>https://xqt01.github.io/top/about/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/top/about/</guid>
+      <description>这里是小拳头的blog, 放着我对计算力领域, 行业的一些想法. email: huanruiz@foxmail.com status: working as software engineer</description>
+    </item>
+    
+    <item>
+      <title>归档</title>
+      <link>https://xqt01.github.io/top/archive/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/top/archive/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>

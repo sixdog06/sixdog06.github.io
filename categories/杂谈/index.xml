@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>杂谈 on PunchCode</title>
+    <link>https://xqt01.github.io/categories/%E6%9D%82%E8%B0%88/</link>
+    <description>Recent content in 杂谈 on PunchCode</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Mon, 15 May 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://xqt01.github.io/categories/%E6%9D%82%E8%B0%88/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>听风</title>
+      <link>https://xqt01.github.io/post/87_%E5%90%AC%E9%A3%8E/</link>
+      <pubDate>Mon, 15 May 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/87_%E5%90%AC%E9%A3%8E/</guid>
+      <description>21年参加工作, 21, 22, 23年都有生命中有交集的人去世. 今天尤其难过, 一整天心情都不怎么好. 生命太脆弱了. 左耳听风的技术分享文章在极客时间有几十</description>
+    </item>
+    
+    <item>
+      <title>GPT让我改变了自己的学习方法</title>
+      <link>https://xqt01.github.io/post/85_gpt%E8%AE%A9%E6%88%91%E6%94%B9%E5%8F%98%E4%BA%86%E8%87%AA%E5%B7%B1%E7%9A%84%E5%AD%A6%E4%B9%A0%E6%96%B9%E6%B3%95/</link>
+      <pubDate>Sat, 01 Apr 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/85_gpt%E8%AE%A9%E6%88%91%E6%94%B9%E5%8F%98%E4%BA%86%E8%87%AA%E5%B7%B1%E7%9A%84%E5%AD%A6%E4%B9%A0%E6%96%B9%E6%B3%95/</guid>
+      <description>GPT可能是最近技术圈最火的话题之一了, 作为一个曾经被NLP暴打过, 还依然对这个领域感兴趣的人, 也深度体验了chatGPT和midjourn</description>
+    </item>
+    
+    <item>
+      <title>完成目标的方法论</title>
+      <link>https://xqt01.github.io/post/82_%E5%AE%8C%E6%88%90%E7%9B%AE%E6%A0%87%E7%9A%84%E6%96%B9%E6%B3%95%E8%AE%BA/</link>
+      <pubDate>Sun, 11 Sep 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/82_%E5%AE%8C%E6%88%90%E7%9B%AE%E6%A0%87%E7%9A%84%E6%96%B9%E6%B3%95%E8%AE%BA/</guid>
+      <description>从3月开始的上海封城, 我的博客就停止了, 现在上海疫情恢复, 我又作为次密接住进了隔离酒店, 但我已调整好状态继续输出. 今天不谈技术, 仅谈谈完成目</description>
+    </item>
+    
+    <item>
+      <title>Mac上我常用的一些工具</title>
+      <link>https://xqt01.github.io/post/76_my_mac_tool_list/</link>
+      <pubDate>Fri, 21 Jan 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/76_my_mac_tool_list/</guid>
+      <description>常用工具 gray: 独立配置mac不同app改变light or dark的主题配置 iina: 视频播放器 snipaste: 截图工具 Magnet: 分屏工具 mos: 鼠标控制软件 办公效率 draw.io: 流程图软件</description>
+    </item>
+    
+    <item>
+      <title>投资第一课</title>
+      <link>https://xqt01.github.io/post/68_%E6%8A%95%E8%B5%84%E7%AC%AC%E4%B8%80%E8%AF%BE/</link>
+      <pubDate>Sat, 20 Nov 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/68_%E6%8A%95%E8%B5%84%E7%AC%AC%E4%B8%80%E8%AF%BE/</guid>
+      <description>之前看到推上有人推荐这个课, 就学习了一下. 常说不理财等死, 乱理财找死, 在有了收入后难免想通过理财来保持健康的资产， 这里记录这门课的笔记和我的</description>
+    </item>
+    
+    <item>
+      <title>一个关于git用户切换的坑</title>
+      <link>https://xqt01.github.io/post/59_%E4%B8%80%E4%B8%AA%E5%85%B3%E4%BA%8Egit%E7%94%A8%E6%88%B7%E5%88%87%E6%8D%A2%E7%9A%84%E5%9D%91/</link>
+      <pubDate>Wed, 28 Jul 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/59_%E4%B8%80%E4%B8%AA%E5%85%B3%E4%BA%8Egit%E7%94%A8%E6%88%B7%E5%88%87%E6%8D%A2%E7%9A%84%E5%9D%91/</guid>
+      <description>这几天公司培训, 要做一个培训的项目, 因为不想远程连接工位的电脑开发, 所以在自己的电脑上配置好了环境, 但是遇到了一个git环境切换无法push</description>
+    </item>
+    
+    <item>
+      <title>如何搭建Hugo博客并部署到Github Page</title>
+      <link>https://xqt01.github.io/post/0_%E5%A6%82%E4%BD%95%E6%90%AD%E5%BB%BAhugo%E5%8D%9A%E5%AE%A2%E5%B9%B6%E9%83%A8%E7%BD%B2%E5%88%B0github_page/</link>
+      <pubDate>Wed, 30 Sep 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/0_%E5%A6%82%E4%BD%95%E6%90%AD%E5%BB%BAhugo%E5%8D%9A%E5%AE%A2%E5%B9%B6%E9%83%A8%E7%BD%B2%E5%88%B0github_page/</guid>
+      <description>因为Hexo博客又一次出现了问题, 在推油的推荐下, 我把个人博客迁移到了Hugo上. 我会根据复习的进度慢慢地把相关的笔记迁移到这里. Hugo的</description>
+    </item>
+    
+  </channel>
+</rss>

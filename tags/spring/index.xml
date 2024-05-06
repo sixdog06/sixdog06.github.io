@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Spring on PunchCode</title>
+    <link>https://xqt01.github.io/tags/spring/</link>
+    <description>Recent content in Spring on PunchCode</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Sun, 15 Aug 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://xqt01.github.io/tags/spring/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>SpringBoot入门</title>
+      <link>https://xqt01.github.io/post/61_springboot%E5%85%A5%E9%97%A8/</link>
+      <pubDate>Sun, 15 Aug 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/61_springboot%E5%85%A5%E9%97%A8/</guid>
+      <description>Spring Boot is an open source Java-based framework used to create a micro Service. It is developed by Pivotal Team and is used to build stand-alone and production ready spring applications. Micro Service is an architecture that allows the developers to develop and deploy services independently. Each service running has its own process and this achieves the lightweight model to support business applications. Hello World Sprin</description>
+    </item>
+    
+    <item>
+      <title>SpringMVC入门</title>
+      <link>https://xqt01.github.io/post/55_springmvc%E5%85%A5%E9%97%A8/</link>
+      <pubDate>Sun, 25 Jul 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/55_springmvc%E5%85%A5%E9%97%A8/</guid>
+      <description>The Spring Web model-view-controller (MVC) framework is designed around a DispatcherServlet that dispatches requests to handlers, with configurable handler mappings, view resolution, locale and theme resolution as well as support for uploading files. The default handler is based on the @Controller and @RequestMapping annotations, offering a wide range of flexible handling methods. With the introduction of Spring 3.0, the @Controller mechanism also allows you to create RESTful Web sites and</description>
+    </item>
+    
+    <item>
+      <title>Spring-AOP</title>
+      <link>https://xqt01.github.io/post/44_spring_aop/</link>
+      <pubDate>Fri, 22 Jan 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/44_spring_aop/</guid>
+      <description>概念 面向切面编程, 利用AOP可以对业务逻辑的各个部分进行隔离, 使业务逻辑各部分之间的耦合度降低. 在不修改源代码的情况下, 也可以在主干功能里面</description>
+    </item>
+    
+    <item>
+      <title>Spring-IOC</title>
+      <link>https://xqt01.github.io/post/43_spring_ioc/</link>
+      <pubDate>Sat, 16 Jan 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/43_spring_ioc/</guid>
+      <description>入门-创建对象 教育版的idea没有spring initializer, 建立普通Java工程就好. 创建好工程后将如下的jar文件(spring框架的依赖和日志依赖)</description>
+    </item>
+    
+  </channel>
+</rss>

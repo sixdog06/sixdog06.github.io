@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>前端 on PunchCode</title>
+    <link>https://xqt01.github.io/tags/%E5%89%8D%E7%AB%AF/</link>
+    <description>Recent content in 前端 on PunchCode</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Thu, 12 Aug 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://xqt01.github.io/tags/%E5%89%8D%E7%AB%AF/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>CSS入门</title>
+      <link>https://xqt01.github.io/post/57_css%E5%85%A5%E9%97%A8/</link>
+      <pubDate>Thu, 12 Aug 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/57_css%E5%85%A5%E9%97%A8/</guid>
+      <description>Cascading Style Sheets(CSS) is a stylesheet language used to describe the presentation of a document written in HTML or XML(including XML dialects such as SVG, MathML or XHTML). CSS describes how elements should be rendered on screen, on paper, in speech, or on other media. CSS is among the core languages of the open web and is standardized across Web browsers according to W3C specifications. 官方的tu</description>
+    </item>
+    
+    <item>
+      <title>Vue入门</title>
+      <link>https://xqt01.github.io/post/54_vue%E5%85%A5%E9%97%A8/</link>
+      <pubDate>Fri, 02 Jul 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/54_vue%E5%85%A5%E9%97%A8/</guid>
+      <description>官方文档的中文介绍有简单入门的视频教程, 下载HbuilderX, 并导入官方的教程代码. 我学习的过程是先看完视频跑一边代码再根据文档梳理一次.</description>
+    </item>
+    
+    <item>
+      <title>HTML入门</title>
+      <link>https://xqt01.github.io/post/51_html%E5%85%A5%E9%97%A8/</link>
+      <pubDate>Mon, 31 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/51_html%E5%85%A5%E9%97%A8/</guid>
+      <description>HTML stands for HyperText Markup Language. It is used to design web pages using a markup language. HTML is the combination of Hypertext and Markup language. Hypertext defines the link between the web pages. A markup language is used to define the text document within tag which defines the structure of web pages. This language is used to annotate (make notes for the computer) text so that a machine can</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="PunchCode">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://xqt01.github.io/front.png">
+    <meta property="twitter:image" content="https://xqt01.github.io/front.png" />
+    
+
+    
+    <meta name="title" content="几行代码解释Java的虚拟线程并不是万能解药" />
+    <meta property="og:title" content="几行代码解释Java的虚拟线程并不是万能解药" />
+    <meta property="twitter:title" content="几行代码解释Java的虚拟线程并不是万能解药" />
+    
+
+    
+    <meta name="description" content="Software Engineer">
+    <meta property="og:description" content="Software Engineer" />
+    <meta property="twitter:description" content="Software Engineer" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="Harry, 小拳头">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>几行代码解释Java的虚拟线程并不是万能解药 | 以终为始</title>
+
+    <link rel="canonical" href="/post/86_%E5%87%A0%E8%A1%8C%E4%BB%A3%E7%A0%81%E8%A7%A3%E9%87%8Ajava%E7%9A%84%E8%99%9A%E6%8B%9F%E7%BA%BF%E7%A8%8B%E5%B9%B6%E4%B8%8D%E6%98%AF%E4%B8%87%E8%83%BD%E8%A7%A3%E8%8D%AF/">
+
+    
+    
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hugo-theme-cleanwhite.min.css">
+
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+
+    
+    <link href="https://cdn.jsdelivr.net/gh/FortAwesome/Font-Awesome@5.15.1/css/all.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    
+    <script src="/js/jquery.min.js"></script>
+
+    
+    <script src="/js/bootstrap.min.js"></script>
+
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+
+</head>
+
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">PunchCode</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">All Posts</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/tech">tech</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0">学习笔记</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/%E6%9D%82%E8%B0%88">杂谈</a>
+                        </li>
+                        
+                    
+                    
+		    
+                        <li><a href="/top/archive/">ARCHIVE</a></li>
+                    
+                        <li><a href="/top/about/">ABOUT</a></li>
+                    
+
+                    
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/front.png')
+    }
+</style>
+
+<header class="intro-header" >
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                    </div>
+                    <h1>几行代码解释Java的虚拟线程并不是万能解药</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        
+                            Posted by 
+                            
+                                小拳头
+                             
+                            on 
+                            Wednesday, May 3, 2023
+                            
+                            
+                            
+                            
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <p>在<a href="https://openjdk.org/jeps/444">JEP 444</a>中, 对虚拟线程进行了第一次正式的介绍, 并且提供了<a href="https://openjdk.org/jeps/12">preview api</a>. 虚拟线程在JDK19中已经被发布, 并且预计在JDK21中发布最终版本.</p>
+<p>其实从JEP 444的介绍可以看出, 虚拟线程只会对高并发(超过几千的并发量)并且不是CPU密集型应用的效果有显著的提升. 有了virtual thread这个概念, 非virtual的线程也就有了platform thread这个名字. virtual thread是一种轻量级的platform thread, 它具有platform thread的所有功能. 类似Go中的goroutines, virtual thread是JDK提供的用户级线程, 并不直接与OS绑定, 所以一个OS先线程下可以有很多个虚拟线程. Java平台线程的切换从抽象的角度看是时间片的轮状, 或是有优先级的调度, 但是当一个平台线程进行IO操作时, CPU资源其实并没有被有效使用, 而虚拟线程则可以在IO操作进行等待的时候, 执行其他的任务, 充分利用CPU.</p>
+<p>下面的例程, 分别用<code>Thread.sleep(1000);</code>来模拟IO操作的等待时间, <code>Test.fibonacci(int n);</code>来模拟计算操作. 分别测试IO密集和CPU密集的运行效果. 每两个实验之间主线程会<code>Thread.sleep(5000);</code>, 让当前执行的任务全部完成, 再执行下一个.</p>
+<pre><code>import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+public class Test {
+
+    public static void main(String[] args) throws InterruptedException {
+        ExecutorService virtualService = Executors.newVirtualThreadPerTaskExecutor();
+        ExecutorService nonVirtualService = Executors.newFixedThreadPool(1);
+        
+        // I/O密集测试
+        System.out.println(&quot;start i/o bound test(virtualService), time:&quot; + System.currentTimeMillis());
+        for (int i = 0; i &lt; 5; i++) {
+            virtualService.execute(new IoBoundTask());
+        }
+
+        Thread.sleep(5000);
+        System.out.println(&quot;start i/o bound test(nonVirtualService), time:&quot; + System.currentTimeMillis());
+        for (int i = 0; i &lt; 5; i++) {
+            nonVirtualService.execute(new IoBoundTask());
+        }
+
+        Thread.sleep(5000);
+        // CPU密集测试
+        System.out.println(&quot;start cpu bound test(virtualService), time:&quot; + System.currentTimeMillis());
+        for (int i = 0; i &lt; 3; i++) {
+            virtualService.execute(new CpuBoundTask());
+        }
+
+        Thread.sleep(5000);
+        System.out.println(&quot;start cpu bound test(nonVirtualService), time:&quot; + System.currentTimeMillis());
+        for (int i = 0; i &lt; 3; i++) {
+            nonVirtualService.execute(new CpuBoundTask());
+        }
+        virtualService.shutdown();
+        nonVirtualService.shutdown();
+    }
+
+    /**
+     * 用斐波那契数列计算来消耗CPU资源
+     */
+    public static int fibonacci(int n) {
+        if (n == 0) {
+            return 0;
+        } else if (n == 1) {
+            return 1;
+        } else {
+            return fibonacci(n - 1) + fibonacci(n - 2);
+        }
+    }
+}
+
+class IoBoundTask implements Runnable {
+    @Override
+    public void run() {
+        try {
+            // I/O密集也就是线程会在某个I/O操作中等待, 用sleep可以模拟这种情况
+            Thread.sleep(1000);
+            System.out.println(Thread.currentThread());
+            System.out.println(System.currentTimeMillis());
+        } catch (InterruptedException e) {
+        }
+    }
+}
+
+class CpuBoundTask implements Runnable {
+    @Override
+    public void run() {
+        // CPU密集也就是线程会持续消耗CPU资源进行计算
+        Test.fibonacci(40);
+        System.out.println(Thread.currentThread());
+        System.out.println(System.currentTimeMillis());
+    }
+}
+</code></pre><p>因为虚拟线程目前处于preview的状态, 直接用<code>javac</code>编译会报<code>error: newVirtualThreadPerTaskExecutor() is a preview API and is disabled by default.</code>, 加上开启preview api的参数即可.</p>
+<pre><code>Javac Test.java --enable-preview --source 19
+</code></pre><p>运行Test.class文件时, 也需要开启preview api. 在代码中我限制了平台线程的线程池核心线程数和线程池的最大线程数都为1, 为保持实验的一致性, 通过JVM参数, 对虚拟线程也做同样限制.</p>
+<pre><code>Java --enable-preview -Djdk.virtualThreadScheduler.parallelism=1 -Djdk.virtualThreadScheduler.maxPoolSize=1 -Djdk.virtualThreadScheduler.minRunnable=1 Test
+</code></pre><p>从运行结果可以看出, 执行IO密集型的任务时, 虚拟线程的5个任务几乎同时完成, 而平台线程执行时, 输出是一个一个蹦出来的, 事实上是串行执行. 而执行CPU密集型任务时, 虚拟线程和平台线程执行的效果都近似于串行, 虚拟线程并没有等待时间做任务的切换. 进而印证的JEP的介绍和我们的结论.</p>
+<p>最后进行一个灵魂发问: JDK21发布后何时能上生产&hellip;</p>
+<h1 id="参考">参考</h1>
+<ol>
+<li><a href="https://jenkov.com/tutorials/java-concurrency/java-virtual-threads.html">https://jenkov.com/tutorials/java-concurrency/java-virtual-threads.html</a></li>
+</ol>
+
+
+                
+
+                
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/post/85_gpt%E8%AE%A9%E6%88%91%E6%94%B9%E5%8F%98%E4%BA%86%E8%87%AA%E5%B7%B1%E7%9A%84%E5%AD%A6%E4%B9%A0%E6%96%B9%E6%B3%95/" data-toggle="tooltip" data-placement="top" title="GPT让我改变了自己的学习方法">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/post/87_%E5%90%AC%E9%A3%8E/" data-toggle="tooltip" data-placement="top" title="听风">Next
+                            Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+                
+
+                
+
+
+<div id="disqus-comment"></div>
+<div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "xqt01" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+            </div>
+
+            
+            
+            <div class="
+                col-lg-2 col-lg-offset-0
+                visible-lg-block
+                sidebar-container
+                catalog-container">
+                <div class="side-catalog">
+                    <hr class="hidden-sm hidden-xs">
+                    <h5>
+                        <a class="catalog-toggle" href="#">CATALOG</a>
+                    </h5>
+                    <ul class="catalog-body"></ul>
+                </div>
+            </div>
+            
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/java" title="java">
+                            java
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/jvm" title="jvm">
+                            jvm
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/spring" title="spring">
+                            spring
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E5%89%8D%E7%AB%AF" title="前端">
+                            前端
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F" title="操作系统">
+                            操作系统
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93" title="数据库">
+                            数据库
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95" title="数据结构与算法">
+                            数据结构与算法
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B" title="网络编程">
+                            网络编程
+                        </a>
+                        
+                        
+                    </div>
+                </section>
+                
+
+                
+                
+                <section>
+                    <hr>
+                    <h5>FRIENDS</h5>
+                    <ul class="list-inline">
+                        
+                        <li><a target="_blank" href="https://fan-bu-fan.github.io/">FELL &amp; ENJOY</a></li>
+                        
+                    </ul>
+                </section>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">                  
+                    
+                    <li>
+                        <a href="mailto:huanruiz@foxmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		           
+                    
+                    
+                    
+                    
+
+		            
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/xqt01">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		            
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+            
+            
+            
+           
+                   <li>
+                       <a href='' rel="alternate" type="application/rss+xml" title="PunchCode" >
+                           <span class="fa-stack fa-lg">
+                               <i class="fas fa-circle fa-stack-2x"></i>
+                               <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                           </span>
+                       </a>
+                   </li>
+            
+             </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; PunchCode 2024
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function loadAsync(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        loadAsync("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    loadAsync("https://cdn.jsdelivr.net/npm/fastclick@1.0.6/lib/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+    function generateCatalog(selector) {
+
+        
+        
+        
+        
+            _containerSelector = 'div.post-container'
+        
+
+        
+        var P = $(_containerSelector), a, n, t, l, i, c;
+        a = P.find('h1,h2,h3,h4,h5,h6');
+
+        
+        $(selector).html('')
+
+        
+        a.each(function () {
+            n = $(this).prop('tagName').toLowerCase();
+            i = "#" + $(this).prop('id');
+            t = $(this).text();
+            c = $('<a href="' + i + '" rel="nofollow">' + t + '</a>');
+            l = $('<li class="' + n + '_nav"></li>').append(c);
+            $(selector).append(l);
+        });
+        return true;
+    }
+
+    generateCatalog(".catalog-body");
+
+    
+    $(".catalog-toggle").click((function (e) {
+        e.preventDefault();
+        $('.side-catalog').toggleClass("fold")
+    }))
+
+    
+
+
+    loadAsync("\/js\/jquery.nav.js", function () {
+        $('.catalog-body').onePageNav({
+            currentClass: "active",
+            changeHash: !1,
+            easing: "swing",
+            filter: "",
+            scrollSpeed: 700,
+            scrollOffset: 0,
+            scrollThreshold: .2,
+            begin: null,
+            end: null,
+            scrollChange: null,
+            padding: 80
+        });
+    });
+</script>
+
+
+
+
+
+
+</body>
+</html>

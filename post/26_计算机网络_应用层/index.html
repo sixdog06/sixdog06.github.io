@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="PunchCode">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://xqt01.github.io/front.png">
+    <meta property="twitter:image" content="https://xqt01.github.io/front.png" />
+    
+
+    
+    <meta name="title" content="计算机网络-应用层" />
+    <meta property="og:title" content="计算机网络-应用层" />
+    <meta property="twitter:title" content="计算机网络-应用层" />
+    
+
+    
+    <meta name="description" content="Software Engineer">
+    <meta property="og:description" content="Software Engineer" />
+    <meta property="twitter:description" content="Software Engineer" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="Harry, 小拳头">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>计算机网络-应用层 | 以终为始</title>
+
+    <link rel="canonical" href="/post/26_%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C_%E5%BA%94%E7%94%A8%E5%B1%82/">
+
+    
+    
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hugo-theme-cleanwhite.min.css">
+
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+
+    
+    <link href="https://cdn.jsdelivr.net/gh/FortAwesome/Font-Awesome@5.15.1/css/all.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    
+    <script src="/js/jquery.min.js"></script>
+
+    
+    <script src="/js/bootstrap.min.js"></script>
+
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+
+</head>
+
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">PunchCode</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">All Posts</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/tech">tech</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0">学习笔记</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/%E6%9D%82%E8%B0%88">杂谈</a>
+                        </li>
+                        
+                    
+                    
+		    
+                        <li><a href="/top/archive/">ARCHIVE</a></li>
+                    
+                        <li><a href="/top/about/">ABOUT</a></li>
+                    
+
+                    
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/front.png')
+    }
+</style>
+
+<header class="intro-header" >
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B" title="网络编程">
+                            网络编程
+                        </a>
+                        
+                    </div>
+                    <h1>计算机网络-应用层</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        
+                            Posted by 
+                            
+                                小拳头
+                             
+                            on 
+                            Tuesday, October 20, 2020
+                            
+                            
+                            
+                            
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <h2 id="协议管理">协议管理</h2>
+<h3 id="网络应用体系结构">网络应用体系结构</h3>
+<p>有应用体系结构决定如何在端系统组织该应用程序. 包括客户-服务器体系结构和P2P体系结构.</p>
+<ul>
+<li>客户-服务器体系结构: 主机总是打开服务其他客户主机的请求, 比如Web应用程序. 客户之间不会通信. 服务器具有固定, 周知的IP地址. 较大的应用会有配备大量主机的有数据中心.</li>
+<li>P2P: 对数据中心的服务器依赖小或者不依赖. 应用程序(对等方)在间断连接的主机之间直接通信. P2P具有<strong>自扩展性(self-scalability)</strong>.</li>
+</ul>
+<h3 id="进程通信">进程通信</h3>
+<p>相同端系统进程通信由操作系统确定. 不同的端系统进程通过端系统互相通信.</p>
+<ol>
+<li>客户和服务器进程: 发起通信为客户, 等待联系的是服务器.</li>
+<li>进程与计算机网络的接口. 进程通过socket的软件接口向网络发送报文或从网络接收报文. 应用开发对运输层的控制仅限于选择运输层协议/设定几个运输层参数.</li>
+<li>进程寻址: 也就是寻找目的地地址, 需要<strong>主机的地址</strong>(IP地址)和定义在目的主机的接收进程的<strong>标识符</strong>(端口号).</li>
+</ol>
+<h3 id="供app使用的运输服务">供app使用的运输服务</h3>
+<p>选择运输层协议只有合不合适, 没有好不好. 我们从4个角度对app服务进行分类, 不要忘记这是针对运输层的.</p>
+<ol>
+<li>可靠数据传输: app是否是loss-tolerant的, 比如多媒体应用丢失疑点数据就影响不大.</li>
+<li>吞吐量: 网络路径的进程通信的场景中, 可用吞吐量就是发送进程能够向接收进程交付比特的速率. 有吞吐量要求的应用叫<strong>带宽敏感(bandwidth sensitive)应用</strong>, 比如多数的自媒体应用. 否则是弹性(elastic)应用, 如电子邮件等.</li>
+<li>定时: 运输层提供实时保证, 比如打游戏就不能延迟太高.</li>
+<li>安全性: 运输协议是否可以加密, 解密.</li>
+</ol>
+<h3 id="因特网的运输服务">因特网的运输服务</h3>
+<ul>
+<li>TCP: 面向连接, 可靠, 就有阻塞控制机制.</li>
+<li>UDP: 轻量, 不保证报文能到达接受进程, 也不保证顺序, 没有阻塞控制机制.
+
+  <img src="/26_1.png" alt="">
+
+</li>
+</ul>
+<h3 id="应用层协议">应用层协议</h3>
+<p>应用层协议只是网络应用的一部分, 协议规定了进行报文的通信, 定义了:</p>
+<ol>
+<li>交换报文的类型, 如请求报文和响应报文</li>
+<li>报文的类型和语法, 如报文中的各个字段和这些字段是如何描述的</li>
+<li>字段包含信息的含义</li>
+<li>进程何时已经如何发送报文, 对报文进行响应的规则</li>
+</ol>
+<p>下面介绍各种网络应用及协议.</p>
+<h2 id="web和http">Web和HTTP</h2>
+<p>Web有<strong>按需操作</strong>的特点.</p>
+<h3 id="http">HTTP</h3>
+<p>Web的应用层协议是<strong>HTTP(HyperText Transfer Protoocol)</strong>, HTTP由客户端程序和服务器程序共同实现. web页面由对象(包括html, jepg, java小程序等等)组成. html用过对象的url地址引用页面中的其他对象, 每个url由存放对象的服务器主机名和对象路径名组成. url地址<code>http://www.bilibili.com/a/b.gif</code>中, <code>www.bilibili.com</code>就是主机名, <code>/a/b.gif</code>就是路径名. web browser实现了客户端, web server实现了服务器端, 用于存储web对象, 每个对象由url寻址.</p>
+<p>HTTP用TCP作为运输协议, 而HTTP本身是无状态协议, HTTP服务器不保存客户的信息.</p>
+<h3 id="非持续链接和持续链接">非持续链接和持续链接</h3>
+<p>HTTP既可以非持续链接, 也可以持续链接.</p>
+<ol>
+<li>非持续链接: 每个TCP链接在服务器发送一个对象后关闭, 每个TCP链接只传输一个请求报文和一个响应报文. 下面的步骤会产生11个TCP链接.
+
+  <img src="/26_2.png" alt="">
+
+</li>
+</ol>
+<p>客户请求基本文件到该客户收到整个文件所花费的时间叫<strong>Round-Trip Time(RTT)</strong>, 包括分组传播时延, 中间路由器和交换机上的排队时延和分组处理时延. 总的响应时间就是2*RTT+服务器传输HTML文件的时间. 也就是说每次连接都会有第一个发起连接的RTT.
+
+  <img src="/26_3.png" alt="">
+
+</p>
+<ol>
+<li>持续链接: 服务器在发送响应后保持TCP打开, 用过相同链接传输上面提到的HTML基本文件和10个图形, 如果一段时间不使用这条链接, 则HTTP服务器关闭连接.</li>
+</ol>
+<h3 id="http报文格式">HTTP报文格式</h3>
+<h4 id="请求报文">请求报文</h4>
+<pre><code>GET /somedir/page.html HTTP/1.1
+Host: www.someschool.com
+onnection: close
+User-agent: Mozilla/5.0
+Accept-language: fr
+</code></pre><p><strong>每行由回车和换行符结束, 最后一行附加回车和换行符</strong>(我曾经在lab中因为不清楚这点debug了一下午), HTTP请求的第一行为<strong>请求行(request line)</strong>, 后继的行叫做<strong>首部行(header line)</strong>.</p>
+<ul>
+<li>请求行包括<strong>方法字段(GET/POST/HEAD/PUT/DELETE)</strong>, <strong>URL字段</strong>, <strong>HTTP版本字段</strong>; 图中的例子就是GET了/somedir/page.html这个对象.</li>
+<li>首部行<code>Host: www.someschool.com</code>, 看似没必要, 但是实际上是Web代理高速缓存所要求的. <code>Connection: close</code>就是非持续链接. <code>User-agent: Mozilla/5.0</code>指明了用户代理(向服务器发送请求的浏览器类型). <code>Accept-language: fr</code>首部行表示用户想要法语.</li>
+</ul>
+<p>下图就是请求报文的通用格式, 后面有个实体主体entity body. 用GET方法时为空, <strong>可是当用户提交表单时常常用POST方法, 而表单的输入就在实体主体中</strong>. 当然请求的url也可以包含这个数据, 比如在b站搜石原里美, 浏览器的url就成了<code>search.bilibili.com/all?keyword=石原里美</code>.
+
+  <img src="/26_4.png" alt="">
+
+</p>
+<p>HEAD类似GET, 服务器会使用HTTP报文响应, 但不返回请求对象, 可以用来调试跟踪. PUT一般和Web发行工具一起用, 允许用户上传对象到指定服务器目录, 需要向Web服务器上传对象的app也可以用PUT. DELETE则是删除Web服务器的对象. HEAD类似GET, 但是只获取头.</p>
+<h3 id="响应报文">响应报文</h3>
+<pre><code>HTTP/1.1 200 OK
+Connection: close
+Date: Tue, 09 Aug 2011 15:44:04 GMT
+Server: Apache/2.23 (CentOS)
+Last-Modified: Tue, 09 Aug 2011 15:11:03 GMT
+Content-Length: 6821
+Content-Type: text/html
+
+(data data data...)
+</code></pre><p>响应报文分为一个<strong>状态行(status line)</strong>, 6个<strong>首部行(header line)</strong>, <strong>实体体(entity body)</strong>. 实体体是报文的主要部分, 包含请求对象本身. 状态行有三个字段: 协议版本, 状态码, 状态信息.</p>
+<p>首部行中<code>Connection: close</code>表示非持续连接, 发送报文后关闭连接. <code>Date: Tue, 09 Aug 2011 15:44:04 GMT</code>是服务器在文件系统中检索到对象, 插入到响应报文, 被发送该响应报文的时间. <code>Server: Apache/2.23 (CentOS)</code>表示该报文是Apache Web服务器产生的. <code>Last-Modified: Tue, 09 Aug 2011 15:11:03 GMT</code>表示对象最后的修改时间. <code>Content-Length: 6821</code>表示被发送对象中的字节数. <code>Content-Type: text/html</code>表示实体体中的对象是HTML文本, 注意对象类型应该用<code>Content-Type</code>来指示而不是用文件扩展名.
+
+  <img src="/26_5.png" alt="">
+
+</p>
+<p>笔试面试经常会问的状态码:</p>
+<ul>
+<li>200 OK: 请求成功, 信息在返回的响应报文中</li>
+<li>301 Moved Permanently: 请求的对象被永久转移了, 新的URL定义在响应报文Location: 首部行中, 客户软件自动获取新的URL</li>
+<li>400 Bad Request: 服务器不理解请求</li>
+<li>404 Not Found: 被请求的文档不在服务器上</li>
+<li>505 HTTP Version Not Supported: 服务器不支持请求报文使用的HTTP协议版本.</li>
+</ul>
+<p>更一般的:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>类别</th>
+<th>原因短语</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1xx</td>
+<td>Informational(信息性状态码)</td>
+<td>接受的请求正在处理</td>
+</tr>
+<tr>
+<td>2xx</td>
+<td>Success(成功状态码)</td>
+<td>请求正常处理完毕</td>
+</tr>
+<tr>
+<td>3xx</td>
+<td>Redirection(重定向状态码)</td>
+<td>需要进行附加操作一完成请求</td>
+</tr>
+<tr>
+<td>4xx</td>
+<td>Client Error (客户端错误状态码)</td>
+<td>服务器无法处理请求</td>
+</tr>
+<tr>
+<td>5xx</td>
+<td>Server Error(服务器错误状态码)</td>
+<td>服务器处理请求出错</td>
+</tr>
+</tbody>
+</table>
+<h3 id="cookie">cookie</h3>
+<p>HTTP服务器本身无状态, 可是为了Web站点去识别用户, 就需要用cookie. cookie技术有四个组件:</p>
+<ol>
+<li>HTTP响应报文中的一个首部行.</li>
+<li>HTTP请求报文中的一个首部行.</li>
+<li>在用户端系统中保留有一个cookie文件, 由用户浏览器进行管理.</li>
+<li>位于Web站点的一个后端数据库.
+
+  <img src="/26_6.png" alt="">
+
+</li>
+</ol>
+<p><strong>cookie相当于在无状态的HTTP上建立了用户会话层</strong>, 如上图, 在客户主机收到了<code>Set-cookie</code>之后, 浏览器就会在其管理的cookie文件中加一行, 包含服务器的主机名和在Set-cookie首部中的识别码. 当客户机继续访问时就会在HTTP请求报文加上这个识别码. Web服务器就由此追踪用户. 比如在淘宝买东西时的购物车就可以通过这种形式来记住某个用户的购物车内容.</p>
+<h3 id="web缓存">Web缓存</h3>
+<p><strong>Web缓存器(Web cache)<strong>也叫</strong>代理服务器(proxy server)</strong>, 能够代表初始的Web服务器满足HTTP请求, Web缓存器有自己的磁盘存储空间, 并在存储空间中存储最近的对象的副本.</p>
+<ul>
+<li>当浏览器请求时会先与Web缓存器建立TCP链接, 向缓存器发送HTTP请求.</li>
+<li>Web缓存器如果有此对象, 则向浏览器用HTTP响应报文返回该对象. 若无, 则缓存器会和初始服务器建立TCP连接, 发送该对象的HTTP请求, 并获得初始服务器具有该对象的HTTP响应, 缓存器会保存次副本并向客户浏览器发送包含此副本的HTTP响应报文.</li>
+</ul>
+<p>所以Web缓存器既是客户又是服务器, 通常由ISP购买并安装. 它大大减少了客户请求的响应时间, 减少一个机构接入链路到因特网的通信量. 下图中, 假设每秒15个请求, 局域网的流量强度就是$15个请求/s * 1Mb/请求 / 100Mbps = 0.15$, 介入链路的流量强度为$15个请求/s * 1Mb/请求 / 100Mbps = 1$. 局域网上0.15的通信量最多导致10ms时延可以忽略, 而链路接近1的流量强度就会让实验非常大, 并且无限增长. naive的方法就是增加接入链路的效率(从15Mbps到100Mbps), 但是代价太高; 所以可以在机构网络中添加一个缓存器, 若命中率是0.4(通常在0.2到0.7), 那么40%的请求会得到缓存器响应, 60%在链路响应, 大大降低了接入链路的流量强度.
+
+  <img src="/26_7.png" alt="">
+
+</p>
+<p>通过**内容分发网络(CDN)**就利用了Web缓存器, CDN公司在因特网分散的地理位置安装缓存器, 去实现流量的本地化.</p>
+<h3 id="条件get方法">条件GET方法</h3>
+<p>高速缓存的问题是缓存器所存储的对象可能已经过时了, 而HTTP可以通过<strong>conditional GET</strong>来群确认存储的副本是最新的. 如果报文是用的GET方法, 并且请求报文中包含一个<code>IF-Modified-Since</code>首部行, 这个HTTP请求就是conditional GET, 告诉Web服务器如果在这个时间之后如果修改过, 才发送此对象. 如果没有修改, 服务器就会给缓存器一个<code>304 Not Modified</code>, 缓存器就可以给浏览器发送已经保存的副本. 如果修改了, 则服务器会返回普通的<code>200 OK</code>.</p>
+<h2 id="ftp">FTP</h2>
+<p><strong>todo</strong></p>
+<h2 id="smtp">SMTP</h2>
+<p><strong>todo</strong></p>
+<h2 id="dns">DNS</h2>
+<p><strong>域名系统(Domain Name System)<strong>也是面试的常考点. 对于因特网的主机来说, 识别方法是他的hostname, 比如bilibili.com, 这是方便人记忆的, 但是在网络中, 主机是由</strong>IP地址</strong>来标识的, 所以需要通过DNS来把主机名转换为IP地址.</p>
+<h3 id="dns服务">DNS服务</h3>
+<p>DNS服务包含一种<strong>转换hostname到IP地址的服务</strong>. DNS是由分层的DNS服务器实现的分布式数据库, 使主机能够查询分布式数据库的应用层协议. 运行在UDP之上, 使用53号端口. HTTP/SMTP/FTP这些应用层协议都可以使用DNS服务.</p>
+<p>若一个浏览器请求URL <a href="http://www.someschool.edu/index.html,">www.someschool.edu/index.html,</a>为了是用户主机的HTTP请求报文发送到www.someschool.edu这个Web服务器, 就必须得知道这个服务器的IP地址, 做法如下:</p>
+<ul>
+<li>同一台主机上运行DNS应用的客户端</li>
+<li>浏览器从URL中抽取主机名www.someschool.edu, 并将其传给DNS客户端</li>
+<li>DNS客户向DNS服务器发送一个包含主机名的请求</li>
+<li>DNS客户收到回答报文, 其中含有该主机名的IP地址</li>
+<li>浏览器向该IP地址80端口的HTTP服务器发起TCP连接.</li>
+</ul>
+<p>除此之外, DNS还提供以下服务:</p>
+<ol>
+<li>主机别名(host aliasing): 主机有多个名字, 包括<strong>规范主机名(canonical hostname)<strong>和</strong>主机别名</strong>, 应用程序可以通过DNS来获得主机别名对应的规范主机名和主机IP地址.</li>
+<li>邮件服务器别名(mial server aliasing): 电子邮件的别名, 主要还是方便记忆.</li>
+<li>负载分配(load distribution): DNS也用于在冗余的服务器之间进行负载分配, 繁忙的站点由多台服务器支撑, 这些服务器的IP地址集合和同一个规范主机名相联系. 当客户对这个地址集合发出DNS请求时, 服务器会响应整个IP集合, 但是每次响应都会旋转这个IP地址的顺序. 虽然客户总是向到地址集的第一个发送HTTP请求报文, 但是DNS就可以在这些冗余的Web服务器之间循环分配负载.</li>
+</ol>
+<h3 id="dns工作原理">DNS工作原理</h3>
+<p>DNS最简单的设计就是在因特网上只用一个DNS服务器, 其包含所有的映射. 但是这样就有单点故障(DNS服务器崩了, 整个因特网就崩了), 通信容量(单个服务器处理过多的请求), 远距离集中式数据库(距离过远, 延迟严重), 维护(困难)的问题. 所以DNS采用了分布式的方案.</p>
+<p>DNS服务器大致分分类:</p>
+<ul>
+<li>根服务器: 因特网有13个根服务器, 每个服务器都是冗余的服务器网络</li>
+<li>顶级域服务器: 负责顶级域名(com/org/net/edu/gov, cn/uk/fr)</li>
+<li>权威服务器: 通常是组织自己拥有的吗比如学校, 公司一般就会有自己实现以及维护的权威DNS服务器</li>
+<li>本地服务器: 通常临近主机, 居民区中本地服务器和主机可能就相隔几台路由器.</li>
+</ul>
+<p>下图中一共发送了4份查询报文和4份回答报文. 从<code>cis.ploy.edu</code>到<code>dns.ploy.edu</code>是递归查询, 后面的三个查询都是迭代查询. 实际上TLD可能不知道权威服务器的IP, 所以还需要通过中间的DNS服务器, 来获得前卫服务器IP地址.
+
+  <img src="/26_8.png" alt="">
+
+</p>
+<p>下图是纯递归的.
+
+  <img src="/26_9.png" alt="">
+
+</p>
+<p><strong>DNS缓存</strong>表示在某DNS服务器接受回答之后, 能缓存到该服务器中, 也就是把主机名和其所对应的IP共同记录, 因为这种映射不是永久的, 所以一段时间后DNS服务器可能会丢弃缓存信息. 主机域名解析顺序:</p>
+<ol>
+<li>浏览器缓存</li>
+<li>找本机hosts文件</li>
+<li>路由缓存</li>
+<li>找DNS服务器(本地, 顶级, 根)</li>
+</ol>
+<h3 id="dns记录和报文">DNS记录和报文</h3>
+<p>共同实现DNS分布式数据库的所有DNS服务器存储了<strong>资源记录(Resource Record, RR)</strong>, 其提供主机名到IP地址的映射.
+每个DNS回答包含了一条或多条RR. RR包括了<code>Name, Value, Type, TTL</code>这样一个四元组. TTL记录生存时间(下面例子中忽略). Name和Value取决于Type.</p>
+<ul>
+<li>Type=A, 则Name为主机名, Value对应其IP地址, 把域名解析到IP地址.  eg. (relay1.bar.foo.com, 145.37.93.126, A)</li>
+<li>Type=NS, 则Name为个域(foo.com), Value为知道如何获得该域中主机IP的<strong>权威DNS服务器</strong>的主机名. eg. (foo.com, dns.foo.com, NS)</li>
+<li>Type=CNAME, Value是别名为Name的主机对应的规范主机名, 简单的说就是<strong>把域名解析到另外一个域名</strong>. 如果使用CDN服务, 供应商就可以给你一个地址, 而ip地址可以灵活地变化, 实现CDN加速. eg. (foo.com, relay1.bar.foo.com, CNAME)</li>
+<li>Type=MX, 则Value是别名为Name的邮件服务器规范主机名. eg. (foo.com, relay1.bar.foo.com, MX)</li>
+</ul>
+<h4 id="dns报文">DNS报文</h4>
+<p>格式如下.
+
+  <img src="/26_10.png" alt="">
+
+</p>
+<ul>
+<li>前12字节是首部区域. 标识符是16bit数, 用于标识该查询. 标志字段有若干编制, 比如1bit的&quot;查询(0)/回答(1)&ldquo;指出报文的类型.</li>
+<li>问题包括正在进行的查询该信息(被查询的主机名, 询问问题类型如A/MX)</li>
+<li>回答包括Type, Value, TTL字段, 可能有多个, 因为主机可能有多个IP地址</li>
+<li>权威包含其他权威服务器的记录</li>
+</ul>
+<blockquote>
+<p>说DNS是运行在端口号53的UDP协议之上实际上是不严谨的, 虽然大多数域名厂商只支持UDP的域名解析, 但是根据<a href="https://tools.ietf.org/html/rfc1035">RFC1035</a>的4.2, 有这么一句话: The Internet supports name server access using TCP [RFC-793] on server port 53 (decimal) as well as datagram access using UDP [RFC-768] on UDP port 53 (decimal). 并且提到了UDP最大支持512个byte, <strong>其实DNS解析查询优先使用 UDP, 当UDP完成不了的情况下, 而且支持解析支持TCP的话, 就转换TCP查询</strong>.</p>
+</blockquote>
+<h2 id="p2p应用">P2P应用</h2>
+<p>我的实现: <a href="https://github.com/xqt01/circular-DHT">circular-DHT</a>.</p>
+<h2 id="实验">实验</h2>
+<h3 id="http-1">HTTP</h3>
+<p>当http请求1次以上, 就有了<code>If-Modified-Since: Tue, 20 Oct 2020 05:59:01 GMT</code>. 响应是<code>304</code>, 也没有了第一次响应时的<code>Line-based text data: text/html (4 lines)</code>.
+
+  <img src="/26_11.png" alt="">
+
+</p>
+<p>向<code>http://gaia.cs.umass.edu/wireshark-labs/HTTP-wireshark-file3.html</code>发起HTTP请求, 因为html文件比较大, 就被拆分成了4个TCP的报文段.
+
+  <img src="/26_12.png" alt="">
+
+</p>
+<p>向<code>http://gaia.cs.umass.edu/wireshark-labs/HTTP-wireshark-file4.html</code>发起HTTP请求, 这是多个对象的html, 发现发生了三次<code>GET</code>. 而且因为<code>Connection: Keep-Alive</code>, 可以知道是串行下载的两张图片而不是并行.
+
+  <img src="/26_13.png" alt="">
+
+</p>
+<p>向<code>http://gaia.cs.umass.edu/wireshark-labs/HTTP-wireshark-file4.html</code>发起HTTP请求, 这是需要认证的HTTP, 在输入用户名和密码之后才能访问. 在第二次的GET中出现了<code>Authorization: Basic d2lyZXNoYXJrLXN0dWRlbnRzOm5ldHdvcms=\r\n</code>, 并得到<code>200</code>响应.
+
+  <img src="/26_14.png" alt="">
+
+</p>
+<h3 id="dns-1">DNS</h3>
+<p>DNS实验有些部分已经没法复现了. 我以这个实验为参考过一遍各个知识点. <code>nslookup</code>可以根据主机名找到其对应的DNS服务器. 输入<code>nslookup www.baidu.com</code>. 前两行是给出答案的DNS server的名字和地址. 后面就是答案. <strong>其实<code>dig</code>更好用</strong>, 还是建议用dig. nslookup用来交互式查询更好.
+
+  <img src="/26_15.png" alt="">
+
+</p>
+<p>输入<code>nslookup -type=NS baidu.com</code>, 如果不用type, 就是默认的type A. <code>non-authoritative</code>顾名思义, 就是非权威服务器返回的结果, 可能来源于缓存. 如果<code>-type=MX</code>, 就可以查询邮件服务器了.
+
+  <img src="/26_16.png" alt="">
+
+</p>
+<blockquote>
+<p>提一个小知识点, <code>www.baidu.com</code>和<code>baidu.com</code>指向的是不同的ip, 用<code>dig</code>试试. 一个经历多个cname最后a到了ip, 一个直接a到ip.</p>
+</blockquote>
+<p>那么我们尝试直接去访问权威DNS服务器, <code>nslookup www.baidu.com dns.baidu.com</code>, 得到下图. 这个时候非权威的答案就不会出现了. <code>dns.baidu.com</code>代表强制访问这个DNS服务器而不是默认的那个.
+
+  <img src="/26_17.png" alt="">
+
+</p>
+<p>接下来试一下<code>ipconfig/ifconfig</code>. mac用后者.
+
+  <img src="/26_18.png" alt="">
+
+</p>
+<p>接着用wireshark来分析下DNS. 首先清除缓存<code>sudo killall -HUP mDNSResponder</code>, 浏览器也要清除下缓存. 浏览器输入<code>https://www.ietf.org</code>, 这里可以看到发送端口并不是53, 查协议发现DNS应该只是限制了server的端口. 同时也应证了DNS通过UDP通信(大多数). 最后得到了4个answer.
+
+  <img src="/26_19.png" alt="">
+
+
+
+  <img src="/26_20.png" alt="">
+
+</p>
+<h2 id="参考">参考</h2>
+<ol>
+<li>计算机网络-自顶向下方法(第6版)</li>
+<li>Computer Networking A Top-Down Approach(7th edition)</li>
+<li><a href="https://github.com/moranzcw/Computer-Networking-A-Top-Down-Approach-NOTES">作业</a></li>
+<li><a href="https://github.com/jzplp/Computer-Network-A-Top-Down-Approach-Answer">习题答案</a></li>
+<li><a href="https://gaia.cs.umass.edu/kurose_ross/wireshark.htm">wireshark实验</a></li>
+<li><a href="https://juejin.im/post/6844903840362266632">状态码表格</a></li>
+<li>计算机网络总结-codesheep</li>
+<li><a href="https://ephen.me/2017/dns_tcp/#%E4%B8%80%E7%82%B9%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86">什么情况下DNS会使用TCP传输协议?</a></li>
+<li><a href="https://www.zhihu.com/question/22916306/answer/142115517">cname记录是什么</a></li>
+<li><a href="http://www.ruanyifeng.com/blog/2016/06/dns.html">DNS原理入门</a></li>
+</ol>
+
+
+                
+
+                
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/post/25_%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C_%E5%9F%BA%E7%A1%80/" data-toggle="tooltip" data-placement="top" title="计算机网络-基础">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/post/27_%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C_%E8%BF%90%E8%BE%93%E5%B1%82/" data-toggle="tooltip" data-placement="top" title="计算机网络-运输层">Next
+                            Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+                
+
+                
+
+
+<div id="disqus-comment"></div>
+<div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "xqt01" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+            </div>
+
+            
+            
+            <div class="
+                col-lg-2 col-lg-offset-0
+                visible-lg-block
+                sidebar-container
+                catalog-container">
+                <div class="side-catalog">
+                    <hr class="hidden-sm hidden-xs">
+                    <h5>
+                        <a class="catalog-toggle" href="#">CATALOG</a>
+                    </h5>
+                    <ul class="catalog-body"></ul>
+                </div>
+            </div>
+            
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/java" title="java">
+                            java
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/jvm" title="jvm">
+                            jvm
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/spring" title="spring">
+                            spring
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E5%89%8D%E7%AB%AF" title="前端">
+                            前端
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F" title="操作系统">
+                            操作系统
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93" title="数据库">
+                            数据库
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95" title="数据结构与算法">
+                            数据结构与算法
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B" title="网络编程">
+                            网络编程
+                        </a>
+                        
+                        
+                    </div>
+                </section>
+                
+
+                
+                
+                <section>
+                    <hr>
+                    <h5>FRIENDS</h5>
+                    <ul class="list-inline">
+                        
+                        <li><a target="_blank" href="https://fan-bu-fan.github.io/">FELL &amp; ENJOY</a></li>
+                        
+                    </ul>
+                </section>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">                  
+                    
+                    <li>
+                        <a href="mailto:huanruiz@foxmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		           
+                    
+                    
+                    
+                    
+
+		            
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/xqt01">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		            
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+            
+            
+            
+           
+                   <li>
+                       <a href='' rel="alternate" type="application/rss+xml" title="PunchCode" >
+                           <span class="fa-stack fa-lg">
+                               <i class="fas fa-circle fa-stack-2x"></i>
+                               <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                           </span>
+                       </a>
+                   </li>
+            
+             </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; PunchCode 2024
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function loadAsync(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        loadAsync("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    loadAsync("https://cdn.jsdelivr.net/npm/fastclick@1.0.6/lib/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+    function generateCatalog(selector) {
+
+        
+        
+        
+        
+            _containerSelector = 'div.post-container'
+        
+
+        
+        var P = $(_containerSelector), a, n, t, l, i, c;
+        a = P.find('h1,h2,h3,h4,h5,h6');
+
+        
+        $(selector).html('')
+
+        
+        a.each(function () {
+            n = $(this).prop('tagName').toLowerCase();
+            i = "#" + $(this).prop('id');
+            t = $(this).text();
+            c = $('<a href="' + i + '" rel="nofollow">' + t + '</a>');
+            l = $('<li class="' + n + '_nav"></li>').append(c);
+            $(selector).append(l);
+        });
+        return true;
+    }
+
+    generateCatalog(".catalog-body");
+
+    
+    $(".catalog-toggle").click((function (e) {
+        e.preventDefault();
+        $('.side-catalog').toggleClass("fold")
+    }))
+
+    
+
+
+    loadAsync("\/js\/jquery.nav.js", function () {
+        $('.catalog-body').onePageNav({
+            currentClass: "active",
+            changeHash: !1,
+            easing: "swing",
+            filter: "",
+            scrollSpeed: 700,
+            scrollOffset: 0,
+            scrollThreshold: .2,
+            begin: null,
+            end: null,
+            scrollChange: null,
+            padding: 80
+        });
+    });
+</script>
+
+
+
+
+
+
+</body>
+</html>

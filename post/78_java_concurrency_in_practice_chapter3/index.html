@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="PunchCode">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://xqt01.github.io/front.png">
+    <meta property="twitter:image" content="https://xqt01.github.io/front.png" />
+    
+
+    
+    <meta name="title" content="Java Concurrency in Practice Chapter3-Sharing Objects" />
+    <meta property="og:title" content="Java Concurrency in Practice Chapter3-Sharing Objects" />
+    <meta property="twitter:title" content="Java Concurrency in Practice Chapter3-Sharing Objects" />
+    
+
+    
+    <meta name="description" content="Software Engineer">
+    <meta property="og:description" content="Software Engineer" />
+    <meta property="twitter:description" content="Software Engineer" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="Harry, 小拳头">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>Java Concurrency in Practice Chapter3-Sharing Objects | 以终为始</title>
+
+    <link rel="canonical" href="/post/78_java_concurrency_in_practice_chapter3/">
+
+    
+    
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hugo-theme-cleanwhite.min.css">
+
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+
+    
+    <link href="https://cdn.jsdelivr.net/gh/FortAwesome/Font-Awesome@5.15.1/css/all.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    
+    <script src="/js/jquery.min.js"></script>
+
+    
+    <script src="/js/bootstrap.min.js"></script>
+
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+
+</head>
+
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">PunchCode</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">All Posts</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/tech">tech</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0">学习笔记</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/%E6%9D%82%E8%B0%88">杂谈</a>
+                        </li>
+                        
+                    
+                    
+		    
+                        <li><a href="/top/archive/">ARCHIVE</a></li>
+                    
+                        <li><a href="/top/about/">ABOUT</a></li>
+                    
+
+                    
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/front.png')
+    }
+</style>
+
+<header class="intro-header" >
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/java" title="Java">
+                            Java
+                        </a>
+                        
+                    </div>
+                    <h1>Java Concurrency in Practice Chapter3-Sharing Objects</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        
+                            Posted by 
+                            
+                                小拳头
+                             
+                            on 
+                            Sunday, January 30, 2022
+                            
+                            
+                            
+                            
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <p>这一章主要讲如何安全地共享资源, 来保证线程安全性. 换个角度理解这句话, 如果资源不被共享, 那么也能保证线程安全.</p>
+<h3 id="visibility">Visibility</h3>
+<p>没有同步机制, 两个线程的执行顺序是无法判断的(因为重排序), 这时候做内存操作很容易出错, 读的值可能是更新前的<strong>失效数据</strong>, 也可能是更新后的, 影响Visibility. <em>e.g. NoVisibility</em>. 在JavaBean中, 如果要对一个值的get和set进行同步, 那么<code>synchronized</code>需要同时加在在getter和setter方法上. <strong>加锁不仅要保证互斥, 也要保证内存可见性.</strong></p>
+<pre><code>/**
+ * 没有同步的情况下共享变量
+ * ReaderThread读不到ready为true的值, 导致程序无法终止. 也有可能读到了ready但是读不到number的值
+ */
+public class NoVisibility {
+
+    private static boolean ready;
+
+    private static int number;
+
+    private static class ReaderThread extends Thread {
+
+        @Override
+        public void run() {
+            while (!ready) {
+                // 让该线程回到ready状态, 实际生产中几乎不会用
+                Thread.yield();
+            }
+            System.out.println(number);
+        }
+    }
+
+    public static void main(String[] args) {
+        new ReaderThread().run();
+        number = 42;
+        ready = true;
+    }
+}
+</code></pre><blockquote>
+<p>synchronized方法锁的的是<code>this</code>实例, 静态synchronized方法锁的是<code>ClassName.class</code>实例. 和对方法内部整个代码块加锁的写法是等价的.</p>
+</blockquote>
+<p>失效数据过期了但是这个值也是有之前的某个线程设置的值, 这个是最低安全性的保证(out-of-thin-air-safety). 但是存在例外: 非volatile的64位数值变量(double/long), JVM允许读写操作分为2个高低32位的操作.</p>
+<p>volatile提供轻量级的同步机制, 编译器和运行时不会对volatile变量重排序. <strong>volatile值保证可见性, 不像锁一样还能保证原子性.</strong> 只有如下场景用volatile变量:</p>
+<ul>
+<li>对变量写入不依赖当前值, 且只会有单个线程更新变量的值</li>
+<li>该变量不会和其他状态变量一起纳入不变性条件</li>
+<li>访问变量时不需要加锁</li>
+</ul>
+<h3 id="publication-and-escape">Publication and escape</h3>
+<p>publish指对象被作用域外的代码使用, 如果不应该被publish的对象被publish(对象还没构造好时), 就叫escape. 有一种不容易发现的情况就是构造器中new实例的时候, 这个实例被publish时, 构造器内的this也会被隐式地publish, 然而此时构造器可能并没有执行结束. 为了解决这个问题, 可以用工厂方法返回实例, 工厂方法中在对象构造完成后, 再把这个对象的实例传给其他类, 防止escape. <em>e.g. SafeListener ThisEscape</em>.</p>
+<pre><code>/**
+ * this溢出
+ */
+public class ThisEscape {
+
+    /**
+     * 构造函数中, 包含对this的隐式引用, 所以当ThisEscape构造器发布EventListener时, this也会被发布.
+     */
+    public ThisEscape(EventSource source) {
+        source.registerListener(
+                new EventListener() {
+                    @Override
+                    public void onEvent(Event e) {
+                        // 如果EventListener被发布, this溢出了, 但是ThisEscape并没有构造完成
+                        System.out.println(this);
+                    }
+                }
+        );
+        System.out.println(&quot;do other thing&quot;);
+    }
+
+    public static void main(String[] args) {
+        EventSource source = new EventSource();
+        new ThisEscape(source);
+        source.eventListener.onEvent(new Event());
+    }
+}
+</code></pre><pre><code>/**
+ * 通过工厂方法, 防止this溢出
+ */
+public class SafeListener {
+
+    /**
+     * EventListener内部有onEvent方法等待override
+     */
+    private final EventListener listener;
+
+    private SafeListener() {
+        listener = new EventListener() {
+            @Override
+            public void onEvent(Event e) {
+                // 不允许这个时候的状态被外部访问
+            }
+        };
+
+        System.out.println(&quot;do other thing&quot;);
+    }
+
+    public static SafeListener newInstance(EventSource source) {
+        // SafeListener构造完成后, 再用registerListener去注册
+        SafeListener safe = new SafeListener();
+        source.registerListener(safe.listener);
+        return safe;
+    }
+}
+
+public class EventSource {
+
+    public EventListener eventListener;
+
+    public void registerListener(EventListener eventListener) {
+        this.eventListener = eventListener;
+    }
+}
+</code></pre><h3 id="thread-confinement">Thread confinement</h3>
+<p>从代码实现上, 把变量限制在只能被一个线程用同步. 如Swing的dispatch线程. 如果仅从代码去实现这样的逻辑, 书中定义叫ad-hoc thread confinement, 这种程序会比较脆弱, 举个例子, volatile变量如果保证单线程写入, 因为可见性可以保证, 所以可以确保线程安全, 但是可以预见的是保证单线程写入本身就不是容易的事情. <strong>stack confinement</strong>也是一种特殊的Thread confinement, 让变量被限制在代码块内: <em>e.g. ThreadConfinementExample.loadTheArk</em>. 这个例子其实和前面的<em>CachedFactorizer</em>类似.</p>
+<pre><code>public class ThreadConfinementExample {
+
+    /**
+     * animals作为局部变量, 被封闭在代码块内
+     */
+    public int loadTheArk(Collection&lt;Animal&gt; candidates) {
+        SortedSet&lt;Animal&gt; animals;
+        int numPairs = 0;
+        Animal candidate = null;
+
+        // animals对象只在
+        animals = new TreeSet&lt;&gt;();
+        animals.addAll(candidates);
+        for (Animal a : animals) {
+            if (candidate == null || !candidate.isPotentialMate(a)) {
+                candidate = a;
+            }
+        }
+        return numPairs;
+    }
+}
+</code></pre><p>使用<strong>ThreadLocal</strong>也能实现thread confinement, 使用时可以把它想象成一个Map, 对不同的线程提供对应的值, 当线程不用这个值了, 这个值就会被GC. 每个set的值在使用的线程都有独立的副本, 在get时也总会返回当前线程设置的最新值.</p>
+<pre><code>private static ThreadLocal&lt;Connection&gt; connectionHolder = new ThreadLocal&lt;Connection&gt;() {
+
+    @Override
+    public Connection initialValue() {
+        try {
+            return DriverManager.getConnection(DB_URL);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+};
+
+public static Connection getConnection() {
+    return connectionHolder.get();
+}
+</code></pre><h3 id="immutability">Immutability</h3>
+<p>immutable的对象线程安全, 不可变对象需要满足如下几个条件. <em>e.g. ThreeStooges</em>.</p>
+<ul>
+<li>对象创建后其状态不能修改(是集合类也可以, 但是不发布, 而是用已有元素做一些判断)</li>
+<li>域都是final</li>
+<li>对象创建期间, this不溢出</li>
+</ul>
+<pre><code>public class ThreeStooges {
+
+    /**
+     * Set可变, 但是构造后无法修改
+     */
+    private final Set&lt;String&gt; stooges = new HashSet&lt;&gt;();
+
+    public ThreeStooges() {
+        stooges.add(&quot;Moe&quot;);
+        stooges.add(&quot;Larry&quot;);
+        stooges.add(&quot;Curly&quot;);
+    }
+
+    public boolean isStooge(String name) {
+        return stooges.contains(name);
+    }
+}
+</code></pre><p>当某个变量的读写有竞争条件时, 可以把他们放在一个不可变对象中, 来保证线程安全.</p>
+<pre><code>public class VolatileCachedFactorizer extends HttpServlet {
+
+    /**
+     * volatile保证visibility, 只要引用改变了, 其他线程就能看到
+     */
+    private volatile OneValueCache cache = new OneValueCache(null, null);
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        BigInteger i = (BigInteger)req.getAttribute(&quot;i&quot;);
+        BigInteger[] factors = cache.getFactors(i);
+        if (factors == null) {
+            factors = factor(i);
+            cache = new OneValueCache(i, factors);
+        }
+        PrintWriter writer = resp.getWriter();
+        writer.print(Arrays.toString(factors));
+        super.doGet(req, resp);
+    }
+
+    /**
+     * 因式分解, 还没实现
+     */
+    private BigInteger[] factor(BigInteger number) {
+        return new BigInteger[]{};
+    }
+}
+
+/**
+ * 线程安全的因式分解, 因为lastNumber和lastFactors不可变
+ */
+public class OneValueCache {
+
+    private final BigInteger lastNumber;
+
+    private final BigInteger[] lastFactors;
+
+    public OneValueCache(BigInteger i, BigInteger[] factors) {
+        lastNumber = i;
+        lastFactors = Arrays.copyOf(factors, factors.length);
+    }
+
+    public BigInteger[] getFactors(BigInteger i) {
+        if (lastNumber == null || !lastNumber.equals(i)) {
+            return null;
+        } else {
+            return Arrays.copyOf(lastFactors, lastFactors.length);
+        }
+    }
+}
+</code></pre><h3 id="safe-publication">Safe publication</h3>
+<p><strong>Effectively immutable objects</strong>(技术上状态可变, 但是实际上不会对其进行改变)需要安全地publish, 让使用这个对象的线程看到已发布的状态. 书中总结了以下几种方式.</p>
+<ul>
+<li>静态初始化函数中初始化一个对象的引用. 因为静态初始化在JVM的初始化阶段进行, JVM保证内部的线程安全.</li>
+<li>将对象引用保存到volatile或AtomicReference对象中</li>
+<li>将对象引用保存到正确构造对象的final域中</li>
+<li>将对象引用保存到一个由锁保护的域中</li>
+</ul>
+<p>而Mutable objects不仅仅需要safe publication, 还需要线程安全或用锁保护. 而不可变对象因为本身保证了线程安全, 所以可用任何机制发布.</p>
+
+
+                
+
+                
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/post/77_java_concurrency_in_practice_chapter2/" data-toggle="tooltip" data-placement="top" title="Java Concurrency in Practice Chapter2-Thread Safety">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/post/79_java_concurrency_in_practice_chapter4/" data-toggle="tooltip" data-placement="top" title="Java Concurrency in Practice Chapter4-Composing Objects">Next
+                            Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+                
+
+                
+
+
+<div id="disqus-comment"></div>
+<div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "xqt01" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+            </div>
+
+            
+            
+            <div class="
+                col-lg-2 col-lg-offset-0
+                visible-lg-block
+                sidebar-container
+                catalog-container">
+                <div class="side-catalog">
+                    <hr class="hidden-sm hidden-xs">
+                    <h5>
+                        <a class="catalog-toggle" href="#">CATALOG</a>
+                    </h5>
+                    <ul class="catalog-body"></ul>
+                </div>
+            </div>
+            
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/java" title="java">
+                            java
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/jvm" title="jvm">
+                            jvm
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/spring" title="spring">
+                            spring
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E5%89%8D%E7%AB%AF" title="前端">
+                            前端
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F" title="操作系统">
+                            操作系统
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93" title="数据库">
+                            数据库
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95" title="数据结构与算法">
+                            数据结构与算法
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B" title="网络编程">
+                            网络编程
+                        </a>
+                        
+                        
+                    </div>
+                </section>
+                
+
+                
+                
+                <section>
+                    <hr>
+                    <h5>FRIENDS</h5>
+                    <ul class="list-inline">
+                        
+                        <li><a target="_blank" href="https://fan-bu-fan.github.io/">FELL &amp; ENJOY</a></li>
+                        
+                    </ul>
+                </section>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">                  
+                    
+                    <li>
+                        <a href="mailto:huanruiz@foxmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		           
+                    
+                    
+                    
+                    
+
+		            
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/xqt01">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		            
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+            
+            
+            
+           
+                   <li>
+                       <a href='' rel="alternate" type="application/rss+xml" title="PunchCode" >
+                           <span class="fa-stack fa-lg">
+                               <i class="fas fa-circle fa-stack-2x"></i>
+                               <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                           </span>
+                       </a>
+                   </li>
+            
+             </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; PunchCode 2024
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function loadAsync(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        loadAsync("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    loadAsync("https://cdn.jsdelivr.net/npm/fastclick@1.0.6/lib/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+    function generateCatalog(selector) {
+
+        
+        
+        
+        
+            _containerSelector = 'div.post-container'
+        
+
+        
+        var P = $(_containerSelector), a, n, t, l, i, c;
+        a = P.find('h1,h2,h3,h4,h5,h6');
+
+        
+        $(selector).html('')
+
+        
+        a.each(function () {
+            n = $(this).prop('tagName').toLowerCase();
+            i = "#" + $(this).prop('id');
+            t = $(this).text();
+            c = $('<a href="' + i + '" rel="nofollow">' + t + '</a>');
+            l = $('<li class="' + n + '_nav"></li>').append(c);
+            $(selector).append(l);
+        });
+        return true;
+    }
+
+    generateCatalog(".catalog-body");
+
+    
+    $(".catalog-toggle").click((function (e) {
+        e.preventDefault();
+        $('.side-catalog').toggleClass("fold")
+    }))
+
+    
+
+
+    loadAsync("\/js\/jquery.nav.js", function () {
+        $('.catalog-body').onePageNav({
+            currentClass: "active",
+            changeHash: !1,
+            easing: "swing",
+            filter: "",
+            scrollSpeed: 700,
+            scrollOffset: 0,
+            scrollThreshold: .2,
+            begin: null,
+            end: null,
+            scrollChange: null,
+            padding: 80
+        });
+    });
+</script>
+
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>网络编程 on PunchCode</title>
+    <link>https://xqt01.github.io/tags/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/</link>
+    <description>Recent content in 网络编程 on PunchCode</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Mon, 09 Nov 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://xqt01.github.io/tags/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>计算机网络-链路层</title>
+      <link>https://xqt01.github.io/post/29_%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C_%E9%93%BE%E8%B7%AF%E5%B1%82/</link>
+      <pubDate>Mon, 09 Nov 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/29_%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C_%E9%93%BE%E8%B7%AF%E5%B1%82/</guid>
+      <description>概述 运行链路层的主机/路由器/交换机等都叫结点(node), 连接相邻结点的通信信道叫链路. 数据报会被封装到链路层帧中并被传送到链路. 主体部分</description>
+    </item>
+    
+    <item>
+      <title>计算机网络-网络层</title>
+      <link>https://xqt01.github.io/post/28_%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C_%E7%BD%91%E7%BB%9C%E5%B1%82/</link>
+      <pubDate>Wed, 04 Nov 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/28_%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C_%E7%BD%91%E7%BB%9C%E5%B1%82/</guid>
+      <description>网络层的分组是数据报, 一般由路由器把报文段封装成数据报, 或者从数据报提取报文段给运输层. 概述 转发与路由选择 转发: 分组到达路由器的输入链路时,</description>
+    </item>
+    
+    <item>
+      <title>计算机网络-运输层</title>
+      <link>https://xqt01.github.io/post/27_%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C_%E8%BF%90%E8%BE%93%E5%B1%82/</link>
+      <pubDate>Tue, 03 Nov 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/27_%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C_%E8%BF%90%E8%BE%93%E5%B1%82/</guid>
+      <description>运输层协议为运行在不同的主机上的应用进程之间提供了逻辑通信(logic communication), 它是在端系统中被实现的, 发送端的运输层把报文转换为报文段(segme</description>
+    </item>
+    
+    <item>
+      <title>计算机网络-应用层</title>
+      <link>https://xqt01.github.io/post/26_%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C_%E5%BA%94%E7%94%A8%E5%B1%82/</link>
+      <pubDate>Tue, 20 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/26_%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C_%E5%BA%94%E7%94%A8%E5%B1%82/</guid>
+      <description>协议管理 网络应用体系结构 有应用体系结构决定如何在端系统组织该应用程序. 包括客户-服务器体系结构和P2P体系结构. 客户-服务器体系结构: 主机总</description>
+    </item>
+    
+    <item>
+      <title>计算机网络-基础</title>
+      <link>https://xqt01.github.io/post/25_%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C_%E5%9F%BA%E7%A1%80/</link>
+      <pubDate>Mon, 19 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/25_%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C_%E5%9F%BA%E7%A1%80/</guid>
+      <description>所有手机, 电脑, 平板都可以成为主机(host)或者端系统(end system), 他们通过通信链路和分组交换机连接在一起. 对于通信链路, 传输速率可以用bit</description>
+    </item>
+    
+  </channel>
+</rss>

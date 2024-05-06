@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="PunchCode">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://xqt01.github.io/front.png">
+    <meta property="twitter:image" content="https://xqt01.github.io/front.png" />
+    
+
+    
+    <meta name="title" content="JVM入门-垃圾回收器" />
+    <meta property="og:title" content="JVM入门-垃圾回收器" />
+    <meta property="twitter:title" content="JVM入门-垃圾回收器" />
+    
+
+    
+    <meta name="description" content="Software Engineer">
+    <meta property="og:description" content="Software Engineer" />
+    <meta property="twitter:description" content="Software Engineer" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="Harry, 小拳头">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>JVM入门-垃圾回收器 | 以终为始</title>
+
+    <link rel="canonical" href="/post/40_jvm%E5%85%A5%E9%97%A8_%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E5%99%A8/">
+
+    
+    
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hugo-theme-cleanwhite.min.css">
+
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+
+    
+    <link href="https://cdn.jsdelivr.net/gh/FortAwesome/Font-Awesome@5.15.1/css/all.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    
+    <script src="/js/jquery.min.js"></script>
+
+    
+    <script src="/js/bootstrap.min.js"></script>
+
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+
+</head>
+
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">PunchCode</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">All Posts</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/tech">tech</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0">学习笔记</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/%E6%9D%82%E8%B0%88">杂谈</a>
+                        </li>
+                        
+                    
+                    
+		    
+                        <li><a href="/top/archive/">ARCHIVE</a></li>
+                    
+                        <li><a href="/top/about/">ABOUT</a></li>
+                    
+
+                    
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/front.png')
+    }
+</style>
+
+<header class="intro-header" >
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/jvm" title="JVM">
+                            JVM
+                        </a>
+                        
+                    </div>
+                    <h1>JVM入门-垃圾回收器</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        
+                            Posted by 
+                            
+                                小拳头
+                             
+                            on 
+                            Tuesday, February 2, 2021
+                            
+                            
+                            
+                            
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <h2 id="按线程数分">按线程数分</h2>
+<p>串行垃圾回收器和并行垃圾回收器.</p>
+<ul>
+<li>串行回收指的是在同一时间段内只允许有一个CPU用于执行垃圾回收操作, 此时工作线程被暂停, 直至垃圾收集工作结束. 单CPU处理器或者较小的应用内存等硬件平台不太足的场合, 串行回收器的性能表现可以超过并行回收器和并发回收器. 所以串行回收默认被应用在客户端的Client模式下的JVM中. 但是在并发能力比较强的CPU上, 并行回收器产生的停顿时间要短于串行回收器</li>
+<li>并行收集可以运用多个CPU同时执行垃圾回收, 提升了应用的吞吐量, 不过并行回收仍然与串行回收一样采用独占式, 依然有STW.
+
+  <img src="/40_1.png" alt="">
+
+</li>
+</ul>
+<h2 id="按工作模式分">按工作模式分</h2>
+<p>并发式垃圾回收器和独占式垃圾回收器</p>
+<ul>
+<li>并发式垃圾回收器与应用程序线程交替工作, 以尽可能减少应用程序的停顿时间</li>
+<li>独占式垃圾(STW)回收器一旦运行, 就停止应用程序中的所有用户线程, 直到垃圾回收过程完全结束
+
+  <img src="/40_2.png" alt="">
+
+</li>
+</ul>
+<h2 id="按碎片处理方式分">按碎片处理方式分</h2>
+<ul>
+<li>压缩式垃圾回收器会在回收完成后对存活对象进行压缩整理, 消除回收后的碎片(指针碰撞)</li>
+<li>非压缩式的垃圾回收器不进行这步操作(空闲列表)</li>
+</ul>
+<h2 id="按工作的内存区间分">按工作的内存区间分</h2>
+<ul>
+<li>年轻代垃圾回收器</li>
+<li>老年代垃圾回收器</li>
+</ul>
+<h2 id="评估gc的性能指标">评估GC的性能指标</h2>
+<ul>
+<li><strong>吞吐量</strong>: <strong>运行用户代码的时间占总运行时间的比例</strong>, 总运行时间指程序的运行时间+内存回收的时间.</li>
+<li>垃圾收集开销: 吞吐量的补数, 垃圾收集所用时间与总运行时间的比例.</li>
+<li><strong>暂停时间</strong>: <strong>执行垃圾收集时程序的工作线程被暂停的时间</strong>.</li>
+<li>收集频率: 相对于应用程序的执行, 收集操作发生的频率.</li>
+<li><strong>内存占用</strong>: Java堆区所占的内存大小.</li>
+<li>快速: 一个对象从诞生到被回收所经历的时间.</li>
+</ul>
+<p>对于加粗部分构成不可能三角, 互相牵制, 现在内存越来越好, 多以主要考虑吞吐量与暂停时间.</p>
+<h3 id="吞吐量throughput">吞吐量(throughput)</h3>
+<p>吞吐量 = 运行用户代码时间 / (运行用户代码时间 + 垃圾收集时间), 若虚拟机总共运行了100分钟, 其中垃圾收集花掉1分钟, 吞吐量就是99%. 这种情况下, 应用程序能容忍较高的暂停时间, 高吞吐量的应用程序有更长的时间基准, 快速响应就不必考虑了. 吞吐量优先意味着在单位时间内, STW的时间最短.</p>
+<h3 id="暂停时间pause-time">暂停时间(pause time)</h3>
+<p>指一个时间段内应用程序线程暂停, 让GC线程执行的状态, GC期间100毫秒的暂停时间意味着在这100毫秒期间内没有应用程序线程是活动的. 暂停时间优先, 意味着尽可能让单次STW的时间最短.</p>
+<h3 id="对比">对比</h3>
+<ul>
+<li>高吞吐量较好是因为这会让应用程序的最终用户感觉只有应用程序线程在做生产性工作, 直觉上吞吐量越高程序运行越快.</li>
+<li>低暂停时间较好是因为从最终用户的角度来看不管是GC还是其他原因导致一个应用被挂起始终是不好的. 这取决于应用程序的类型, 对于一个交互式应用程序, 低延迟当然就更好.
+
+  <img src="/40_3.png" alt="">
+
+</li>
+</ul>
+<p>因为如果选择以吞吐量优先, 那么必然需要降低内存回收的执行频率, 但是这样会导致GC需要更长的暂停时间来执行内存回收. 如果选择以低延迟优先为原则, 那么为了降低每次执行内存回收时的暂停时间, 只能频繁地执行内存回收, 让年轻代内存的缩减, 导致程序吞吐量的下降. 现在一般标准为在最大吞吐量优先的情况下, 降低暂停时间(G1).</p>
+<h2 id="不同垃圾回收器概述">不同垃圾回收器概述</h2>
+<h3 id="发展史">发展史</h3>
+<p>
+  <img src="/40_4.png" alt="">
+
+</p>
+<h3 id="7种经典垃圾回收器">7种经典垃圾回收器</h3>
+<ul>
+<li>串行回收器: Serial; Serial Old</li>
+<li>并行回收器: ParNew; Parallel Scavenge; Parallel Old</li>
+<li>并发回收器: CMS; G1
+
+  <img src="/40_5.png" alt="">
+
+</li>
+</ul>
+<h3 id="经典垃圾回收器与垃圾分代关系">经典垃圾回收器与垃圾分代关系</h3>
+<p>对应区如下.
+
+  <img src="/40_6.png" alt="">
+
+</p>
+<p>组合关系如下, 选择时要根据场景选最适合的.
+
+  <img src="/40_7.png" alt="">
+
+</p>
+<h3 id="查看默认垃圾回收器">查看默认垃圾回收器</h3>
+<ul>
+<li>-XX:+PrintCommandLineFlags: 查看命令行相关参数(包含使用的垃圾收集器)</li>
+<li>使用命令行指令: jinfo -flag(UseParallelGC/UseParallelOldGC)相关垃圾回收器参数进程ID, 间接判断; 加号就是用了, 反之减号</li>
+</ul>
+<pre><code>/**
+ *  -XX:+PrintCommandLineFlags
+ *  -XX:+UseSerialGC: 表明新生代使用Serial GC, 同时老年代使用Serial Old GC
+ *  -XX:+UseParNewGC: 标明新生代使用ParNew GC
+ *  -XX:+UseParallelGC: 表明新生代使用Parallel GC
+ *  -XX:+UseParallelOldGC: 表明老年代使用Parallel Old GC
+ *
+ *  二者可以相互激活
+ *  -XX:+UseConcMarkSweepGC：表明老年代使用CMS GC, 同时年轻代会触发对ParNew的使用
+ */
+public class GCUseTest {
+    public static void main(String[] args) {
+        ArrayList&lt;byte[]&gt; list = new ArrayList&lt;&gt;();
+
+        while(true){
+            byte[] arr = new byte[100];
+            list.add(arr);
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+</code></pre><h2 id="serial回收器-串行回收">Serial回收器: 串行回收</h2>
+<ul>
+<li><strong>Serial收集器作为HotSpot中Client模式下的默认新生代垃圾收集器</strong>.</li>
+<li>Serial收集器采用复制算法, 串行回收和STW机制的方式执行内存回收.</li>
+<li>除了年轻代之外, Serial收集器还提供用于执行老年代垃圾收集的Serial Old收集器. Serial Old收集器同样也采用了串行回收和STW制, 但是内存回收算法使用的是标记压缩算法.</li>
+<li><strong>Serial Old是运行在Client模式下默认的老年代的垃圾回收器</strong>.</li>
+<li>Serial Old在Server模式下主要有两个用途: 与新生代的ParallelScavenge配合使用; 作为老年代CMS收集器的后备垃圾收集方案.</li>
+<li>Serial收集器是一个单线程的收集器, 但它的<strong>单线程的意义并不仅仅说明它只会使用一个CPU或一条收集线程去完成垃圾收集</strong>, 更重要的是在它进行垃圾收集时必须暂停其他所有的工作线程(STW).
+
+  <img src="/40_8.png" alt="">
+
+</li>
+</ul>
+<p>优点是</p>
+<ul>
+<li>简单而高效, 对于限定单个CPU的环境来说, Serial收集器没有线程交互的开销, 可以获得最高的单线程收集效率.</li>
+<li>在用户的桌面应用场景中, 可用内存一般不大, 可以在较短时间内完成垃圾收集, 只要不频繁发生, 使用串行回收器是可以接受的.</li>
+<li>在HotSpot中, 使用-XX:+UseSerialGC可以指定新生代和老年代都使用串行收集器. 等价于新生代用SerialGC, 且老年代用SerialOldGC.</li>
+</ul>
+<p>现在单核CPU少了所以Serial回收器基本不用了.</p>
+<h2 id="parnew回收器-并行回收">ParNew回收器: 并行回收</h2>
+<ul>
+<li>如果说Serial GC是年轻代中的单线程垃圾收集器, 那么ParNew收集器则是Serial收集器的多线程版本. (Par是Parallel的缩写, New指只能处理的是新生代)</li>
+<li>ParNew收集器除了采用并行回收的方式执行内存回收外, 两款垃圾收集器之间几乎没有任何区别. ParNew收集器在年轻代中同样也是采用复制算法, STW机制.</li>
+<li><strong>ParNew是很多JVM运行在Server模式下新生代的默认垃圾收集器</strong>(老版本).</li>
+<li>对于新生代, 回收次数频繁, 使用并行方式高效; 对于老年代, 回收次数少, 使用串行方式节省资源. ParNew适用于多CPU/多核场景.</li>
+<li>在HotSpot中, 使用-XX+UseParNewGC手动指定ParNew收集器执行内存回收任务. 表示年轻代使用并行收集器, 不影响老年代. JDK9及之后会报警告, 不被推荐使用.
+
+  <img src="/40_9.png" alt="">
+
+</li>
+</ul>
+<h2 id="parallel回收器-吞吐量优先">Parallel回收器: 吞吐量优先</h2>
+<ul>
+<li>HotSpot的年轻代中除了拥有ParNew收集器是基于并行回收的以外, Parallel Scavenge收集器同样也采用了复制算法, 并行回收和STW机制.</li>
+<li>Parallel Scavenge收集器的目标则是<strong>达到一个可控制的吞吐量(Throughput)</strong>, 并且Parallel Scavenge收集器有自适应调节策略.</li>
+<li>高吞吐量则可以高效率地利用CPU时间, 尽快完成运算任务, 主要适合在后台运算而不需要太多交互的任务. 常见在服务器环境中, 如执行批量处理/订单处理/工资支付/科学计算的应用程序.</li>
+<li>Parallel收集器在JDK1.6时提供了用于执行老年代垃圾收集的Parallel Old收集器, 用来代替老年代的Serial Old收集器. 吞吐量优先的应用场景中, Parallel收集器和Parallel Old收集器的组合, 在Server模式下的内存回收性能很不错.</li>
+<li>Parallel Old收集器采用了标记压缩算法, 但同样也是基于并行回收和STW机制.</li>
+<li><strong>在jdk8中, 默认是此垃圾收集器</strong>.
+
+  <img src="/40_10.png" alt="">
+
+</li>
+</ul>
+<h3 id="参数">参数</h3>
+<ul>
+<li>-XX:+UseParallelGC手动指定年轻代使用Parallel并行收集器执行内存回收任务.</li>
+<li>-XX:+UseParallelOldGc手动指定老年代都是使用并行回收收集器.</li>
+</ul>
+<p>分别适用于新生代和老年代. 默认jdk8是开启的, jdk9就改为G1了, 上面两个参数会同时开启(互相激活).</p>
+<ul>
+<li>-XX:ParallelGCThreads设置<strong>年轻代并行收集器的线程数</strong>. 一般地最好与CPU数量相等, 以避免过多的线程数影响垃圾收集性能.</li>
+</ul>
+<p>在默认情况下, 当CPU数量小于8个, ParallelGCThreads的值等于CPU数量; 当CPU数量大于8, ParallelGCThreads的值等于$3+[5*CPU数量]/8]$.</p>
+<ul>
+<li>-XX:MaxGCPauseMillis设置垃圾收集器最大停顿时间(STW时间), 单位是ms.</li>
+</ul>
+<p>为了尽可能地把停顿时间控制在MaxGCPauseMills以内, 回收器工作时会调整Java堆大小或者其他一些参数. 对于用户来讲, 停顿时间越短体验越好, 但是在服务器端, 我们注重的吞吐量. 所以服务器端适合Parallel进行控制. 这个参数要谨慎使用, 不能因为想控制垃圾回收时间而减少了堆的大小, 影响吞吐量.</p>
+<ul>
+<li>-XX:GCTimeRatio控制垃圾收集时间占总时间的比例用于衡量吞吐量的大小。</li>
+</ul>
+<p>取值范围是(0, 100), 默认值99, 也就是垃圾回收时间不超过1s.</p>
+<ul>
+<li>-XX:+UseAdaptiveSizePolicy设置Parallel Scavenge收集器具有自适应调节策略</li>
+</ul>
+<p>在这种模式下, 年轻代的大小/Eden/Survivor的比例, 晋升老年代的对象年龄等参数会被自动调整, 为了取得堆大小, 吞吐量和停顿时间之间的平衡点. 在手动调优比较困难的场合, 可以直接使用这种自适应的方式, 仅指定虚拟机的最大堆/目标的吞吐量/和停顿时间.</p>
+<h2 id="cms回收器">CMS回收器</h2>
+<p><strong>Concurrent-Mark-Sweep</strong>是jdk1.5出来的非独占式(并发回收)回收器, 在G1出现之前, CMS使用还是非常广泛的. CMS收集器的关注点是尽可能缩短垃圾收集时用户线程的停顿时间, 响应速度快, 提升用户体验. 目前很大一部分的Java应用集中在互联网站或者B/S系统的服务端上，这类应用尤其重视服务的响应速度, CMS收集器就非常合适. CMS的垃圾收集算法采用<strong>标记清除算法</strong>(和上面不同了), 也会STW. CMS作为老年代的收集器, 却无法与JDK1.4中已经存在的新生代收集器Parallel Scavenge配合工作, 所以在JDK1.5中使用CMS来收集老年代的时候, 新生代只能选择ParNew或者Serial收集器中的一个.
+
+  <img src="/40_11.png" alt="">
+
+</p>
+<p>可以看出CMS有4步,</p>
+<ol>
+<li><strong>初始标记(Initial Mark)阶段</strong>: 在这个阶段中, 程序中所有的工作线程都将会因为STW机制而出现短暂的暂停, 这个阶段的主要任务只是标记出GCRoots能直接关联到的对象, 由于直接关联对象比较小, 所以速度非常快.</li>
+<li><strong>并发标记(Concurrent Mark)阶段</strong>: 从GC Roots的直接关联对象开始遍历整个对象图, 这个过程耗时较长但是不需要停顿用户线程, 可以与垃圾收集线程一起并发运行.</li>
+<li><strong>重新标记(Remark)阶段</strong>: 由于在并发标记阶段中, 程序的工作线程会和垃圾收集线程同时运行或者交叉运行, 因此为了修正并发标记期间, 标记产生变动的那一部分对象的标记记录, 这个阶段的停顿时间通常会比初始标记阶段长, 但远比并发标记时间短.</li>
+<li><strong>并发清除(Concurrent Sweep)阶段</strong>: 此阶段清理删除掉标记阶段判断的已经死亡的对象病释放内存空间. 由于不需要移动存活对象, 所以这个阶段也是可以与用户线程同时并发的.</li>
+</ol>
+<ul>
+<li>由于最耗费时间的并发标记与并发清除阶段都不需要暂停工作, 所以整体的回收是低停顿的.</li>
+<li>由于在垃圾收集阶段用户线程没有中断, 所以在CMS回收过程中应该确保应用程序用户线程有足够的内存可用. CMS收集器不能像其他收集器那样等到老年代几乎完全被填满了再进行收集, 而是当堆内存使用率达到某一阈值时就开始进行回收. 要是CMS运行期间预留的内存无法满足程序需要, 就会出现&quot;Concurrent Mode Failure&quot;失败. 这时虚拟机将启动后备预案: 临时启用Serial Old收集器来重新进行老年代的垃圾收集, 这样停顿时间就很长了.</li>
+<li>CMS收集器的垃圾收集算法采用的是标记清除算法, 所依不可避免地将会产生一些内存碎片. 那么CMS在为新对象分配内存空间时, 将无法使用<strong>指针碰撞(Bump the Pointer)</strong>，而只能够选择**空闲列表(Free List)**执行内存分配. 但是也不能用内存压缩算法, 因为要保证用户线程继续执行, 标记压缩算法适合STW场景.</li>
+</ul>
+<h3 id="优点">优点</h3>
+<p>并发收集, 低延迟</p>
+<h3 id="缺点">缺点</h3>
+<ol>
+<li>会产生内存碎片, 在无法分配大对象的情况下, 不得不提前触发Full GC.</li>
+<li>CMS收集器对CPU资源非常敏感. 在并发阶段, 它虽然不会导致用户停顿, 但是会因为占用了一部分线程而导致应用程序变慢, 总吞吐量会降低.</li>
+<li>CMS收集器无法处理浮动垃圾. 可能出现Concurrent Mode Failure导致另一次Full GC. 并发标记阶段由于程序的工作线程和垃圾收集线程是同时运行或者交叉运行的. 并发标记阶段产生的垃圾对象无法被标记, 无法及时回收, 只能等待下一次GC.</li>
+</ol>
+<h3 id="参数-1">参数</h3>
+<ul>
+<li>-XX:+UseConcMarkSweepGC: 手动指定使用CMS收集器执行内存回收任务, 会自动将-XX:+UseParNewGc打开.</li>
+<li>-XX:CMSlnitiatingOccupanyFraction: 设置堆内存使用率的阈值, 一旦达到该阈值便开始进行回收. 如果内存增长缓慢, 就可以设置一个稍大的值, 大的阈值可以有效降低CMS的触发频率, 减少老年代回收的次数; 反之就降低, 避免频繁触发老年代串行收集器.</li>
+<li>-XX:+UseCMSCompactAtFullCollection: 用于指定在执行完Full GC后对内存空间进行压缩整理, 停顿时间会变得更长.</li>
+<li>-XX:CMSFullGCsBeforeCompaction设置在执行多少次Full GC后对内存空间进行压缩整理.</li>
+<li>一XX:ParallelCMSThreads设置CMS的线程数量. CMS默认启动的线程数是$(ParallelGCThreads + 3) / 4, ParallelGCThreads是年轻代并行收集器的线程数.</li>
+</ul>
+<h3 id="总结">总结</h3>
+<ul>
+<li>如果你想要最小化地使用内存和并行开销, 请选Serial GC.</li>
+<li>如果你想要最大化应用程序的吞吐量, 请选Parallel GC.</li>
+<li>如果你想要最小化GC的中断或停顿时间, 请选CMS GC.</li>
+</ul>
+<p>JDK9中CMS被标记为Deprecate了. JDK14中被移除了, 如果在JDK14中使用-XX:+UseConcMarkSweepGC, JVM不会报错, 但是报warning，并自动回退以默认GC方式启动JVM.</p>
+<h2 id="g1回收器-区域化分代式">G1回收器: 区域化分代式</h2>
+<p><strong>G1的目标是在延迟可控的情况下获得尽可能高的吞吐量</strong>. <strong>Garbage First</strong>有以下特性.</p>
+<ul>
+<li>G1是一个并行回收器, 它把堆内存分割为物理上不连续的, 很多不相关的区域(Region). 使用不同的Region来表示Eden, s0区, s1区, 老年代等.</li>
+<li>GC有计划地避免在整个Java堆中进行全区域的垃圾收集. G1跟踪各个Region里面的垃圾堆积的价值大小, 在后台维护一个优先列表, 每次根据允许的收集时间, 优先回收价值最大的Region. (垃圾优先名字的由来)</li>
+<li>面向服务端应用的垃圾收集器, 主要针对配备多核CPU及大容量内存的机器, 以极高概率满足GC停顿时间的同时, 还兼具高吞吐量的性能特征.</li>
+<li>在JDK1.7正式启用, 移除Experimental的标识，是JDK 9以后的默认垃圾回收器, 取代了CMS回收器以及Parallel与Parallel Old组合. 被Oracle官方称为&quot;全功能的垃圾收集器&quot;. CMS已经在JDK 9中被标记为废弃(deprecated), 如果在JDK8中要使用-XX: +UseG1GC来启用G1回收器.</li>
+</ul>
+<h3 id="g1的优点">G1的优点</h3>
+<ol>
+<li>并行于并发</li>
+</ol>
+<p><strong>并行性</strong>: G1在回收期间可以有多个GC线程同时工作, 有效利用多核计算能力, 此时用户线程会STW; <strong>并发性</strong>: G1拥有与应用程序交替执行的能力, 部分工作可以和应用程序同时执行. 一般来说, 不会在整个回收阶段发生完全阻塞应用程序的情况.</p>
+<ol start="2">
+<li>分代收集</li>
+</ol>
+<p>G1依然属于分代型垃圾回收器, 它会区分年轻代和老年代, 年轻代依然有Eden区和Survivor区. 但从堆的结构来看, G1不要求整个Eden区, 年轻代或者老年代都是连续的, 也没有固定大小和固定数量.</p>
+<ol>
+<li>空间整合</li>
+</ol>
+<p>G1将内存划分为一个个的region. 内存的回收是以region作为基本单位的. Region之间是复制算法, 但整体上可看作是标记一压缩算法, 这两种算法都可以避免内存碎片. 有利于长时间运行.</p>
+<ol start="4">
+<li>可预测的停顿时间模型(soft real-time)</li>
+</ol>
+<p>这是G1相对于CMS的另一大优势是建立可预测的停顿时间模型, 让使用者明确指定在一个长度为M毫秒的时间片段内, 消耗在垃圾收集上的时间不得超过N毫秒. G1可以只<strong>选取部分区域进行内存回收</strong>, 这样缩小了回收的范围, 因此对于全局停顿情况的发生也能得到较好的控制. G1跟踪各个Region里面的垃圾堆积的价值大小. G1未必能做到CMS在最好情况下的延时停顿, 但是最差情况会很有优势.</p>
+<h3 id="g1的缺点">G1的缺点</h3>
+<p>在用户程序运行过程中, G1无论是为了垃圾收集产生的内存占用(Footprint), 还是程序运行时的额外执行负载(overload)都要比CMS要高. 从经验上来说, <strong>在小内存应用上CMS的表现一般会优于G1, 而G1在大内存应用具有优势. 一般内存大小要高于6一8GB之间</strong>.</p>
+<h3 id="相关参数">相关参数</h3>
+<ul>
+<li>-XX: +UseG1GC 手动指定使用G1收集器执行内存回收任务。</li>
+<li>-XX: G1HeapRegionSize 设置每个Region大小. 值是2的幂, 范围在1MB-32MB之间, 目标是根据最小的Java堆大小划分出约2048个区域. 默认是堆内存的1/2000.</li>
+<li>-XX: MaxGCPauseMillis 设置期望达到的最大GC停顿时间指标, 默认值是200ms.</li>
+<li>-XX: ParallelGCThread 设置STW工作线程数的值. 最多设置为8.</li>
+<li>-XX：ConcGCThreads 设置并发标记的线程数, 将n设置为并行垃圾回收线程数(ParallelGCThreads)的1/4左右.</li>
+<li>-XX：InitiatingHeapOccupancyPercent 设置触发并发GC周期的Java堆占用率阈值. 超过此值就触发GC. 默认值是45.</li>
+</ul>
+<p><strong>常见操作步骤</strong></p>
+<p>开启G1垃圾收集器 -&gt; 设置堆的最大内存 -&gt; 设置最大的停顿时间. G1中提供了三种垃圾回收模式(YoungGC/Mixed GC/Full GC), 在不同的条件下被触发.</p>
+<h3 id="适用场景">适用场景</h3>
+<ul>
+<li>面向服务端应用, 针对具有大内存, 多处理器的机器.</li>
+<li>应用是需要低GC延迟, 并具有大堆的应用程序提供解决方案. (在堆大小约6GB或更大时, 可预测的暂停时间低于0.5秒)</li>
+<li>用来替换掉JDK1.5中的CMS收集器, 使用G1可能比CMS好的情况: 超过50%的Java堆被活动数据占用/对象分配频率或年代提升频率变化很大/GC停顿时间过长, 长于0.5-1秒.</li>
+<li>HotSpot中, 除了G1以外, 其他的垃圾收集器使用内置的JVM线程执行GC的多线程操作, 而G1 GC可以采用应用线程承担后台运行的GC工作. 即当JVM的GC线程处理速度慢时, 系统会<strong>调用应用程序线程帮助加速垃圾回收过程</strong>.</li>
+</ul>
+<h3 id="region使用介绍">region使用介绍</h3>
+<p>G1将整个Java堆划分成约2048个大小相同的独立Region块, 每个Region块大小根据堆空间的实际大小而定, 整体被控制在1MB到32MB之间, 大小为2的N次幂(1MB/2MB/4MB/8MB/16MB/32MB). 可以通过-XX: G1HeapRegionSize设定, 所有的Region大小相同, <strong>在JVM生命周期内不会被改变</strong>. <strong>一个region只可能属于一个角色</strong>. G1增加了一种新的内存区域Humongous, 如图中的H, 主要用于<strong>连续</strong>存储大对象. 防止短期存在的大对象直接被放在老年代(回收频率低, 如内存泄漏一样影响性能). H区大多数情况被看做老年代一部分.
+
+  <img src="/40_12.png" alt="">
+
+</p>
+<p>Region也可以有指针碰撞和TLAB.
+
+  <img src="/40_13.png" alt="">
+
+</p>
+<h3 id="g1回收过程">G1回收过程</h3>
+<p>主要有三个环节:</p>
+<ul>
+<li>年轻代GC(Young GC)</li>
+<li>老年代并发标记过程(Concurrent Marking)</li>
+<li>混合回收(Mixed GC)
+
+  <img src="/40_14.png" alt="">
+
+</li>
+</ul>
+<p>年轻代GC阶段是并行的独占式收集器. 在年轻代回收期, G1 GC暂停所有应用程序线程, 启动多线程执行年轻代回收. 然后从年轻代区间移动存活对象到Survivor区间或者老年区间, 也有可能是两个区间都会涉及; 当堆内存使用达到一定值(默认45%), 开始老年代并发标记过程; 标记完成马上开始混合回收过程, 混合回收期G1 GC从老年区间移动存活对象到空闲区间, 这些空闲区间也就成为了老年代的一部分. 老年代回收器不需要整个老年代被回收, 而是一次只需要扫描/回收一小部分老年代的Region. 并且这个老年代Region是和年轻代一起被回收的.</p>
+<p>eg. 一个web服务器, Java进程最大堆内存为4G, 每分钟响应1500个请求, 每45秒钟会新分配大约2G的内存. G1会每45秒钟进行一次年轻代回收, 每31个小时整个堆的使用率会达到45%，开始老年代并发标记过程, 标记完成后开始四到五次的混合回收.</p>
+<h3 id="remembered-setr-set">Remembered Set(R Set)</h3>
+<p>一个对象会被不同区域引用(分代引用), 所以一个Region不可能是孤立的, 那么怎么去扫描这个堆呢? 回收新生代是否也不得不同时扫描老年代, 导致降低MinorGC的效率? 所以需要R Set来避免全局扫描.</p>
+<p>每个Region都有一个对应的R Set, 每次Reference类型数据写操作时, 都会产生一个Write Barrier暂时中断操作. 然后检查将要写入的引用指向的对象是否和该Reference类型数据在不同的Region中. 若不同, 通过CardTable把引用信息记录到引用指向对象的所在Region对应的R Set中(下图的粉红区域). 当进行垃圾收集时, 在GC根节点的枚举范围加入R Set, 就可以保证不进行全局扫描, 没有遗漏.
+
+  <img src="/40_15.png" alt="">
+
+</p>
+<h3 id="g1回收过程详细说明">G1回收过程详细说明</h3>
+<p>JVM启动时, G1先准备好Eden区, 程序在运行过程中不断创建对象到Eden区, 当Eden空间耗尽时, G1会启动一次年轻代垃圾回收过程. 年轻代垃圾回收只会回收Eden区和Survivor区, 注意<strong>Survivor区是不会触发回收的</strong>. Youing GC时, 首先G1进行STW, 创建回收集(Collection Set), 回收集是指需要被回收的内存分段的集合, 年轻代回收过程的回收集包含年轻代Eden区和Survivor区所有的内存分段.</p>
+<h4 id="年轻代gc">年轻代GC</h4>
+<ol>
+<li><strong>扫描根(GC Root)</strong>. 根是指static变量指向的对象, 正在执行的方法调用链条上的局部变量等. 根引用连同RSet记录的外部引用作为扫描存活对象的入口.</li>
+<li><strong>更新RSet</strong>. 处理dirty card queue中的card, 更新RSet.</li>
+<li><strong>处理RSet</strong>. 识别被老年代对象指向的Eden中的对象, 这些被指向的Eden中的对象被认为是存活的对象.</li>
+<li><strong>复制对象</strong>. 遍历对象树, Eden内存段中存活的对象会被复制到Survivor区中空的内存分段, Survivor区内存段中存活的对象如果年龄未达阈值, 就会加1. 达到阀值会被会被复制到Old区中空的内存分段. 如果Survivor空间不够, Eden空间的部分数据会直接晋升到老年代空间. 这一部分和之前堆空间操作过程是一样的.</li>
+<li><strong>处理引用</strong>. 处理Soft/Weak/Phantom/Final/JNI Weak等引用. 最终Eden空间的数据为空, GC停止工作. 而目标内存中的对象都是连续存储没有碎片的. 所以复制过程可以达到内存整理的效果, 减少碎片.</li>
+</ol>
+<blockquote>
+<p>dirty card queue: 对于应用程序的引用赋值语句object.field=object, JVM会在之前和之后执行特殊的操作以在dirty card queue中入队一个保存了对象引用信息的card. 在年轻代回收的时候, G1会对dirty card queue中所有的card进行处理, 以更新RSet, 保证RSet实时准确的反映引用关系. 那为什么不在引用赋值语句处直接更新RSet呢? 是为了提高性能, RSet的处理需要线程同步, 开销会很大, 使用队列性能会好很多.</p>
+</blockquote>
+<h4 id="并发标记过程">并发标记过程</h4>
+<ul>
+<li>初始标记阶段: 标记从根节点直接可达的对象, 这个阶段是STW的, 并且会触发一次年轻代GC.</li>
+<li>根区域扫描(Root Region Scanning): G1 GC扫描Survivor区直接可达的老年代区域对象, 并标记被引用的对象. 这一过程必须在young GC之前结束, 因为young GC会操作Survivor区.</li>
+<li>并发标记(Concurrent Marking): 在整个堆中和应用程序并发执行, 此过程可能被young GC中断. 在并发标记阶段, 若发现区域对象中的所有对象都是垃圾, 那这个区域会被立即回收. 同时会计算每个区域的对象活性**(区域中存活对象的比例)**.</li>
+<li>再次标记(Remark): 由于应用程序持续进行, 需要修正上一次的标记结果. 它是是STW的, G1中采用了比CMS更快的初始快照算法: 初始快照 <strong>snapshot-at-the-beginning(SATB)</strong>.</li>
+<li>独占清理(cleanup，STW): 计算各个区域的存活对象和GC回收比例并进行排序, 识别可以混合回收的区域. 是STW的. 这个阶段并不会实际上去做垃圾的收集.</li>
+<li>并发清理阶段: 识别并清理完全空闲的区域.</li>
+</ul>
+<h4 id="混合回收">混合回收</h4>
+<p>当越来越多的对象晋升到老年代old region时, 为了避免堆内存被耗尽, 虚拟机会触发混合垃圾收集器Mixed GC. 该算法并不是Old GC. 除了回收整个Young Region, 还会回收<strong>一部分</strong>的Old Region. 也要注意这是Mixed GC而不是Fu1l GC.
+
+  <img src="/40_16.png" alt="">
+
+</p>
+<ul>
+<li>并发标记结束以后, 老年代中百分百为垃圾的内存分段被回收了, 另部分为垃圾的内存分段被计算了出来. 默认情况下这些老年代的内存分段会分8次(-XX: G1MixedGCCountTarget)被回收.</li>
+<li>混合回收的回收集(Collection Set), 包括八分之一的老年代内存分段, Eden区内存分段, Survivor区内存分段. 混合回收的算法和年轻代回收的算法完全一样, 只是回收集多了老年代的内存分段.</li>
+<li>由于老年代中的内存分段默认分8次回收, G1会优先回收垃圾多的内存分段. 有阈值来决定内存分段是否被回收(-XX: G1MixedGCLiveThresholdPercent), 默认为65%. 因为如果垃圾<strong>在分段中占比太低</strong>意味着存活的对象占比高, 在复制时会花费更多的时间.</li>
+<li>混合回收并不一定要进行8次(-XX: G1HeapWastePercent), 默认值为10%. 也就是允许整个堆内存中有10%的空间被浪费, 意味着如果发现可以回收的垃圾<strong>占堆内存的比例</strong>低于10%则不再进行混合回收. 防止GC花费很多的时间但是回收到的内存却很少.</li>
+</ul>
+<h4 id="full-gc">Full GC</h4>
+<p>G1的初衷就是要避免Full GC的出现, 但是如果上述方式不能正常工作, G1就会STW, 使用单线程的内存回收算法进行垃圾回收. 而导致G1Full GC的原因可能有两个: evacuation的时候没有足够的to-space来存放晋升的对象/并发处理过程完成之前空间耗尽. 例如堆内存太小, 当G1在复制存活对象的时候没有空的内存分段可用, 这种情况可以通过增大内存解决. 也有可能暂定时间过短, 回收频率高但是回收不够.</p>
+<h3 id="g1回收优化建议">G1回收优化建议</h3>
+<ul>
+<li>年轻代大小: 避免使用-Xmn或-XX: NewRatio等相关选项显式设置年轻代大小, 固定年轻代的大小会覆盖暂停时间目标, 因为年轻代是独占式的.</li>
+<li>G1 GC的吞吐量目标是90%的应用程序时间和10%的垃圾回收时间, 评估G1 GC的吞吐量时，<strong>暂停时间目标不要太严苛</strong>. 目标太过严苛就会承受更多的垃圾回收开销, 直接影响到吞吐量.</li>
+</ul>
+<blockquote>
+<p>从Oracle官方透露出来的信息, 回收阶段(Evacuation)其实也有想过设计成与用户程序一起并发执行, 但比较复杂. 考虑到G1只是回收一部分Region, 停顿时间是用户可控, 所以并不迫切去实现,, 而选择把这个特性放到了G1之后出现的低延迟垃圾收集器(ZGC)中. 另外还考虑到G1不是仅仅面向低延迟, 停顿用户线程能够最大幅度提高垃圾收集效率. 为了保证吞吐量所以才选择了完全暂停用户线程的实现方案.</p>
+</blockquote>
+<h2 id="7种经典垃圾回收器-1">7种经典垃圾回收器</h2>
+<p>
+  <img src="/40_17.png" alt="">
+
+</p>
+<p>怎么选择垃圾回收器呢. 有以下几点.</p>
+<ol>
+<li>优先调整堆的大小让JVM自适应完成.</li>
+<li>如果内存小于100M, 用串行收集器.</li>
+<li>如果是单核/单机程序并且没有停顿时间的要求, 用串行收集器.</li>
+<li>如果是多CPU/高吞吐量/允许停顿时间超过1秒, 选择并行或者JVM自己选择.</li>
+<li>如果是多CPU/追求低停顿时间/需快速响应(比如延迟不能超过1秒, 互联网应用), 用并发收集器.</li>
+<li>一般互联网项目都是G1.</li>
+</ol>
+<h2 id="gc日志">GC日志</h2>
+<ul>
+<li>-XX: +PrintGC 输出GC日志. (类似 -verbose: gc)</li>
+<li>-XX: +PrintGCDetails 输出GC的详细日志.</li>
+<li>-XX: +PrintGCTimeStamps 输出GC的时间戳(基准时间).</li>
+<li>-XX: +PrintGCDateStamps输出GC的时间戳(以日期的形式).</li>
+<li>-XX: +PrintHeapAtGC 在进行GC的前后打印出堆的信息.</li>
+<li>-Xloggc: 打印日志信息, &ldquo;../logs/gc.log&quot;日志文件的输出路径.</li>
+</ul>
+<h2 id="参考">参考</h2>
+<ol>
+<li><a href="https://www.bilibili.com/video/BV1PJ411n7xZ?p=1">尚硅谷最新版宋红康JVM教程</a></li>
+<li><a href="https://docs.oracle.com/javase/specs/jvms/se8/html/index.html">The Java® Virtual Machine Specification</a></li>
+<li><a href="https://github.com/Snailclimb/JavaGuide/blob/master/docs/java/notes/notes%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6.md">JVM垃圾回收</a></li>
+</ol>
+
+
+                
+
+                
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/post/39_jvm%E5%85%A5%E9%97%A8_%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E7%9B%B8%E5%85%B3%E6%A6%82%E5%BF%B5/" data-toggle="tooltip" data-placement="top" title="JVM入门-垃圾回收相关概念">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/post/15_%E5%B9%B6%E6%9F%A5%E9%9B%86/" data-toggle="tooltip" data-placement="top" title="数据结构与算法-并查集">Next
+                            Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+                
+
+                
+
+
+<div id="disqus-comment"></div>
+<div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "xqt01" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+            </div>
+
+            
+            
+            <div class="
+                col-lg-2 col-lg-offset-0
+                visible-lg-block
+                sidebar-container
+                catalog-container">
+                <div class="side-catalog">
+                    <hr class="hidden-sm hidden-xs">
+                    <h5>
+                        <a class="catalog-toggle" href="#">CATALOG</a>
+                    </h5>
+                    <ul class="catalog-body"></ul>
+                </div>
+            </div>
+            
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/java" title="java">
+                            java
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/jvm" title="jvm">
+                            jvm
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/spring" title="spring">
+                            spring
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E5%89%8D%E7%AB%AF" title="前端">
+                            前端
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F" title="操作系统">
+                            操作系统
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93" title="数据库">
+                            数据库
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95" title="数据结构与算法">
+                            数据结构与算法
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B" title="网络编程">
+                            网络编程
+                        </a>
+                        
+                        
+                    </div>
+                </section>
+                
+
+                
+                
+                <section>
+                    <hr>
+                    <h5>FRIENDS</h5>
+                    <ul class="list-inline">
+                        
+                        <li><a target="_blank" href="https://fan-bu-fan.github.io/">FELL &amp; ENJOY</a></li>
+                        
+                    </ul>
+                </section>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">                  
+                    
+                    <li>
+                        <a href="mailto:huanruiz@foxmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		           
+                    
+                    
+                    
+                    
+
+		            
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/xqt01">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		            
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+            
+            
+            
+           
+                   <li>
+                       <a href='' rel="alternate" type="application/rss+xml" title="PunchCode" >
+                           <span class="fa-stack fa-lg">
+                               <i class="fas fa-circle fa-stack-2x"></i>
+                               <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                           </span>
+                       </a>
+                   </li>
+            
+             </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; PunchCode 2024
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function loadAsync(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        loadAsync("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    loadAsync("https://cdn.jsdelivr.net/npm/fastclick@1.0.6/lib/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+    function generateCatalog(selector) {
+
+        
+        
+        
+        
+            _containerSelector = 'div.post-container'
+        
+
+        
+        var P = $(_containerSelector), a, n, t, l, i, c;
+        a = P.find('h1,h2,h3,h4,h5,h6');
+
+        
+        $(selector).html('')
+
+        
+        a.each(function () {
+            n = $(this).prop('tagName').toLowerCase();
+            i = "#" + $(this).prop('id');
+            t = $(this).text();
+            c = $('<a href="' + i + '" rel="nofollow">' + t + '</a>');
+            l = $('<li class="' + n + '_nav"></li>').append(c);
+            $(selector).append(l);
+        });
+        return true;
+    }
+
+    generateCatalog(".catalog-body");
+
+    
+    $(".catalog-toggle").click((function (e) {
+        e.preventDefault();
+        $('.side-catalog').toggleClass("fold")
+    }))
+
+    
+
+
+    loadAsync("\/js\/jquery.nav.js", function () {
+        $('.catalog-body').onePageNav({
+            currentClass: "active",
+            changeHash: !1,
+            easing: "swing",
+            filter: "",
+            scrollSpeed: 700,
+            scrollOffset: 0,
+            scrollThreshold: .2,
+            begin: null,
+            end: null,
+            scrollChange: null,
+            padding: 80
+        });
+    });
+</script>
+
+
+
+
+
+
+</body>
+</html>

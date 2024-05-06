@@ -1,0 +1,497 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>学习笔记 on PunchCode</title>
+    <link>https://xqt01.github.io/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</link>
+    <description>Recent content in 学习笔记 on PunchCode</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Wed, 28 Dec 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://xqt01.github.io/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>CSAPP-123讲</title>
+      <link>https://xqt01.github.io/post/84_csapp123/</link>
+      <pubDate>Wed, 28 Dec 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/84_csapp123/</guid>
+      <description>1_Overview 第一节课几乎没有讲任何的知识, 只是单纯地介绍了这节课, 老师是Bryant和O’Hallaron, CSAPP原书的作者. 这门课的前置要求是会</description>
+    </item>
+    
+    <item>
+      <title>Java Concurrency in Practice Chapter7-Cancellation and Shutdown</title>
+      <link>https://xqt01.github.io/post/83_java_concurrency_in_practice_chapter7/</link>
+      <pubDate>Sat, 05 Nov 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/83_java_concurrency_in_practice_chapter7/</guid>
+      <description>7.1 Task cancellation e.g. PrimeGenerator是一个质数生成器, 通过调用aSecondOfPrimes方法, 实现在1秒延迟后取消质数生成. 看起来没有什</description>
+    </item>
+    
+    <item>
+      <title>Java Concurrency in Practice Chapter6-Task Execution</title>
+      <link>https://xqt01.github.io/post/81_java_concurrency_in_practice_chapter6/</link>
+      <pubDate>Mon, 07 Mar 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/81_java_concurrency_in_practice_chapter6/</guid>
+      <description>一个大型的应用通常是一个个的任务组成的, 这个Chapter就讲怎么设计一个线程安全的任务. 6.1-Executing tasks in threads 如果串行执行任务, 性能很差, 不适合web服</description>
+    </item>
+    
+    <item>
+      <title>Java Concurrency in Practice Chapter5-Building Blocks</title>
+      <link>https://xqt01.github.io/post/80_java_concurrency_in_practice_chapter5/</link>
+      <pubDate>Sat, 05 Feb 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/80_java_concurrency_in_practice_chapter5/</guid>
+      <description>上一章讲如何设计线程安全类, 这一章就介绍JDK中已有的线程安全类, 把线程安全性委托给这些类, 并让这些类区管理所有的状态, 从而使模块线程安全.</description>
+    </item>
+    
+    <item>
+      <title>Java Concurrency in Practice Chapter4-Composing Objects</title>
+      <link>https://xqt01.github.io/post/79_java_concurrency_in_practice_chapter4/</link>
+      <pubDate>Tue, 01 Feb 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/79_java_concurrency_in_practice_chapter4/</guid>
+      <description>这一章介绍一些组合模式, 让我们把一个类设计成线程安全的类, 避免在每一次访问内存时都要去分析线程安全性, 平切在维护这些类时不会破坏线程安全性.</description>
+    </item>
+    
+    <item>
+      <title>Java Concurrency in Practice Chapter3-Sharing Objects</title>
+      <link>https://xqt01.github.io/post/78_java_concurrency_in_practice_chapter3/</link>
+      <pubDate>Sun, 30 Jan 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/78_java_concurrency_in_practice_chapter3/</guid>
+      <description>这一章主要讲如何安全地共享资源, 来保证线程安全性. 换个角度理解这句话, 如果资源不被共享, 那么也能保证线程安全. Visibility 没有同步机制, 两个线程的执行</description>
+    </item>
+    
+    <item>
+      <title>Java Concurrency in Practice Chapter2-Thread Safety</title>
+      <link>https://xqt01.github.io/post/77_java_concurrency_in_practice_chapter2/</link>
+      <pubDate>Sat, 29 Jan 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/77_java_concurrency_in_practice_chapter2/</guid>
+      <description>这一节主要介绍线程安全的一些基本概念, 解释一些基本名词. 写线程安全的并发代码, 关键就是在访问共享资源时做好管理. Atomicity 在不同的线程访问一个资源时</description>
+    </item>
+    
+    <item>
+      <title>Effective Java Chapter9&amp;10-General Programming&amp;Exceptions</title>
+      <link>https://xqt01.github.io/post/75_effective_java_chapter9_10/</link>
+      <pubDate>Thu, 20 Jan 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/75_effective_java_chapter9_10/</guid>
+      <description>这是Effective Java第九和第十章的总结, 讲如何编程. 项目链接JavaLab. Item 57: Minimize the scope of local variables 减少局部变量的scope, 比如循环遍历</description>
+    </item>
+    
+    <item>
+      <title>Effective Java Chapter8-Methods</title>
+      <link>https://xqt01.github.io/post/74_effective_java_chapter8/</link>
+      <pubDate>Mon, 17 Jan 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/74_effective_java_chapter8/</guid>
+      <description>这是Effective Java第八章的总结, 讲如何设计方法, 个构造器原则一样, 考虑usability, robustness, flexibility. 项目链接JavaLab. Item 49: Check parameters for</description>
+    </item>
+    
+    <item>
+      <title>Effective Java Chapter7-Lambdas and Streams</title>
+      <link>https://xqt01.github.io/post/73_effective_java_chapter7/</link>
+      <pubDate>Wed, 29 Dec 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/73_effective_java_chapter7/</guid>
+      <description>这是Effective Java第七章的总结, 讲Lambdas和Streams这两个在Java8中经常使用的特性. 项目链接JavaLab. Item 42:</description>
+    </item>
+    
+    <item>
+      <title>Effective Java Chapter6-Enums and Annotations</title>
+      <link>https://xqt01.github.io/post/71_effective_java_chapter6/</link>
+      <pubDate>Tue, 28 Dec 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/71_effective_java_chapter6/</guid>
+      <description>这是Effective Java第六章的总结, 讲枚举类和注解. 项目链接JavaLab. Item 34: Use enums instead of int constants 当需要int常量(static final int)</description>
+    </item>
+    
+    <item>
+      <title>Effective Java Chapter5-Generics</title>
+      <link>https://xqt01.github.io/post/70_effective_java_chapter5/</link>
+      <pubDate>Tue, 14 Dec 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/70_effective_java_chapter5/</guid>
+      <description>这是Effective Java第五章的总结, 讲泛型. 项目链接JavaLab. Item 26: Don’t use raw types 在集合中不要用raw types, 写集合带钻石符号, 避免</description>
+    </item>
+    
+    <item>
+      <title>Effective Java Chapter4-Classes and Interfaces</title>
+      <link>https://xqt01.github.io/post/69_effective_java_chapter4/</link>
+      <pubDate>Sun, 28 Nov 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/69_effective_java_chapter4/</guid>
+      <description>这是Effective Java第四章的总结, 讲如何设计Java Class和Interfaces, 这是我们写Java去抽象逻辑的核心. 项目链接</description>
+    </item>
+    
+    <item>
+      <title>Effective Java Chapter3-Methods Common to All Objects</title>
+      <link>https://xqt01.github.io/post/67_effective_java_chapter3/</link>
+      <pubDate>Tue, 16 Nov 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/67_effective_java_chapter3/</guid>
+      <description>这是Effective Java第三章的总结, 将如何override Object类的方法, 以及Comparable.compareTo这个类似</description>
+    </item>
+    
+    <item>
+      <title>Effective Java Chapter2-Creating and Destroying Objects</title>
+      <link>https://xqt01.github.io/post/66_effective_java_chapter2/</link>
+      <pubDate>Mon, 08 Nov 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/66_effective_java_chapter2/</guid>
+      <description>这是Effective Java第二章的总结, 主要涵盖对象的创建和销毁. Item 1: Consider static factory methods instead of constructors 这个建议和设计模式中的工厂方法不是一个东西, 这里指当</description>
+    </item>
+    
+    <item>
+      <title>SpringBoot入门</title>
+      <link>https://xqt01.github.io/post/61_springboot%E5%85%A5%E9%97%A8/</link>
+      <pubDate>Sun, 15 Aug 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/61_springboot%E5%85%A5%E9%97%A8/</guid>
+      <description>Spring Boot is an open source Java-based framework used to create a micro Service. It is developed by Pivotal Team and is used to build stand-alone and production ready spring applications. Micro Service is an architecture that allows the developers to develop and deploy services independently. Each service running has its own process and this achieves the lightweight model to support business applications. Hello World Sprin</description>
+    </item>
+    
+    <item>
+      <title>CSS入门</title>
+      <link>https://xqt01.github.io/post/57_css%E5%85%A5%E9%97%A8/</link>
+      <pubDate>Thu, 12 Aug 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/57_css%E5%85%A5%E9%97%A8/</guid>
+      <description>Cascading Style Sheets(CSS) is a stylesheet language used to describe the presentation of a document written in HTML or XML(including XML dialects such as SVG, MathML or XHTML). CSS describes how elements should be rendered on screen, on paper, in speech, or on other media. CSS is among the core languages of the open web and is standardized across Web browsers according to W3C specifications. 官方的tu</description>
+    </item>
+    
+    <item>
+      <title>Java的基本类型</title>
+      <link>https://xqt01.github.io/post/60_java%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%B1%BB%E5%9E%8B/</link>
+      <pubDate>Sun, 08 Aug 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/60_java%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%B1%BB%E5%9E%8B/</guid>
+      <description>在刚结束的培训项目中需要把几个指标落库, 我想当然的以为int那21亿的范围应该已经够用了, 结果项目发布后报了一堆out of range. 我发现自己对最最基</description>
+    </item>
+    
+    <item>
+      <title>SpringMVC入门</title>
+      <link>https://xqt01.github.io/post/55_springmvc%E5%85%A5%E9%97%A8/</link>
+      <pubDate>Sun, 25 Jul 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/55_springmvc%E5%85%A5%E9%97%A8/</guid>
+      <description>The Spring Web model-view-controller (MVC) framework is designed around a DispatcherServlet that dispatches requests to handlers, with configurable handler mappings, view resolution, locale and theme resolution as well as support for uploading files. The default handler is based on the @Controller and @RequestMapping annotations, offering a wide range of flexible handling methods. With the introduction of Spring 3.0, the @Controller mechanism also allows you to create RESTful Web sites and</description>
+    </item>
+    
+    <item>
+      <title>Mybatis入门</title>
+      <link>https://xqt01.github.io/post/52_mybatis%E5%85%A5%E9%97%A8/</link>
+      <pubDate>Fri, 09 Jul 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/52_mybatis%E5%85%A5%E9%97%A8/</guid>
+      <description>MyBatis是一款优秀的持久层框架, 它支持自定义SQL/存储过程以及高级映射. MyBatis免除了几乎所有的JDBC代码以及设置参数和获取</description>
+    </item>
+    
+    <item>
+      <title>Vue入门</title>
+      <link>https://xqt01.github.io/post/54_vue%E5%85%A5%E9%97%A8/</link>
+      <pubDate>Fri, 02 Jul 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/54_vue%E5%85%A5%E9%97%A8/</guid>
+      <description>官方文档的中文介绍有简单入门的视频教程, 下载HbuilderX, 并导入官方的教程代码. 我学习的过程是先看完视频跑一边代码再根据文档梳理一次.</description>
+    </item>
+    
+    <item>
+      <title>Redis入门</title>
+      <link>https://xqt01.github.io/post/53_redis%E5%85%A5%E9%97%A8/</link>
+      <pubDate>Tue, 15 Jun 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/53_redis%E5%85%A5%E9%97%A8/</guid>
+      <description>NoSQL方便扩展, 因为不像关系型数据库中的数据, 互相之间会有关联. 性能高, 而且数据类型多种多样, 不用提前设计. Redis代表Remote Dictionary</description>
+    </item>
+    
+    <item>
+      <title>HTML入门</title>
+      <link>https://xqt01.github.io/post/51_html%E5%85%A5%E9%97%A8/</link>
+      <pubDate>Mon, 31 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/51_html%E5%85%A5%E9%97%A8/</guid>
+      <description>HTML stands for HyperText Markup Language. It is used to design web pages using a markup language. HTML is the combination of Hypertext and Markup language. Hypertext defines the link between the web pages. A markup language is used to define the text document within tag which defines the structure of web pages. This language is used to annotate (make notes for the computer) text so that a machine can</description>
+    </item>
+    
+    <item>
+      <title>JavaWeb-MVC/过滤器/监听器</title>
+      <link>https://xqt01.github.io/post/50_javaweb_mvc_%E8%BF%87%E6%BB%A4%E5%99%A8%E7%9B%91%E5%90%AC%E5%99%A8/</link>
+      <pubDate>Mon, 31 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/50_javaweb_mvc_%E8%BF%87%E6%BB%A4%E5%99%A8%E7%9B%91%E5%90%AC%E5%99%A8/</guid>
+      <description>MVC三层架构 MVC: Controller专注于业务处理, 它的处理结果就是Model. Model可以是一个JavaBean(pojo), 也可以是一</description>
+    </item>
+    
+    <item>
+      <title>JavaWeb-Cookie/Session</title>
+      <link>https://xqt01.github.io/post/49_javaweb_cookie_session/</link>
+      <pubDate>Mon, 24 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/49_javaweb_cookie_session/</guid>
+      <description>cookie: 客户端技术(响应/请求), session: 服务器技术, 把信息或数据放在session中. 都是保存会话的技术. 现实中的例子就是已经登陆的网站, 下次可以直接</description>
+    </item>
+    
+    <item>
+      <title>JavaWeb-Servlet</title>
+      <link>https://xqt01.github.io/post/48_javaweb_servlet/</link>
+      <pubDate>Fri, 14 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/48_javaweb_servlet/</guid>
+      <description>原理 其中首次访问指创建war包的过程, service方法定义在Servlet接口中. 实验 在MVN repository中找Java Servlet API/jsp api, 导入m</description>
+    </item>
+    
+    <item>
+      <title>JavaWeb-Tomcat/Maven及其配置</title>
+      <link>https://xqt01.github.io/post/47_javaweb_tomcatmaven%E5%8F%8A%E5%85%B6%E9%85%8D%E7%BD%AE/</link>
+      <pubDate>Mon, 10 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/47_javaweb_tomcatmaven%E5%8F%8A%E5%85%B6%E9%85%8D%E7%BD%AE/</guid>
+      <description>Web服务器 静态web的客户端直接从服务器下文件, 像我的这个博客一样, 没法动态更新. 而动态web中, 服务器可以提供动态的资源, 可以连接数据库</description>
+    </item>
+    
+    <item>
+      <title>JVM入门-垃圾回收器</title>
+      <link>https://xqt01.github.io/post/40_jvm%E5%85%A5%E9%97%A8_%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E5%99%A8/</link>
+      <pubDate>Tue, 02 Feb 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/40_jvm%E5%85%A5%E9%97%A8_%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E5%99%A8/</guid>
+      <description>按线程数分 串行垃圾回收器和并行垃圾回收器. 串行回收指的是在同一时间段内只允许有一个CPU用于执行垃圾回收操作, 此时工作线程被暂停, 直至垃圾收</description>
+    </item>
+    
+    <item>
+      <title>JVM入门-垃圾回收相关概念</title>
+      <link>https://xqt01.github.io/post/39_jvm%E5%85%A5%E9%97%A8_%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E7%9B%B8%E5%85%B3%E6%A6%82%E5%BF%B5/</link>
+      <pubDate>Mon, 01 Feb 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/39_jvm%E5%85%A5%E9%97%A8_%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E7%9B%B8%E5%85%B3%E6%A6%82%E5%BF%B5/</guid>
+      <description>System.gc() 在默认情况下, 通过System.gc()或者Runtime.getRuntime().gc()的调用, 会显式触发Full GC, 同时对老年代和新</description>
+    </item>
+    
+    <item>
+      <title>JVM入门-垃圾回收概述与算法</title>
+      <link>https://xqt01.github.io/post/38_jvm%E5%85%A5%E9%97%A8_%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%A6%82%E8%BF%B0%E4%B8%8E%E7%AE%97%E6%B3%95/</link>
+      <pubDate>Sat, 30 Jan 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/38_jvm%E5%85%A5%E9%97%A8_%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%A6%82%E8%BF%B0%E4%B8%8E%E7%AE%97%E6%B3%95/</guid>
+      <description>垃圾是指在运行程序中没有任何指针指向的对象, 这个对象就是需要被回收的垃圾. 如果不及时对内存中的垃圾进行清理, 这些垃圾对象所占的内存空间会一直</description>
+    </item>
+    
+    <item>
+      <title>JVM入门-字符串常量池</title>
+      <link>https://xqt01.github.io/post/37_jvm%E5%85%A5%E9%97%A8_%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%B8%B8%E9%87%8F%E6%B1%A0/</link>
+      <pubDate>Fri, 29 Jan 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/37_jvm%E5%85%A5%E9%97%A8_%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%B8%B8%E9%87%8F%E6%B1%A0/</guid>
+      <description>String比较特殊, 具有不可变性(声明为final), 并且实现了Serializable接口(支持序列化), Comparable接口(可比</description>
+    </item>
+    
+    <item>
+      <title>JVM入门-执行引擎</title>
+      <link>https://xqt01.github.io/post/36_jvm%E5%85%A5%E9%97%A8_%E6%89%A7%E8%A1%8C%E5%BC%95%E6%93%8E/</link>
+      <pubDate>Fri, 29 Jan 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/36_jvm%E5%85%A5%E9%97%A8_%E6%89%A7%E8%A1%8C%E5%BC%95%E6%93%8E/</guid>
+      <description>虚拟机是一个相对于&amp;quot;物理机&amp;quot;的概念, 这两种机器都有代码执行能力; 区别是物理机的执行引擎是直接建立在处理器, 缓存, 指令集和</description>
+    </item>
+    
+    <item>
+      <title>JVM入门-对象实例化与直接内存</title>
+      <link>https://xqt01.github.io/post/35_jvm%E5%85%A5%E9%97%A8_%E5%AF%B9%E8%B1%A1%E5%AE%9E%E4%BE%8B%E5%8C%96/</link>
+      <pubDate>Thu, 28 Jan 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/35_jvm%E5%85%A5%E9%97%A8_%E5%AF%B9%E8%B1%A1%E5%AE%9E%E4%BE%8B%E5%8C%96/</guid>
+      <description>运行时方法区已经讲完了, 那么new的对象是在堆中的, 它的类信息在方法区, 而局部变量在虚拟机栈中. 接下来我们梳理的是内存层面对象到底是怎么实例</description>
+    </item>
+    
+    <item>
+      <title>JVM入门-方法区</title>
+      <link>https://xqt01.github.io/post/34_jvm%E5%85%A5%E9%97%A8_%E6%96%B9%E6%B3%95%E5%8C%BA/</link>
+      <pubDate>Thu, 28 Jan 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/34_jvm%E5%85%A5%E9%97%A8_%E6%96%B9%E6%B3%95%E5%8C%BA/</guid>
+      <description>所有的方法区在逻辑上属于堆的一部分(官方文档原话), 但一些简单的实现可能不会选择去进行垃圾收集或者进行压缩. 所以我们把方法区看作是一块独立于</description>
+    </item>
+    
+    <item>
+      <title>JVM入门-堆</title>
+      <link>https://xqt01.github.io/post/33_jvm%E5%85%A5%E9%97%A8_%E5%A0%86/</link>
+      <pubDate>Wed, 27 Jan 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/33_jvm%E5%85%A5%E9%97%A8_%E5%A0%86/</guid>
+      <description>上一篇笔记讲的是运行时方法区的线程独享的部分, 接下来将线程共享的方法区与堆. Heap(堆) Java堆区在JVM启动的时候即被创建, 其空间大小</description>
+    </item>
+    
+    <item>
+      <title>JVM入门-运行时数据区概述及线程</title>
+      <link>https://xqt01.github.io/post/32_jvm%E5%85%A5%E9%97%A8_%E8%BF%90%E8%A1%8C%E6%97%B6%E6%95%B0%E6%8D%AE%E5%8C%BA%E6%A6%82%E8%BF%B0%E5%8F%8A%E7%BA%BF%E7%A8%8B/</link>
+      <pubDate>Wed, 27 Jan 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/32_jvm%E5%85%A5%E9%97%A8_%E8%BF%90%E8%A1%8C%E6%97%B6%E6%95%B0%E6%8D%AE%E5%8C%BA%E6%A6%82%E8%BF%B0%E5%8F%8A%E7%BA%BF%E7%A8%8B/</guid>
+      <description>回顾上一讲, class文件被类加载器加载之后, 会使用run engine去执行. Running Data Area具体内容如下图, 红色部分是多个线程共享的, 灰色部分</description>
+    </item>
+    
+    <item>
+      <title>JVM入门-JVM与Java体系结构</title>
+      <link>https://xqt01.github.io/post/30_jvm%E5%85%A5%E9%97%A8_vm%E4%B8%8Ejava%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/</link>
+      <pubDate>Mon, 25 Jan 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/30_jvm%E5%85%A5%E9%97%A8_vm%E4%B8%8Ejava%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/</guid>
+      <description>Java的垃圾回收使得开发效率大大提升(对比C++), 但是理解JVM工作机制才能更好地让我们我们有扩展知识和debug的能力. JVM不一定只</description>
+    </item>
+    
+    <item>
+      <title>JVM入门-类加载子系统</title>
+      <link>https://xqt01.github.io/post/31_jvm%E5%85%A5%E9%97%A8_%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%AD%90%E7%B3%BB%E7%BB%9F/</link>
+      <pubDate>Mon, 25 Jan 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/31_jvm%E5%85%A5%E9%97%A8_%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%AD%90%E7%B3%BB%E7%BB%9F/</guid>
+      <description>通过Class Loader SubSystem从文件系统或者网络中加载Class文件. ClassLoader只负责XXX.class文件的加载, 至于它是</description>
+    </item>
+    
+    <item>
+      <title>Spring-AOP</title>
+      <link>https://xqt01.github.io/post/44_spring_aop/</link>
+      <pubDate>Fri, 22 Jan 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/44_spring_aop/</guid>
+      <description>概念 面向切面编程, 利用AOP可以对业务逻辑的各个部分进行隔离, 使业务逻辑各部分之间的耦合度降低. 在不修改源代码的情况下, 也可以在主干功能里面</description>
+    </item>
+    
+    <item>
+      <title>Spring-IOC</title>
+      <link>https://xqt01.github.io/post/43_spring_ioc/</link>
+      <pubDate>Sat, 16 Jan 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/43_spring_ioc/</guid>
+      <description>入门-创建对象 教育版的idea没有spring initializer, 建立普通Java工程就好. 创建好工程后将如下的jar文件(spring框架的依赖和日志依赖)</description>
+    </item>
+    
+    <item>
+      <title>剑指offer</title>
+      <link>https://xqt01.github.io/post/1_%E5%89%91%E6%8C%87offer/</link>
+      <pubDate>Fri, 11 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/1_%E5%89%91%E6%8C%87offer/</guid>
+      <description>这是剑指offer第二版的刷题小总结, 对应leetcode上剑指Offer专题的题目. 括号内的数字对应主站中题目的序号, 没有注明的复杂度都是</description>
+    </item>
+    
+    <item>
+      <title>Java多线程-高级</title>
+      <link>https://xqt01.github.io/post/46_java%E5%A4%9A%E7%BA%BF%E7%A8%8B%E9%AB%98%E7%BA%A7/</link>
+      <pubDate>Thu, 10 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/46_java%E5%A4%9A%E7%BA%BF%E7%A8%8B%E9%AB%98%E7%BA%A7/</guid>
+      <description>继续卖票 高内聚低耦合, 线程操作资源类. 操作指线程对外暴露的调用方法(高内聚). 线程之间低耦合. public class SaleTicket { public static void main(String[] args) { Ticket ticket = new Ticket(); new Thread(new Runnable() { @Override public void run()</description>
+    </item>
+    
+    <item>
+      <title>Java多线程-基础</title>
+      <link>https://xqt01.github.io/post/45_java%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80/</link>
+      <pubDate>Mon, 30 Nov 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/45_java%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80/</guid>
+      <description>创建 方式1 创建继承Thread类的子类 重写Thread类的run() 创建Thread类的子类的对象 通过此对象调用start() public class ThreadBase { public static void</description>
+    </item>
+    
+    <item>
+      <title>MySQL-高级</title>
+      <link>https://xqt01.github.io/post/42_mysql_%E9%AB%98%E7%BA%A7/</link>
+      <pubDate>Tue, 17 Nov 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/42_mysql_%E9%AB%98%E7%BA%A7/</guid>
+      <description>回顾 性能下降原因 查询写的不好 索引失效(单值, 符合) 关联查询过多join 服务器调优和参数设置不合适 SQL解析顺序 几种join 注意这种公有部分没</description>
+    </item>
+    
+    <item>
+      <title>MySQL-基础</title>
+      <link>https://xqt01.github.io/post/41_mysql_%E5%9F%BA%E7%A1%80/</link>
+      <pubDate>Thu, 12 Nov 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/41_mysql_%E5%9F%BA%E7%A1%80/</guid>
+      <description>MySQL的常见命令 查看当前所有的数据库: show databases; 打开指定的库: use 库名 查看当前库的所有表: show tables; 查看其它库的所有表: show tables from 库名; 创建表: create table 表名(</description>
+    </item>
+    
+    <item>
+      <title>计算机网络-链路层</title>
+      <link>https://xqt01.github.io/post/29_%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C_%E9%93%BE%E8%B7%AF%E5%B1%82/</link>
+      <pubDate>Mon, 09 Nov 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/29_%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C_%E9%93%BE%E8%B7%AF%E5%B1%82/</guid>
+      <description>概述 运行链路层的主机/路由器/交换机等都叫结点(node), 连接相邻结点的通信信道叫链路. 数据报会被封装到链路层帧中并被传送到链路. 主体部分</description>
+    </item>
+    
+    <item>
+      <title>计算机网络-网络层</title>
+      <link>https://xqt01.github.io/post/28_%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C_%E7%BD%91%E7%BB%9C%E5%B1%82/</link>
+      <pubDate>Wed, 04 Nov 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/28_%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C_%E7%BD%91%E7%BB%9C%E5%B1%82/</guid>
+      <description>网络层的分组是数据报, 一般由路由器把报文段封装成数据报, 或者从数据报提取报文段给运输层. 概述 转发与路由选择 转发: 分组到达路由器的输入链路时,</description>
+    </item>
+    
+    <item>
+      <title>计算机网络-运输层</title>
+      <link>https://xqt01.github.io/post/27_%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C_%E8%BF%90%E8%BE%93%E5%B1%82/</link>
+      <pubDate>Tue, 03 Nov 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/27_%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C_%E8%BF%90%E8%BE%93%E5%B1%82/</guid>
+      <description>运输层协议为运行在不同的主机上的应用进程之间提供了逻辑通信(logic communication), 它是在端系统中被实现的, 发送端的运输层把报文转换为报文段(segme</description>
+    </item>
+    
+    <item>
+      <title>计算机网络-应用层</title>
+      <link>https://xqt01.github.io/post/26_%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C_%E5%BA%94%E7%94%A8%E5%B1%82/</link>
+      <pubDate>Tue, 20 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/26_%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C_%E5%BA%94%E7%94%A8%E5%B1%82/</guid>
+      <description>协议管理 网络应用体系结构 有应用体系结构决定如何在端系统组织该应用程序. 包括客户-服务器体系结构和P2P体系结构. 客户-服务器体系结构: 主机总</description>
+    </item>
+    
+    <item>
+      <title>计算机网络-基础</title>
+      <link>https://xqt01.github.io/post/25_%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C_%E5%9F%BA%E7%A1%80/</link>
+      <pubDate>Mon, 19 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/25_%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C_%E5%9F%BA%E7%A1%80/</guid>
+      <description>所有手机, 电脑, 平板都可以成为主机(host)或者端系统(end system), 他们通过通信链路和分组交换机连接在一起. 对于通信链路, 传输速率可以用bit</description>
+    </item>
+    
+    <item>
+      <title>操作系统-设备驱动与文件系统</title>
+      <link>https://xqt01.github.io/post/24_%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F_%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E4%B8%8E%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/</link>
+      <pubDate>Sat, 17 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/24_%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F_%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E4%B8%8E%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/</guid>
+      <description>I/O与显示器 使用外设通常就是CPU向外设发指令, 当外设完成后做中断处理程序. 有单片机背景的朋友应该会很熟悉这种模式, 通过i2总线, spi总</description>
+    </item>
+    
+    <item>
+      <title>操作系统-内存管理</title>
+      <link>https://xqt01.github.io/post/23_%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F_%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/</link>
+      <pubDate>Sun, 11 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/23_%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F_%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/</guid>
+      <description>内存使用与分段 回顾冯诺依曼的取址执行, 计算机取址执行, 也就是将程序(从磁盘)放到内存中,PC指向开始地址. 如果有下面的代码, call 40所在的位置</description>
+    </item>
+    
+    <item>
+      <title>操作系统-进程与线程</title>
+      <link>https://xqt01.github.io/post/22_%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F_%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B/</link>
+      <pubDate>Sat, 03 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/22_%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F_%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B/</guid>
+      <description>使用CPU 如果CPU只是简单地取址执行, 很多时间就会浪费在IO上, 因为IO通常是机械动作, 而CPU是电路工作, 所以这样就会降低CPU的使用率</description>
+    </item>
+    
+    <item>
+      <title>操作系统-基础</title>
+      <link>https://xqt01.github.io/post/21_%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F_%E5%9F%BA%E7%A1%80/</link>
+      <pubDate>Fri, 02 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://xqt01.github.io/post/21_%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F_%E5%9F%BA%E7%A1%80/</guid>
+      <description>操作系统的课程来自哈工大的李志军老师, 视频和课件可以在B站找到, 配套的实验在蓝桥可以找到. 课程分为四个部分: 操作系统基础, 进程与线程, 内存管</description>
+    </item>
+    
+  </channel>
+</rss>

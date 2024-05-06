@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="PunchCode">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://xqt01.github.io/front.png">
+    <meta property="twitter:image" content="https://xqt01.github.io/front.png" />
+    
+
+    
+    <meta name="title" content="Effective Java Chapter4-Classes and Interfaces" />
+    <meta property="og:title" content="Effective Java Chapter4-Classes and Interfaces" />
+    <meta property="twitter:title" content="Effective Java Chapter4-Classes and Interfaces" />
+    
+
+    
+    <meta name="description" content="Software Engineer">
+    <meta property="og:description" content="Software Engineer" />
+    <meta property="twitter:description" content="Software Engineer" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="Harry, 小拳头">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>Effective Java Chapter4-Classes and Interfaces | 以终为始</title>
+
+    <link rel="canonical" href="/post/69_effective_java_chapter4/">
+
+    
+    
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hugo-theme-cleanwhite.min.css">
+
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+
+    
+    <link href="https://cdn.jsdelivr.net/gh/FortAwesome/Font-Awesome@5.15.1/css/all.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    
+    <script src="/js/jquery.min.js"></script>
+
+    
+    <script src="/js/bootstrap.min.js"></script>
+
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+
+</head>
+
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">PunchCode</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">All Posts</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/tech">tech</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0">学习笔记</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/%E6%9D%82%E8%B0%88">杂谈</a>
+                        </li>
+                        
+                    
+                    
+		    
+                        <li><a href="/top/archive/">ARCHIVE</a></li>
+                    
+                        <li><a href="/top/about/">ABOUT</a></li>
+                    
+
+                    
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/front.png')
+    }
+</style>
+
+<header class="intro-header" >
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/java" title="Java">
+                            Java
+                        </a>
+                        
+                    </div>
+                    <h1>Effective Java Chapter4-Classes and Interfaces</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        
+                            Posted by 
+                            
+                                小拳头
+                             
+                            on 
+                            Sunday, November 28, 2021
+                            
+                            
+                            
+                            
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <p>这是Effective Java第四章的总结, 讲如何设计Java Class和Interfaces, 这是我们写Java去抽象逻辑的核心. 项目链接<a href="https://github.com/xqt01/JavaLab">JavaLab</a>.</p>
+<h2 id="item-15-minimize-the-accessibility-of-classes-and-members">Item 15: Minimize the accessibility of classes and members</h2>
+<p>尽量让类的accessibility严格, 书中讲了很多原因, 总的来说就是降低代码的耦合度, 对private的方法, 我们可以放心地优化/修改. 对于类的字段, 大多数情况都不应该让他们是public的. 对于<code>public static final fields</code>常量, 应该用大写+下划线的格式命名.</p>
+<p>这里要注意nonzero-length array, 即使是<code>public static final Thing[]</code>, 其中的值可以被修改. 我们可以让这个字段<code>private</code>, 然后露出一个返回或者它的方法/用另一个字段返回一个只读的copy.</p>
+<h2 id="item-16-in-public-classes-use-accessor-methods-not-public-fields">Item 16: In public classes, use accessor methods, not public fields</h2>
+<p>对public classes, 用getter和setter来暴露字段, 不要用public字段. 对私有类/嵌套类, 可以用public的字段</p>
+<h2 id="item-17-minimize-mutability">Item 17: Minimize mutability</h2>
+<p>Java本身提供了许多immutable的类, 比如String/BigInteger/BigDecimal/包装类. 让类immutable, 有5条规则.</p>
+<ol>
+<li>Don’t provide methods that modify the object’s state</li>
+<li>Ensure that the class can’t be extended. 声明为<code>public final</code>类, 防止被继承</li>
+<li>Make all fields final.</li>
+<li>Make all fields private. 即使对final的基础数据类型字段, immutable objects的引用字段, 也最用方法的方式返回, 为后序的更新留下余地</li>
+<li>Ensure exclusive access to any mutable components. 因为有些字段是对象, 而对象本身可能回被外部修改</li>
+</ol>
+<p>immutable objects有很多优点, 比如线程安全(因为不可修改), 可以被放心地调用. 但是如果每个不同的对象都要new新的对象, 会造成资源地浪费. 总的来说, 也应该尽可能地使用immutable objects, 即使无法做到, 也要尽量让字段private final, 不露出不必要的setter. 甚至我们可以让构造器也是私有的, 通过静态工厂方法返回对象, 进一步增加灵活度.</p>
+<h2 id="item-18-favor-composition-over-inheritance">Item 18: Favor composition over inheritance</h2>
+<p>用组合代替继承(这里仅讨论extend, 不讨论implement), 因为继承实际上违反了封装, 跨包的继承往往比较危险. 继承只适用于真正满足<strong>is-a</strong>关系的情况. 这个item用composition-and-forwarding/装饰者的方式解决了继承带来的问题, 强烈建议看例程. Gvava提供了Collection类的方法. 事实上, Java platform libraries也有很多不合理用继承的类, 比如<code>Stack extend Vector</code>和<code>Properties extend Hashtable</code>, 他们都应该用组合而不是继承.</p>
+<h2 id="item-19-design-and-document-for-inheritance-or-else-prohibit-it">Item 19: Design and document for inheritance or else prohibit it</h2>
+<p>对可被重写的类留下注释, 如item18中的addAll, 要明确他的内部调用了什么.</p>
+<h2 id="item-20-prefer-interfaces-to-abstract-classes">Item 20: Prefer interfaces to abstract classes</h2>
+<p>书中主要还是介绍了接口的灵活度, 我自己的理解是接口更多定义的是行为(method), 所以只有类拥有某个行为, 就可以用接口去抽象. 像java Collection接口下有很多AbstractInterface抽象类, 这种实现方式叫abstract skeletal implementation class, 实现接口这个类型下一部分的行为(method), 没有实现的方法就可以最大限度地让子类去实现, 而不用考虑父类方法. 而且类可恶意实现多个接口, 对于通用的类型, 用接口更加合适(Serializable, Cloneable等等).</p>
+<h2 id="item-21-design-interfaces-for-posterity">Item 21: Design interfaces for posterity</h2>
+<p>书中这一节主要是讲写接口的时候要考虑到子类实现是否合适, 想Collection接口的removeIf(是一个default方法), 对Java自己的集合类可以试用, 但是像某些实现了这个接口的第三方集合类(SynchronizedCollection)就不适用.</p>
+<h2 id="item-22-use-interfaces-only-to-define-types">Item 22: Use interfaces only to define types</h2>
+<p>接口作用是用来定义一个type, 而不是其他. 像<code>java.io.ObjectStreamConstants</code>这种constant interface pattern的设计师是有问题的. 去实现这个接口的类即使不用某个常量了, 但是为了保证兼容性还是要去实现这个接口, 并且类的所有子类都会不必要地拥有这些常量. 这种常量应该存在于通用的工具类/某个都会使用此常量的类或接口中.</p>
+<h2 id="item-23-prefer-class-hierarchies-to-tagged-classes">Item 23: Prefer class hierarchies to tagged classes</h2>
+<p>tagged class(类的内部用字段来区分类型)这种类都应该用继承来替换, tagged class实际上就是对类的继承这种性质的一种不好的模仿.</p>
+<h2 id="item-24-favor-static-member-classes-over-nonstatic">Item 24: Favor static member classes over nonstatic</h2>
+<p>这节讨论nested class, 分为4种: static member classes(inner classes), nonstatic member classes, anonymous classes, and local classes.</p>
+<p><strong>static member classes</strong>相当于外部类的一个字段, 可以访问private字段和方法, 同时自身也受到作用域的限制. 因为是static, 本身是独立于实例的. static member classes常用来作为一个helper class作为辅助功能. 而<strong>nonstatic member class</strong>的一个常用的设计是作为Adapter, 比如Map中的keySet, entrySet, and values返回的对象, 被当做集合的一个view. <strong>和实例无关的nested class, 都应该被声明为static, 否则每个对象都会持有对这个nested class的引用.</strong> private static member classes通常作为外部类的一个member, 比如Map中的Entry, 每个entry本身与map有关, 但是entry自身的<code>getKey/getValue/setValue</code>与外部的map无关, 所以用private就可以了.</p>
+<p>除了member classes之外, anonymous classes可以用来作为一个小的功能对象或者过程中生成的对象, 但是有lambda之后就可以用lambda替换这些对象. 还有一个作用就是实现工厂方法. local classes使用场景较少, 文中没举例, 我也没见过&hellip;</p>
+<h2 id="item-25-limit-source-files-to-a-single-top-level-class">Item 25: Limit source files to a single top-level class</h2>
+<p>不要再同一个文件下放多个class, 这样不仅代码难读, 当用<code>javac</code>编译时, 如果顺序不对还会造成编译错误. 要么非public的类分别放到不用的java文件中, 要么放到top-level class的内部供调用.</p>
+<h2 id="参考">参考</h2>
+<ol>
+<li>Effective Java</li>
+</ol>
+
+
+                
+
+                
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/post/68_%E6%8A%95%E8%B5%84%E7%AC%AC%E4%B8%80%E8%AF%BE/" data-toggle="tooltip" data-placement="top" title="投资第一课">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/post/70_effective_java_chapter5/" data-toggle="tooltip" data-placement="top" title="Effective Java Chapter5-Generics">Next
+                            Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+                
+
+                
+
+
+<div id="disqus-comment"></div>
+<div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "xqt01" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+            </div>
+
+            
+            
+            <div class="
+                col-lg-2 col-lg-offset-0
+                visible-lg-block
+                sidebar-container
+                catalog-container">
+                <div class="side-catalog">
+                    <hr class="hidden-sm hidden-xs">
+                    <h5>
+                        <a class="catalog-toggle" href="#">CATALOG</a>
+                    </h5>
+                    <ul class="catalog-body"></ul>
+                </div>
+            </div>
+            
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/java" title="java">
+                            java
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/jvm" title="jvm">
+                            jvm
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/spring" title="spring">
+                            spring
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E5%89%8D%E7%AB%AF" title="前端">
+                            前端
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F" title="操作系统">
+                            操作系统
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93" title="数据库">
+                            数据库
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95" title="数据结构与算法">
+                            数据结构与算法
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B" title="网络编程">
+                            网络编程
+                        </a>
+                        
+                        
+                    </div>
+                </section>
+                
+
+                
+                
+                <section>
+                    <hr>
+                    <h5>FRIENDS</h5>
+                    <ul class="list-inline">
+                        
+                        <li><a target="_blank" href="https://fan-bu-fan.github.io/">FELL &amp; ENJOY</a></li>
+                        
+                    </ul>
+                </section>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">                  
+                    
+                    <li>
+                        <a href="mailto:huanruiz@foxmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		           
+                    
+                    
+                    
+                    
+
+		            
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/xqt01">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		            
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+            
+            
+            
+           
+                   <li>
+                       <a href='' rel="alternate" type="application/rss+xml" title="PunchCode" >
+                           <span class="fa-stack fa-lg">
+                               <i class="fas fa-circle fa-stack-2x"></i>
+                               <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                           </span>
+                       </a>
+                   </li>
+            
+             </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; PunchCode 2024
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function loadAsync(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        loadAsync("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    loadAsync("https://cdn.jsdelivr.net/npm/fastclick@1.0.6/lib/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+    function generateCatalog(selector) {
+
+        
+        
+        
+        
+            _containerSelector = 'div.post-container'
+        
+
+        
+        var P = $(_containerSelector), a, n, t, l, i, c;
+        a = P.find('h1,h2,h3,h4,h5,h6');
+
+        
+        $(selector).html('')
+
+        
+        a.each(function () {
+            n = $(this).prop('tagName').toLowerCase();
+            i = "#" + $(this).prop('id');
+            t = $(this).text();
+            c = $('<a href="' + i + '" rel="nofollow">' + t + '</a>');
+            l = $('<li class="' + n + '_nav"></li>').append(c);
+            $(selector).append(l);
+        });
+        return true;
+    }
+
+    generateCatalog(".catalog-body");
+
+    
+    $(".catalog-toggle").click((function (e) {
+        e.preventDefault();
+        $('.side-catalog').toggleClass("fold")
+    }))
+
+    
+
+
+    loadAsync("\/js\/jquery.nav.js", function () {
+        $('.catalog-body').onePageNav({
+            currentClass: "active",
+            changeHash: !1,
+            easing: "swing",
+            filter: "",
+            scrollSpeed: 700,
+            scrollOffset: 0,
+            scrollThreshold: .2,
+            begin: null,
+            end: null,
+            scrollChange: null,
+            padding: 80
+        });
+    });
+</script>
+
+
+
+
+
+
+</body>
+</html>

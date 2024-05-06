@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="PunchCode">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://xqt01.github.io/front.png">
+    <meta property="twitter:image" content="https://xqt01.github.io/front.png" />
+    
+
+    
+    <meta name="title" content="JVM入门-执行引擎" />
+    <meta property="og:title" content="JVM入门-执行引擎" />
+    <meta property="twitter:title" content="JVM入门-执行引擎" />
+    
+
+    
+    <meta name="description" content="Software Engineer">
+    <meta property="og:description" content="Software Engineer" />
+    <meta property="twitter:description" content="Software Engineer" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="Harry, 小拳头">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>JVM入门-执行引擎 | 以终为始</title>
+
+    <link rel="canonical" href="/post/36_jvm%E5%85%A5%E9%97%A8_%E6%89%A7%E8%A1%8C%E5%BC%95%E6%93%8E/">
+
+    
+    
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hugo-theme-cleanwhite.min.css">
+
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+
+    
+    <link href="https://cdn.jsdelivr.net/gh/FortAwesome/Font-Awesome@5.15.1/css/all.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    
+    <script src="/js/jquery.min.js"></script>
+
+    
+    <script src="/js/bootstrap.min.js"></script>
+
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+
+</head>
+
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">PunchCode</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">All Posts</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/tech">tech</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0">学习笔记</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/%E6%9D%82%E8%B0%88">杂谈</a>
+                        </li>
+                        
+                    
+                    
+		    
+                        <li><a href="/top/archive/">ARCHIVE</a></li>
+                    
+                        <li><a href="/top/about/">ABOUT</a></li>
+                    
+
+                    
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/front.png')
+    }
+</style>
+
+<header class="intro-header" >
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/jvm" title="JVM">
+                            JVM
+                        </a>
+                        
+                    </div>
+                    <h1>JVM入门-执行引擎</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        
+                            Posted by 
+                            
+                                小拳头
+                             
+                            on 
+                            Friday, January 29, 2021
+                            
+                            
+                            
+                            
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <p>虚拟机是一个相对于&quot;物理机&quot;的概念, 这两种机器都有代码执行能力; 区别是物理机的执行引擎是直接建立在处理器, 缓存, 指令集和操作系统层面上的. 而虚拟机的执行引擎则是由软件自行实现的, 因此可以不受物理条件制约地定制指令集与执行引擎的结构体系, 能够执行那些不被硬件直接支持的指令集格式. 执行引擎的任务就是<strong>将字节码指令解释(解释器)/编译(编译器)为对应平台上的本地机器指令</strong>. 注意这里的编译是指后端编译, 而不是生成字节码的前端编译.
+
+  <img src="/36_1.png" alt="">
+
+</p>
+<h2 id="工作过程">工作过程</h2>
+<p>执行引擎工作过程主要有步骤如下. 根据PC寄存器的当前位置对栈进行操作, 从外观上来看, 所有的Java虚拟机的执行引擎输入, 输出都是一致的: 输入字节码二进制流, 处理过程是字节码解析执行的等效过程, 输出执行结果.</p>
+<ol>
+<li>在执行的过程中究竟需要执行什么样的字节码指令完全依赖于PC寄存器.</li>
+<li>每当执行完一项指令操作后, PC寄存器就会更新下一条需要被执行的指令地址.</li>
+<li>方法在执行的过程中, 执行引擎可能通过存储在局部变量表中的对象引用准确定位到存储在Java堆区中的对象实例信息, 或者通过对象头中的元数据指针定位到目标对象的类型信息.
+
+  <img src="/36_2.png" alt="">
+
+</li>
+</ol>
+<p>代码编译(编译器):
+
+  <img src="/36_4.png" alt="">
+
+</p>
+<p>字节码执行(执行引擎)如下. 其中<strong>解释器</strong>在Java虚拟机启动时会根据预定义的规范对字节码采用逐行解释的方式执行, 将每条字节码文件中的内容&quot;翻译&quot;为对应平台的本地机器指令执行. <strong>JIT(Just In Time Compiler)即时编译器</strong>: 就是虚拟机将源代码直接编译成和本地机器平台相关的机器语言(还没执行), 因为方法区有JIT代码缓存, 这个缓存的就是机器指令, 增加机器效率. Java是<strong>半编译半解释型语言</strong>.
+
+  <img src="/36_3.png" alt="">
+
+</p>
+<p>下图是一个流程的概括.
+
+  <img src="/36_5.png" alt="">
+
+</p>
+<h2 id="各种码及运行过程">各种码及运行过程</h2>
+<ol>
+<li><strong>机器码</strong>: 二进制编码方式表示的指令. CPU直接读取运行, 因此和其他语言编的程序相比, 执行速度最快. 不同种类的CPU所对应的机器指令不同.</li>
+<li><strong>指令</strong>: 把机器码中特定的0和1序列, 简化成对应的指令. 不同的硬件平台执行同一个操作对应的机器码可能不同, 所以不同的硬件平台的同一种指令对应的机器码也可能不同.</li>
+<li><strong>指令集</strong>: 不同的硬件平台各自支持的指令是有差别的. 因此每个平台所支持的指令, 称之为对应平台的指令集.</li>
+<li><strong>汇编语言</strong>: 用助记符代替机器指令的操作码, 用地址符号或标号代替指令或操作数的地址. 不同的硬件平台对应着不同的机器语言指令集, 需要通过汇编过程转换成机器指令.</li>
+<li><strong>高级语言</strong>: 仍然需要把程序解释和编译成机器的指令码, 完成这个过程的程序就叫做<strong>解释程序</strong>或<strong>编译程序</strong>.
+
+  <img src="/36_6.png" alt="">
+
+</li>
+</ol>
+<p>对于C和Cpp, 执行过程如下图. 编译过程中读取源程序(字符流), 进行词法和语法的分析, 将高级语言指令转换为功能等效的汇编. 汇编过程中把汇编语言代码翻译成目标机器指令.
+
+  <img src="/36_7.png" alt="">
+
+</p>
+<ol start="6">
+<li><strong>字节码</strong>: 一种中间状态的二进制代码, 比机器码更抽象, 需要直译器转译后才能成为机器码.主要为了实现特定软件运行和软件环境, 与硬件无关. 实现方式是通过编译器和虚拟机器, 编译器将源码编译成字节码, 特定平台上的虚拟机器将字节码转译为可以直接执行的指令.
+
+  <img src="/36_8.png" alt="">
+
+</li>
+</ol>
+<h2 id="解释器">解释器</h2>
+<p>为啥不直接把Java源文件直接让虚拟机识别再转化为机器指令呢, 为什么还要字节码文件这个过程呢. 主要还是为了简化开发. 那么解释器就是一个运行时翻译者, 将字节码文件中的内容翻译为对应平台的本地机器指令执行. 当一条字节码指令被解释执行完成后, 接着再根据PC寄存器中记录的下一条需要被执行的字节码指令执行解释操作.</p>
+<p>**字节码解释器(老版本)**在执行时通过纯软件代码模拟字节码的执行, 效率非常低下. **模板解释器(现在)**将每一条字节码和一个模板函数相关联, 模板函数中直接产生这条字节码执行时的机器码, 提高了解释器的性能. 并且JVM平台支持一种叫作即时编译(JIT)的技术, 即时编译的目的是避免函数被解释执行, 而是将整个函数体编译成为机器码, 每次函数执行时, 只执行编译后的机器码即可, 使得执行效率大幅度提升.</p>
+<h2 id="jit编译器">JIT编译器</h2>
+<p>JIT编译器的好处就是速度快, 那么为什么还要解释器呢. 因为当程序启动后, 解释器可以马上发挥作用, <strong>省去编译的时间</strong>立即执行. 而编译器要想发挥作用, 把代码编译成本地代码, 需要一定的执行时间. 但是要注意JRockit VM就是没有解释器的. 对于服务端应用来说, 启动时间一般不是关注重点, 但对于那些看中启动时间的应用场景, 就需要采用解释器与即时编译器并存的架构来换取一平衡点. 我愿意总结为<strong>解释器先上, JIT慢慢起</strong>.</p>
+<p>一般编译器分为前端编译器(把.java文件转变成.class文件的过程), 后端运行期编译器(把字节码转变成机器码), 静态提前编译器(直接把.java文件编译成本地机器代码的过程).</p>
+<h3 id="热点代码及探测方式">热点代码及探测方式</h3>
+<p>是否需要启动JIT编译器将字节码直接编译为对应平台的本地机器指令, 需要根据代码被调用执行的频率而定. JIT编译器在运行时会针对那些频繁被调用的<strong>热点代码</strong>做深度优化, 将其直接编译为对应平台的本地机器指令来提升Java程序的执行性能(<strong>栈上替换OSR On Stack Replacement</strong>过程, 因为发生在栈上). 被多次调用的方法, 或者是一个方法体内部循环次数较多的循环体都可以被称之为热点代码. 通过热点探测功能来判断和这个调用的次数和循环体次数的阈值. <strong>HotSpot VM所采用的热点探测方式是基于计数器的热点探测</strong>.</p>
+<p>HotSpot VM将会为每一个方法建立2个不同类型的计数器, 分别为<strong>方法调用计数器(Invocation Counter)<strong>和</strong>回边计数器(BackEdge Counter)</strong>. 方法调用计数器用于统计方法的调用次数, 回边计数器用于统计循环体执行的循环次数.</p>
+<h4 id="方法调用计数器">方法调用计数器</h4>
+<p>默认阈值在Client模式下是1500 次, 在Server模式下是10000次, 阈值可以通过虚拟机参数一XX: CompileThreshold来设定, 而超过这个阈值就会触发JIT编译.
+
+  <img src="/36_9.png" alt="">
+
+</p>
+<p>如果不做任何设置, 方法调用计数器统计的并不是方法被调用的绝对次数, 而是一个相对的执行频率, 即一段时间之内方法被调用的次数. 当超过一定的时间限度, 如果方法的调用次数仍然不足以让它提交给即时编译器编译, 那这个方法的调用计数器就会被减少一半. 这个过程称为方法调用计数器<strong>热度的衰减(Counter Decay)</strong>, 而这段时间就称为此方法统计的半衰周期(Counter Half Life Time).</p>
+<p>热度衰减的动作是在虚拟机进行垃圾收集时顺便进行的, 可以通过-XX: -UseCounterDecay来关闭, 可以通过使用-XX: CounterHalfLifeTime参数设置半衰周期的时间, 单位是秒.</p>
+<h4 id="回边计数器">回边计数器</h4>
+<p>统计一个方法中循环体代码执行的次数, 在字节码中遇到控制流向后跳转的指令称为<strong>回边</strong>(Back Edge). 建立回边计数器统计的目的就是为了触发OSR编译.
+
+  <img src="/36_10.png" alt="">
+
+</p>
+<h4 id="设置执行方式">设置执行方式</h4>
+<p>默认是mix mode.</p>
+<ul>
+<li>-Xint: 完全采用解释器模式执行程序.</li>
+<li>-Xcomp: 完全采用即时编译器模式执行程序. 如果即时编译出现问题, 解释器会介入执行.</li>
+<li>-Xmixed: 采用解释器+即时编译器的混合模式共同执行程序.</li>
+</ul>
+<h4 id="hotspot中jit分类">HotSpot中JIT分类</h4>
+<p>在HotSpot VM中内嵌有两个JIT编译器, 分别为Client Compiler和Server Compiler, 大多数情况下我们简称为C1编译器(对字节码进行简单和可靠的优化, 耗时短, 以达到更快的编译速度)和C2编译器(耗时较长的优化, 更激进优化, 但优化的代码执行效率更高). 分别通过-client和-server命令来设置.</p>
+<p>对C1来说:</p>
+<ul>
+<li>方法内联: 将引用的函数代码编译到引用点处, 这样可以减少栈帧的生成, 减少参数传递以及跳转过程.</li>
+<li>去虚拟化: 对唯一的实现类进行内联.</li>
+<li>冗余消除: 在运行期间把一些不会执行的代码折叠.</li>
+</ul>
+<p>C2的优化主要是在全局层面, 逃逸分析是优化的基础(堆中提到过):</p>
+<ul>
+<li>标量替换: 用标量值代替聚合对象的属性值.</li>
+<li>栈上分配：对于未逃逸的对象分配对象在栈而不是堆.</li>
+<li>同步消除：清除同步操作, 通常指synchronized.</li>
+</ul>
+<p>虽然server才会有C2, 但是分层编译(Tiered Compilation)策略会让程序解释执行(不开启性能监控)可以触发C1编译, 将字节码编译成机器码, 进行简单优化. 加上性能监控, C2编译会根据性能监控信息进行激进优化.</p>
+<p>总的说来就是两点:</p>
+<ol>
+<li>JIT编译出来的机器码性能比解释器高</li>
+<li>C2启动时长比C1长, 系统稳定执行以后, C2速度远远快于C1.</li>
+</ol>
+<h2 id="graal编译器与aot编译器">Graal编译器与AOT编译器</h2>
+<p>JDK10起, HotSpot又加入一个全新的即时编译器<strong>Graal编译器</strong>. 需要使用开关参数-XX: +UnlockExperimentalVMOptions, -XX: +UseJVMCICompiler开启.</p>
+<p>jdk9引入了<strong>AOT编译器(Ahead Of Time Compiler)</strong>, JIT是程序运行中进行优化, 而AOT是在运行前优化, 他们的关西是并列的. 通过jaotc, 借助Graal编译器, 将所输入的Java类文件转换为机器码, 并存放至生成的动态共享库之中. 可以直接执行, 不必等待即时编译器的预热, 减少启动阶段的时间. 但是他破坏了跨平台的特性(机器指令堆不同硬件不同), 降低了Java链接过程的动态性, 加载的代码在编译期就必须全部已知.</p>
+<h2 id="参考">参考</h2>
+<ol>
+<li><a href="https://www.bilibili.com/video/BV1PJ411n7xZ?p=1">尚硅谷最新版宋红康JVM教程</a></li>
+<li><a href="https://docs.oracle.com/javase/specs/jvms/se8/html/index.html">The Java® Virtual Machine Specification</a></li>
+</ol>
+
+
+                
+
+                
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/post/35_jvm%E5%85%A5%E9%97%A8_%E5%AF%B9%E8%B1%A1%E5%AE%9E%E4%BE%8B%E5%8C%96/" data-toggle="tooltip" data-placement="top" title="JVM入门-对象实例化与直接内存">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/post/37_jvm%E5%85%A5%E9%97%A8_%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%B8%B8%E9%87%8F%E6%B1%A0/" data-toggle="tooltip" data-placement="top" title="JVM入门-字符串常量池">Next
+                            Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+                
+
+                
+
+
+<div id="disqus-comment"></div>
+<div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "xqt01" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+            </div>
+
+            
+            
+            <div class="
+                col-lg-2 col-lg-offset-0
+                visible-lg-block
+                sidebar-container
+                catalog-container">
+                <div class="side-catalog">
+                    <hr class="hidden-sm hidden-xs">
+                    <h5>
+                        <a class="catalog-toggle" href="#">CATALOG</a>
+                    </h5>
+                    <ul class="catalog-body"></ul>
+                </div>
+            </div>
+            
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/java" title="java">
+                            java
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/jvm" title="jvm">
+                            jvm
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/spring" title="spring">
+                            spring
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E5%89%8D%E7%AB%AF" title="前端">
+                            前端
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F" title="操作系统">
+                            操作系统
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93" title="数据库">
+                            数据库
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95" title="数据结构与算法">
+                            数据结构与算法
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B" title="网络编程">
+                            网络编程
+                        </a>
+                        
+                        
+                    </div>
+                </section>
+                
+
+                
+                
+                <section>
+                    <hr>
+                    <h5>FRIENDS</h5>
+                    <ul class="list-inline">
+                        
+                        <li><a target="_blank" href="https://fan-bu-fan.github.io/">FELL &amp; ENJOY</a></li>
+                        
+                    </ul>
+                </section>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">                  
+                    
+                    <li>
+                        <a href="mailto:huanruiz@foxmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		           
+                    
+                    
+                    
+                    
+
+		            
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/xqt01">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		            
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+            
+            
+            
+           
+                   <li>
+                       <a href='' rel="alternate" type="application/rss+xml" title="PunchCode" >
+                           <span class="fa-stack fa-lg">
+                               <i class="fas fa-circle fa-stack-2x"></i>
+                               <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                           </span>
+                       </a>
+                   </li>
+            
+             </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; PunchCode 2024
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function loadAsync(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        loadAsync("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    loadAsync("https://cdn.jsdelivr.net/npm/fastclick@1.0.6/lib/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+    function generateCatalog(selector) {
+
+        
+        
+        
+        
+            _containerSelector = 'div.post-container'
+        
+
+        
+        var P = $(_containerSelector), a, n, t, l, i, c;
+        a = P.find('h1,h2,h3,h4,h5,h6');
+
+        
+        $(selector).html('')
+
+        
+        a.each(function () {
+            n = $(this).prop('tagName').toLowerCase();
+            i = "#" + $(this).prop('id');
+            t = $(this).text();
+            c = $('<a href="' + i + '" rel="nofollow">' + t + '</a>');
+            l = $('<li class="' + n + '_nav"></li>').append(c);
+            $(selector).append(l);
+        });
+        return true;
+    }
+
+    generateCatalog(".catalog-body");
+
+    
+    $(".catalog-toggle").click((function (e) {
+        e.preventDefault();
+        $('.side-catalog').toggleClass("fold")
+    }))
+
+    
+
+
+    loadAsync("\/js\/jquery.nav.js", function () {
+        $('.catalog-body').onePageNav({
+            currentClass: "active",
+            changeHash: !1,
+            easing: "swing",
+            filter: "",
+            scrollSpeed: 700,
+            scrollOffset: 0,
+            scrollThreshold: .2,
+            begin: null,
+            end: null,
+            scrollChange: null,
+            padding: 80
+        });
+    });
+</script>
+
+
+
+
+
+
+</body>
+</html>

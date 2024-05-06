@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="PunchCode">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://xqt01.github.io/front.png">
+    <meta property="twitter:image" content="https://xqt01.github.io/front.png" />
+    
+
+    
+    <meta name="title" content="Spring-AOP" />
+    <meta property="og:title" content="Spring-AOP" />
+    <meta property="twitter:title" content="Spring-AOP" />
+    
+
+    
+    <meta name="description" content="Software Engineer">
+    <meta property="og:description" content="Software Engineer" />
+    <meta property="twitter:description" content="Software Engineer" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="Harry, 小拳头">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>Spring-AOP | 以终为始</title>
+
+    <link rel="canonical" href="/post/44_spring_aop/">
+
+    
+    
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hugo-theme-cleanwhite.min.css">
+
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+
+    
+    <link href="https://cdn.jsdelivr.net/gh/FortAwesome/Font-Awesome@5.15.1/css/all.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    
+    <script src="/js/jquery.min.js"></script>
+
+    
+    <script src="/js/bootstrap.min.js"></script>
+
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+
+</head>
+
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">PunchCode</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">All Posts</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/tech">tech</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0">学习笔记</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/%E6%9D%82%E8%B0%88">杂谈</a>
+                        </li>
+                        
+                    
+                    
+		    
+                        <li><a href="/top/archive/">ARCHIVE</a></li>
+                    
+                        <li><a href="/top/about/">ABOUT</a></li>
+                    
+
+                    
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/front.png')
+    }
+</style>
+
+<header class="intro-header" >
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/spring" title="Spring">
+                            Spring
+                        </a>
+                        
+                    </div>
+                    <h1>Spring-AOP</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        
+                            Posted by 
+                            
+                                小拳头
+                             
+                            on 
+                            Friday, January 22, 2021
+                            
+                            
+                            
+                            
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <h2 id="概念">概念</h2>
+<p><strong>面向切面编程</strong>, 利用AOP可以对业务逻辑的各个部分进行隔离, 使业务逻辑各部分之间的耦合度降低. 在不修改源代码的情况下, 也可以在主干功能里面添加新功能.</p>
+<h2 id="动态代理">动态代理</h2>
+<ol>
+<li>有接口的情况, 使用JDK动态代理. 创建接口实现类代理对象, 去增强类的方法.</li>
+<li>没有接口的情况, 使用CGLIB动态代理; 创建子类的代理对象, 增强类的方法.</li>
+</ol>
+<p>我们来针对情况1做一个实验. 首先创建接口和对应的实现类.</p>
+<pre><code>public interface UserDao {
+    public int add(int a, int b);
+    public String update(String id);
+}
+</code></pre><pre><code>public class UserDaoImpl implements UserDao {
+    @Override
+    public int add(int a, int b) {
+        return a + b;
+    }
+    @Override
+    public String update(String id) {
+        return id;
+    }
+}
+</code></pre><p>再使用Proxy类创建接口代理对象.</p>
+<pre><code>public class JDKProxy {
+    public static void main(String[] args) {
+        //创建接口实现类的代理对象
+        Class[] interfaces = {UserDao.class};
+        UserDaoImpl userDao = new UserDaoImpl();
+        /**
+         * @param   loader the class loader to define the proxy class
+         * @param   interfaces the list of interfaces for the proxy class
+         *          to implement
+         * @param   接口InvocationHandler的实现类
+         */
+        //接口实现类的代理对象
+        UserDao dao = (UserDao) Proxy.newProxyInstance(JDKProxy.class.getClassLoader(), interfaces, new UserDaoProxy(userDao)); //也可以用匿名内部类代替UserDaoProxy, new InvocationHandler(), 直接Override invoke方法
+        int result = dao.add(1, 2);
+        System.out.println(&quot;result: &quot; + result);
+        System.out.println(dao.update(&quot;test&quot;));
+    }
+}
+
+class UserDaoProxy implements InvocationHandler { //也可以用匿名内部类写
+    private Object obj;
+    public UserDaoProxy(Object obj) { //通过有参构造器传入要代理的对象
+        this.obj = obj;
+    }
+    //增强的逻辑
+    @Override
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        System.out.println(&quot;Run before method: &quot; + method.getName() + &quot; Parameters: &quot;+ Arrays.toString(args));
+        Object res = method.invoke(obj, args); //(对象, 参数), 被增强的方法执行
+        System.out.println(&quot;Run after method: &quot; + obj);
+        return res;
+    }
+}
+</code></pre><blockquote>
+<p>一些术语:</p>
+<p>连接点: 类里面哪些可以被增强的方法</p>
+<p>切入点: <strong>实际被增强</strong>的方法称为切入点</p>
+<p>通知(增强): 实际增强的逻辑部分称为通知, 包含前置通知/后置通知/环绕通知/异常通知/最终通知</p>
+<p>切面: 把通知应用到切入点过程</p>
+</blockquote>
+<h2 id="aop操作-准备">AOP操作-准备</h2>
+<p>Spring一般都是基于AspectJ实现AOP操作. 和IOC一样, 可以基于xml配置文件实现, 也可以基于注解方式实现. 需要如下的依赖包:
+
+  <img src="/44_1.png" alt="">
+
+</p>
+<p>通过切入点表达式可以知道对哪个类里面的哪个方法进行增强. <code>execution([权限修饰符][返回类型][类全路径][方法名称]([参数列表]))</code>. 其中权限修饰符可以用<code>*</code>表示所有类型, 返回类型可以省略. 如果写<code>com.example.*.*</code>, 就表示对<code>com.example</code>包下的所有类和所有方法进行增强.</p>
+<h2 id="aop操作-aspectj">AOP操作-AspectJ</h2>
+<p>创建两个类:</p>
+<pre><code>@Component //被增强的类
+public class User {
+    public void add() {
+        System.out.println(&quot;add!&quot;);
+    }
+}
+</code></pre><pre><code>@Component
+@Aspect //生成代理对象
+public class UserProxy {
+    //相同切入点抽取, 后面就可以重复使用了
+    @Pointcut(value = &quot;execution(* com.example.aopanno.User.add(..))&quot;)
+    public void pointdemo() {
+
+    }
+
+    //前置通知
+    @Before(value = &quot;pointdemo()&quot;)//相同切入点抽取使用
+    public void before() {
+        System.out.println(&quot;before&quot;);
+    }
+
+    //后置通知
+    @AfterReturning(value = &quot;pointdemo()&quot;)
+    public void afterReturning() {
+        System.out.println(&quot;afterReturning&quot;);
+    }
+
+    //最终通知
+    @After(value = &quot;pointdemo()&quot;)
+    public void after() {
+        System.out.println(&quot;after&quot;);
+    }
+
+    //异常通知
+    @AfterThrowing(value = &quot;pointdemo()&quot;)
+    public void afterThrowing() {
+        System.out.println(&quot;afterThrowing&quot;);
+    }
+
+    //环绕通知
+    @Around(value = &quot;pointdemo()&quot;)
+    public void around(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
+        System.out.println(&quot;环绕之前&quot;);
+        proceedingJoinPoint.proceed(); //被增强的方法执行
+        System.out.println(&quot;环绕之后&quot;);
+    }
+}
+</code></pre><p>创建配置文件:</p>
+<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
+       xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+       xmlns:context=&quot;http://www.springframework.org/schema/context&quot;
+       xmlns:aop=&quot;http://www.springframework.org/schema/aop&quot;
+       xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd&quot;&gt;
+    &lt;!-- 开启注解扫描 --&gt;
+    &lt;context:component-scan base-package=&quot;com.example.aopanno&quot;/&gt;
+
+    &lt;!-- 开启Aspect生成代理对象--&gt;
+    &lt;aop:aspectj-autoproxy&gt;&lt;/aop:aspectj-autoproxy&gt;
+&lt;/beans&gt;
+</code></pre><p>进行测试:</p>
+<pre><code>public class TestAop {
+
+    @Test
+    public void test() {
+        ApplicationContext context = new ClassPathXmlApplicationContext(&quot;bean1.xml&quot;);
+        User user = context.getBean(&quot;user&quot;, User.class);
+        user.add();
+    }
+}
+</code></pre><p>最后的输出如下. 我们注意<code>after</code>无论是否有异常都会执行.</p>
+<pre><code>//没有异常输出
+环绕之前
+before
+add!
+afterReturning
+after
+环绕之后
+//有异常输出
+环绕之前
+before
+afterThrowing
+after
+</code></pre><p>如果有多个增强类多同一个方法进行增强, 可以设置增强类优先级. 我们新建一个<code>PersonProxy</code>类. 并带上注解<code>@Order(0)</code> 而前面的<code>UserProxy</code>加上注解<code>@Order(1)</code></p>
+<pre><code>@Component
+@Aspect
+@Order(0)
+public class PersonProxy {
+    @Before(value = &quot;execution(* com.example.aopanno.User.add())&quot;)
+    public void afterReturning() {
+        System.out.println(&quot;Person before&quot;);
+    }
+}
+</code></pre><p>输出如下, 可以看出数字越小, 优先级越高. 而默认是最低优先级<code>int value() default 2147483647;</code>.</p>
+<pre><code>Person before
+环绕之前
+before
+add!
+afterReturning
+after
+环绕之后
+</code></pre><h2 id="aop操作-xml中配置aop增强">AOP操作-xml中配置aop增强</h2>
+<pre><code>&lt;!--配置 aop 增强--&gt;
+&lt;aop:config&gt;
+    &lt;!--切入点--&gt;
+    &lt;aop:pointcut id=&quot;p&quot; expression=&quot;execution(* com.example.aopxml.Book.buy())&quot;/&gt;
+    &lt;!--配置切面--&gt;
+    &lt;aop:aspect ref=&quot;bookProxy&quot;&gt;
+        &lt;!--增强作用在具体的方法上--&gt;
+        &lt;aop:before method=&quot;before&quot; pointcut-ref=&quot;p&quot;/&gt;
+    &lt;/aop:aspect&gt;
+&lt;/aop:config&gt;
+</code></pre><p>aop也可以使用完全注解, 一般开发中比较少遇到.</p>
+<pre><code>@Configuration
+@ComponentScan(basePackages = {&quot;com.atguigu&quot;}) 
+@EnableAspectJAutoProxy(proxyTargetClass = true)
+</code></pre><h2 id="jdbctemplate">JdbcTemplate</h2>
+<p>Spring封装了JDBC. 需要如下的依赖包.
+
+  <img src="/44_2.png" alt="">
+
+</p>
+<p>为此次实验创建一个数据库book.</p>
+<pre><code>create database book;
+use book;
+create table Book(userId varchar(30), username varchar(30), ustatus varchar(30));
+</code></pre><p>配置文件.</p>
+<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
+       xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+       xmlns:context=&quot;http://www.springframework.org/schema/context&quot;
+       xmlns:aop=&quot;http://www.springframework.org/schema/aop&quot;
+       xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd&quot;&gt;
+    &lt;!-- 1.数据库连接池 --&gt;
+    &lt;bean id=&quot;dataSource&quot; class=&quot;com.alibaba.druid.pool.DruidDataSource&quot;
+          destroy-method=&quot;close&quot;&gt;
+        &lt;property name=&quot;url&quot; value=&quot;jdbc:mysql:///book&quot; /&gt;
+        &lt;property name=&quot;username&quot; value=&quot;root&quot; /&gt;
+        &lt;property name=&quot;password&quot; value=&quot;xxxxxx&quot; /&gt;
+        &lt;property name=&quot;driverClassName&quot; value=&quot;com.mysql.jdbc.Driver&quot; /&gt;
+    &lt;/bean&gt;
+
+    &lt;!-- 2.JdbcTemplate对象, 注入DataSource --&gt;
+    &lt;bean id=&quot;jdbcTemplate&quot; class=&quot;org.springframework.jdbc.core.JdbcTemplate&quot;&gt;
+        &lt;!--注入 dataSource--&gt;
+        &lt;property name=&quot;dataSource&quot; ref=&quot;dataSource&quot;&gt;&lt;/property&gt;&lt;!--set方式注入--&gt;
+    &lt;/bean&gt;
+
+    &lt;!-- 组件扫描 --&gt;
+    &lt;context:component-scan base-package=&quot;com.example&quot;&gt;&lt;/context:component-scan&gt;
+&lt;/beans&gt;
+</code></pre><p>创建<code>BookDao</code>接口并实现.</p>
+<pre><code>public interface BookDao {
+    public void addBook(Book book);
+    public void updateBook(Book book);
+    public void deleteBook(String id);
+    public int selectCount();
+    public Book findBookInfo(String id);
+    public List&lt;Book&gt; findAllBook();
+    public void batchAddBook(List&lt;Object[]&gt; batchArgs);
+    public void batchUpdateBook(List&lt;Object[]&gt; batchArgs);
+    public void batchDeleteBook(List&lt;Object[]&gt; batchArgs);
+}
+</code></pre><pre><code>@Repository
+public class BookDaoImpl implements BookDao{
+    @Autowired
+    private JdbcTemplate jdbcTemplate; //3.创建service类/dao类, 在dao注入jdbcTemplate对象
+
+    @Override
+    public void addBook(Book book) {
+        //1.创建sql语句
+        String sql = &quot;insert into book values(?,?,?)&quot;;
+        //2.调用方法实现
+        Object[] args = {book.getUserId(), book.getUsername(),book.getUstatus()};
+        int update = jdbcTemplate.update(sql, args);
+        System.out.println(update);
+    }
+
+    @Override
+    public void updateBook(Book book) {
+        String sql = &quot;update book set username=?,ustatus=? where userid=?&quot;;
+        Object[] args = {book.getUsername(), book.getUstatus(),book.getUserId()};
+        int update = jdbcTemplate.update(sql, args);
+        System.out.println(update);
+    }
+
+    @Override
+    public void deleteBook(String id) {
+        String sql = &quot;delete from book where userid=?&quot;;
+        int update = jdbcTemplate.update(sql, id);
+        System.out.println(update);
+    }
+
+    @Override
+    public int selectCount() {
+        String sql = &quot;select count(*) from book&quot;;
+        int count = jdbcTemplate.queryForObject(sql, Integer.class); //返回类型的class
+        return count;
+    }
+
+    @Override
+    public Book findBookInfo(String id) {
+        String sql = &quot;select * from book where userid=?&quot;;
+        Book book = jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper&lt;Book&gt;(Book.class), id);
+        return book;
+    }
+
+    @Override
+    public List&lt;Book&gt; findAllBook() {
+        String sql = &quot;select * from book&quot;;
+        List&lt;Book&gt; bookList = jdbcTemplate.query(sql, new BeanPropertyRowMapper&lt;Book&gt;(Book.class));
+        return bookList;
+    }
+
+    @Override
+    public void batchAddBook(List&lt;Object[]&gt; batchArgs) {
+        String sql = &quot;insert into book values(?,?,?)&quot;;
+        int[] ints = jdbcTemplate.batchUpdate(sql, batchArgs); //第二个参数是List集合, 表示添加的多条记录数据
+        System.out.println(Arrays.toString(ints));
+    }
+
+    @Override
+    public void batchUpdateBook(List&lt;Object[]&gt; batchArgs) {
+        String sql = &quot;update book set username=?,ustatus=? where userid=?&quot;;
+        int[] ints = jdbcTemplate.batchUpdate(sql, batchArgs);
+        System.out.println(Arrays.toString(ints));
+    }
+
+    @Override
+    public void batchDeleteBook(List&lt;Object[]&gt; batchArgs) {
+        String sql = &quot;delete from book where userid=?&quot;;
+        int[] ints = jdbcTemplate.batchUpdate(sql, batchArgs);
+        System.out.println(Arrays.toString(ints));
+    }
+}
+</code></pre><p>通过<code>BookService</code>类去调用方法.</p>
+<pre><code>@Service
+public class BookService {
+    @Autowired
+    private BookDao bookDao;
+
+    //添加
+    public void addBook(Book book) {
+        bookDao.addBook(book);
+    }
+
+    //修改
+    public void updateBook(Book book) {
+        bookDao.updateBook(book);
+    }
+
+    //删除
+    public void deleteBook(String id) {
+        bookDao.deleteBook(id);
+    }
+
+    //查询返回某个值
+    public int selectCount() {
+        return bookDao.selectCount();
+    }
+
+    //查询返回对象
+    public Book findBookInfo(String id) {
+        return bookDao.findBookInfo(id);
+    }
+
+    //查询返回集合
+    public List&lt;Book&gt; findAllBook() {
+        return bookDao.findAllBook();
+    }
+
+    //批量添加
+    public void batchAddBook(List&lt;Object[]&gt; batchArgs) {
+        bookDao.batchAddBook(batchArgs);
+    }
+
+    //批量修改
+    public void batchUpdateBook(List&lt;Object[]&gt; batchArgs) {
+        bookDao.batchUpdateBook(batchArgs);
+    }
+
+    //批量删除
+    public void batchDeleteBook(List&lt;Object[]&gt; batchArgs) {
+        bookDao.batchDeleteBook(batchArgs);
+    }
+}
+</code></pre><p>最后进行测试.</p>
+<pre><code>public class TestBook {
+
+    @Test
+    public void test() {
+        ApplicationContext context = new ClassPathXmlApplicationContext(&quot;bean1.xml&quot;);
+        BookService bookService = context.getBean(&quot;bookService&quot;, BookService.class);
+        //添加
+//        Book book = new Book();
+//        book.setUserId(&quot;1&quot;);
+//        book.setUsername(&quot;zhang3&quot;);
+//        book.setUstatus(&quot;a&quot;);
+//        bookService.addBook(book);
+
+        //修改
+//        book.setUserId(&quot;1&quot;);
+//        book.setUsername(&quot;li4&quot;);
+//        book.setUstatus(&quot;a&quot;);
+//        bookService.updateBook(book);
+
+        //删除
+//        bookService.deleteBook(&quot;1&quot;);
+
+        //查询返回某个值
+//        System.out.println(bookService.selectCount());
+
+        //查询返回对象
+//        System.out.println(bookService.findBookInfo(&quot;1&quot;));
+
+        //查询返回集合
+//        System.out.println(bookService.findAllBook());
+
+        //批量添加
+//        List&lt;Object[]&gt; batchArgs = new ArrayList&lt;&gt;();
+//        Object[] o1 = {&quot;3&quot;,&quot;wang5&quot;,&quot;a&quot;};
+//        Object[] o2 = {&quot;4&quot;,&quot;liu6&quot;,&quot;b&quot;};
+//        Object[] o3 = {&quot;5&quot;,&quot;zhao7&quot;,&quot;c&quot;};
+//        batchArgs.add(o1);
+//        batchArgs.add(o2);
+//        batchArgs.add(o3);
+//        bookService.batchAddBook(batchArgs);
+
+        //批量修改
+//        List&lt;Object[]&gt; batchArgs = new ArrayList&lt;&gt;();
+//        Object[] o1 = {&quot;wang5&quot;,&quot;233&quot;,&quot;3&quot;};
+//        Object[] o2 = {&quot;liu6&quot;,&quot;233&quot;,&quot;4&quot;};
+//        Object[] o3 = {&quot;zhao7&quot;,&quot;233&quot;,&quot;5&quot;};
+//        batchArgs.add(o1);
+//        batchArgs.add(o2);
+//        batchArgs.add(o3);
+//        bookService.batchUpdateBook(batchArgs);
+
+        //批量删除
+        List&lt;Object[]&gt; batchArgs = new ArrayList&lt;&gt;();
+        batchArgs.add(new Object[]{&quot;3&quot;});
+        batchArgs.add(new Object[]{&quot;4&quot;});
+        batchArgs.add(new Object[]{&quot;5&quot;});
+        bookService.batchDeleteBook(batchArgs);
+    }
+}
+</code></pre><h2 id="spring-操作事务">Spring-操作事务</h2>
+<p>通过银行的转账作为实现. 像之前一样, service层做业务操作, dao层做数据库操作. 首先创建一个数据库. 配置文件个前面的实验几乎一样. <strong>事务添加到JavaEE三层结构(web/service/dao)里面Service层</strong>. 有编程式事务管理和<strong>声明式事务管理(常用)</strong>, 在Spring中的声明式事务管理会用到AOP. 同样支持注解方式和配置文件方式.</p>
+<pre><code>create database bank;
+use bank;
+insert into user values(&quot;1&quot;,&quot;zhang3&quot;,100);
+insert into user values(&quot;2&quot;,&quot;li4&quot;,100);
+</code></pre><p>配置文件中, 在之前的基础上, 加入:</p>
+<pre><code>&lt;!--配置文件中增加--&gt;
+xmlns:tx=&quot;http://www.springframework.org/schema/tx&quot;
+xsi:schemaLocation=&quot;http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd&quot;
+
+&lt;!--创建事务管理器--&gt;
+&lt;bean id=&quot;transactionManager&quot; class=&quot;org.springframework.jdbc.datasource.DataSourceTransactionManager&quot;&gt;
+    &lt;property name=&quot;dataSource&quot; ref=&quot;dataSource&quot;&gt;&lt;/property&gt; &lt;!--注入数据源--&gt;
+&lt;/bean&gt;
+&lt;!--开启事务注解--&gt;
+&lt;tx:annotation-driven transaction-manager=&quot;transactionManager&quot;&gt;&lt;/tx:annotation-driven&gt;
+</code></pre><p>创建UserDao接口并实现它.</p>
+<pre><code>@Repository
+public class UserDaoImpl implements UserDao {
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
+    @Override
+    public void addMoney() {
+        String sql = &quot;update user set money=money+? where username=?&quot;;
+        jdbcTemplate.update(sql, 100, &quot;li4&quot;);
+    }
+
+    @Override
+    public void reduceMoney() {
+        String sql = &quot;update user set money=money-? where username=?&quot;;
+        jdbcTemplate.update(sql, 100, &quot;zhang3&quot;);
+    }
+}
+</code></pre><p>Service层如下. 如果这里的转账业务两个方法之间发成了错误, 那么可能张三的钱少了但是李四的钱不增加, 添加事务就避免了这个问题.</p>
+<pre><code>@Service
+@Transactional //给类里面的所有方法都添加事务, 也可以加在类上
+public class UserService {
+
+    //注入dao
+    @Autowired
+    private UserDao userDao;
+
+    //转账的业务方法, 需要加入一个事务
+    public void transferMoney() {
+        userDao.reduceMoney();
+        userDao.addMoney();
+    }
+}
+</code></pre><h3 id="事务注解参数">事务注解参数</h3>
+<p><code>Propagation propagation() default Propagation.REQUIRED;</code>(事务传播行为)一共有7种. 配置时就写<code>propagation = Propagation.REQUIRED</code>.
+
+  <img src="/44_3.png" alt="">
+
+</p>
+<p><code>Isolation isolation() default Isolation.DEFAULT;</code>(事务隔离级别). 有4个隔离级别<code>READ UNCOMMITED</code>/<code>READ COMMITED</code>/<code>REPEATABLE READ</code>/<code>SERIALIZABLE</code>. MySQL默认是可重复度.</p>
+<ul>
+<li>脏读(问题): 一个未提交事务读取到另一个未提交事务的数据</li>
+<li>不可重复度(现象): 一个未提交事务读取到另一提交事务修改数据</li>
+<li>幻读: 一个未提交事务读取到另一提交事务添加数据</li>
+</ul>
+<p><code>int timeout() default -1;</code>(超时时间): 单位是秒, 表示事务开启和提交的时间长度.</p>
+<p><code>boolean readOnly() default false;</code>(是否只读): 读就是查询, 写就是增删改.</p>
+<p><code>Class&lt;? extends Throwable&gt;[] rollbackFor() default {};</code>: 出现哪些异常进行事务回滚</p>
+<p><code>Class&lt;? extends Throwable&gt;[] noRollbackFor() default {};</code>: 出现哪些异常不进行事务回滚</p>
+<h2 id="xml声明式事务管理">XML声明式事务管理</h2>
+<p>在组件下面, 加入如下配置. 测试的时候可以在<code>transferMoney</code>的两个方法中引入错误, 最后数据库操作会回滚.</p>
+<pre><code>&lt;!-- 1.创建事务管理器 --&gt;
+&lt;bean id=&quot;transactionManager&quot; class=&quot;org.springframework.jdbc.datasource.DataSourceTransactionManager&quot;&gt;
+    &lt;property name=&quot;dataSource&quot; ref=&quot;dataSource&quot;&gt;&lt;/property&gt; &lt;!--注入数据源--&gt;
+&lt;/bean&gt;
+
+&lt;!-- 2.配置通知 --&gt;
+&lt;tx:advice id=&quot;txadvice&quot;&gt;
+    &lt;!-- 配置事务参数 --&gt;
+    &lt;tx:attributes&gt;
+        &lt;!-- 指定哪种规则的方法上面添加事务 --&gt;
+        &lt;tx:method name=&quot;transferMoney&quot; propagation=&quot;REQUIRED&quot;/&gt;
+        &lt;!--&lt;tx:method name=&quot;trans*&quot;/&gt;--&gt;
+        &lt;/tx:attributes&gt;
+&lt;/tx:advice&gt;
+&lt;!-- 配置切入点 --&gt;
+&lt;aop:config&gt;
+    &lt;aop:pointcut id=&quot;pt&quot; expression=&quot;execution(* com.example.service.UserService.*(..))&quot;/&gt;
+    &lt;!-- 配置切面 --&gt;
+    &lt;aop:advisor advice-ref=&quot;txadvice&quot; pointcut-ref=&quot;pt&quot;/&gt;
+&lt;/aop:config&gt;
+</code></pre><h2 id="完全注解声明式事务管理">完全注解声明式事务管理</h2>
+<p>通过配置类替代配置文件. 测试的时候, context改为<code>ApplicationContext context = new AnnotationConfigApplicationContext(TxConfig.class);</code>.</p>
+<pre><code>@Configuration //配置类
+@ComponentScan(basePackages = &quot;com.example&quot;) //组件扫描
+@EnableTransactionManagement //开启事务
+public class TxConfig {
+    //创建数据库连接池, 和配置文件效果一样
+    @Bean
+    public DruidDataSource getDruidDataSource() {
+        DruidDataSource dataSource = new DruidDataSource();
+        dataSource.setDriverClassName(&quot;com.mysql.jdbc.Driver&quot;);
+        dataSource.setUrl(&quot;jdbc:mysql:///bank&quot;);
+        dataSource.setUsername(&quot;root&quot;);
+        dataSource.setPassword(&quot;jiayou1221&quot;);
+        return dataSource;
+    }
+
+    //创建JdbcTemplate对象
+    @Bean
+    public JdbcTemplate getJdbcTemplate(DataSource dataSource) { //到ioc容器中根据类型找到dataSource
+        JdbcTemplate jdbcTemplate = new JdbcTemplate();
+        //注入dataSource, 不用再次getDruidDataSource()
+        jdbcTemplate.setDataSource(dataSource);
+        return jdbcTemplate;
+    }
+
+    //创建事务管理器
+    @Bean
+    public DataSourceTransactionManager getDataSourceTransactionManager(DataSource dataSource) {
+        DataSourceTransactionManager transactionManager = new DataSourceTransactionManager();
+        transactionManager.setDataSource(dataSource);
+        return transactionManager;
+    }
+}
+</code></pre><h2 id="参考">参考</h2>
+<ol>
+<li><a href="https://www.bilibili.com/video/BV1Vf4y127N5?p=1">尚硅谷Spring5</a></li>
+<li>Spring技术内幕</li>
+</ol>
+
+
+                
+
+                
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/post/14_%E4%BD%8D%E8%BF%90%E7%AE%97/" data-toggle="tooltip" data-placement="top" title="数据结构与算法-位运算">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/post/31_jvm%E5%85%A5%E9%97%A8_%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%AD%90%E7%B3%BB%E7%BB%9F/" data-toggle="tooltip" data-placement="top" title="JVM入门-类加载子系统">Next
+                            Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+                
+
+                
+
+
+<div id="disqus-comment"></div>
+<div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "xqt01" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+            </div>
+
+            
+            
+            <div class="
+                col-lg-2 col-lg-offset-0
+                visible-lg-block
+                sidebar-container
+                catalog-container">
+                <div class="side-catalog">
+                    <hr class="hidden-sm hidden-xs">
+                    <h5>
+                        <a class="catalog-toggle" href="#">CATALOG</a>
+                    </h5>
+                    <ul class="catalog-body"></ul>
+                </div>
+            </div>
+            
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/java" title="java">
+                            java
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/jvm" title="jvm">
+                            jvm
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/spring" title="spring">
+                            spring
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E5%89%8D%E7%AB%AF" title="前端">
+                            前端
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F" title="操作系统">
+                            操作系统
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93" title="数据库">
+                            数据库
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95" title="数据结构与算法">
+                            数据结构与算法
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B" title="网络编程">
+                            网络编程
+                        </a>
+                        
+                        
+                    </div>
+                </section>
+                
+
+                
+                
+                <section>
+                    <hr>
+                    <h5>FRIENDS</h5>
+                    <ul class="list-inline">
+                        
+                        <li><a target="_blank" href="https://fan-bu-fan.github.io/">FELL &amp; ENJOY</a></li>
+                        
+                    </ul>
+                </section>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">                  
+                    
+                    <li>
+                        <a href="mailto:huanruiz@foxmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		           
+                    
+                    
+                    
+                    
+
+		            
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/xqt01">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		            
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+            
+            
+            
+           
+                   <li>
+                       <a href='' rel="alternate" type="application/rss+xml" title="PunchCode" >
+                           <span class="fa-stack fa-lg">
+                               <i class="fas fa-circle fa-stack-2x"></i>
+                               <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                           </span>
+                       </a>
+                   </li>
+            
+             </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; PunchCode 2024
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function loadAsync(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        loadAsync("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    loadAsync("https://cdn.jsdelivr.net/npm/fastclick@1.0.6/lib/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+    function generateCatalog(selector) {
+
+        
+        
+        
+        
+            _containerSelector = 'div.post-container'
+        
+
+        
+        var P = $(_containerSelector), a, n, t, l, i, c;
+        a = P.find('h1,h2,h3,h4,h5,h6');
+
+        
+        $(selector).html('')
+
+        
+        a.each(function () {
+            n = $(this).prop('tagName').toLowerCase();
+            i = "#" + $(this).prop('id');
+            t = $(this).text();
+            c = $('<a href="' + i + '" rel="nofollow">' + t + '</a>');
+            l = $('<li class="' + n + '_nav"></li>').append(c);
+            $(selector).append(l);
+        });
+        return true;
+    }
+
+    generateCatalog(".catalog-body");
+
+    
+    $(".catalog-toggle").click((function (e) {
+        e.preventDefault();
+        $('.side-catalog').toggleClass("fold")
+    }))
+
+    
+
+
+    loadAsync("\/js\/jquery.nav.js", function () {
+        $('.catalog-body').onePageNav({
+            currentClass: "active",
+            changeHash: !1,
+            easing: "swing",
+            filter: "",
+            scrollSpeed: 700,
+            scrollOffset: 0,
+            scrollThreshold: .2,
+            begin: null,
+            end: null,
+            scrollChange: null,
+            padding: 80
+        });
+    });
+</script>
+
+
+
+
+
+
+</body>
+</html>

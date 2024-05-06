@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="PunchCode">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://xqt01.github.io/front.png">
+    <meta property="twitter:image" content="https://xqt01.github.io/front.png" />
+    
+
+    
+    <meta name="title" content="计算机网络-网络层" />
+    <meta property="og:title" content="计算机网络-网络层" />
+    <meta property="twitter:title" content="计算机网络-网络层" />
+    
+
+    
+    <meta name="description" content="Software Engineer">
+    <meta property="og:description" content="Software Engineer" />
+    <meta property="twitter:description" content="Software Engineer" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="Harry, 小拳头">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>计算机网络-网络层 | 以终为始</title>
+
+    <link rel="canonical" href="/post/28_%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C_%E7%BD%91%E7%BB%9C%E5%B1%82/">
+
+    
+    
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hugo-theme-cleanwhite.min.css">
+
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+
+    
+    <link href="https://cdn.jsdelivr.net/gh/FortAwesome/Font-Awesome@5.15.1/css/all.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    
+    <script src="/js/jquery.min.js"></script>
+
+    
+    <script src="/js/bootstrap.min.js"></script>
+
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+
+</head>
+
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">PunchCode</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">All Posts</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/tech">tech</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0">学习笔记</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/%E6%9D%82%E8%B0%88">杂谈</a>
+                        </li>
+                        
+                    
+                    
+		    
+                        <li><a href="/top/archive/">ARCHIVE</a></li>
+                    
+                        <li><a href="/top/about/">ABOUT</a></li>
+                    
+
+                    
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/front.png')
+    }
+</style>
+
+<header class="intro-header" >
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B" title="网络编程">
+                            网络编程
+                        </a>
+                        
+                    </div>
+                    <h1>计算机网络-网络层</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        
+                            Posted by 
+                            
+                                小拳头
+                             
+                            on 
+                            Wednesday, November 4, 2020
+                            
+                            
+                            
+                            
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <p>网络层的分组是数据报, 一般由路由器把报文段封装成数据报, 或者从数据报提取报文段给运输层.</p>
+<h2 id="概述">概述</h2>
+<h2 id="转发与路由选择">转发与路由选择</h2>
+<ul>
+<li>转发: 分组到达路由器的输入链路时, 路由器把该分组移到合适的输出链路.</li>
+<li>路由选择: 根据路由选择算法, 网络层决定分组从发送方到接收方的路径.</li>
+</ul>
+<p>路由器根据**路由表(forwarding table)**转发分组, 如下图所示, 分组的首部值会映射到某一个输出链路. 名词使用上我们通通讲网络层(第三层)的分组交换机统称为路由器.
+
+  <img src="/28_1.png" alt="">
+
+</p>
+<h2 id="虚电路和数据报网络">虚电路和数据报网络</h2>
+<p>仅在网络层提供连接服务的计算机网络叫<strong>虚电路网络(Virtual-Circuit)</strong>, 仅在网络层提供无线连接服务的计算机网络叫<strong>数据报网络(datagram network)</strong>.</p>
+<h3 id="虚电路网络">虚电路网络</h3>
+<p>因特网是数据报网络, 但是许多其他网络结构(ATM, 帧中继体系结构)是虚电路网络. 虚电路组成如下:</p>
+<ol>
+<li>源和目的主机之间的路径</li>
+<li>沿该路径每段链路的VC号</li>
+<li>沿该路径每台路由器的转发表表项, VC号由路由器中的转发表决定.</li>
+</ol>
+<p>虚电路主要有三个阶段:</p>
+<ol>
+<li>虚链路建立. 网络层决定发送方接收方路径, 为每条链路决定VC号, 并在路径中的路由器转发表中添加表项.</li>
+<li>数据传送. 分组在虚电路流动.</li>
+<li>虚电路拆除. 发送方通知网络层终止虚电路, 网络层遍通知接收方结束呼叫, 并更新路径上路由器的转发表.</li>
+</ol>
+<p>虚电路的概念最早来自于电话线的连接. 对比运输层的连接, 可以发现虚电路的连接是涉及整个路径的, 路径上所有的路由器都参与虚电路的建立, 并且都知道经过它的所有虚电路.</p>
+<h3 id="数据报网络">数据报网络</h3>
+<p>端系统为分组加上目的端系统的地址, 并把分组推进网络中. 每个路由器根据分组的目的地址转发分组, 转发表保存了目的地址到<strong>链路接口</strong>的映射. 保存精确的所有IP地址(假设32位)是不可能的, 所以路由表是根据<strong>最长前缀匹配规则</strong>来匹配这个映射.</p>
+<h2 id="路由器工作原理">路由器工作原理</h2>
+<p>路由器体系结构如下:
+
+  <img src="/28_2.png" alt="">
+
+</p>
+<h3 id="输入端口">输入端口</h3>
+<p>将输入的物理链路和路由器连接, 完成查找功能, 控制分组从输入端口转发到路由选择器. <strong>这里的端口指路由器的物理端口, 而不是嵌套字的软件端口</strong>.
+
+  <img src="/28_3.png" alt="">
+
+</p>
+<h3 id="交换结构">交换结构</h3>
+<p>将输入端口, 输出端口连接, 也就是路由器中的网络.
+
+  <img src="/28_4.png" alt="">
+
+</p>
+<h3 id="输出端口">输出端口</h3>
+<p>从交换结构接收分组, 并通过输出链路转发(第六版中文书上翻译错成了输入链路)
+
+  <img src="/28_5.png" alt="">
+
+</p>
+<h3 id="路由选择器">路由选择器</h3>
+<p>执行路由选择协议, 维护路由选择表和连接的链路状态信息, 为路由器计算转发表.</p>
+<h3 id="何处出现排队">何处出现排队</h3>
+<p>输入输出端口都有队列, 所以都有可能发生排队. 如果队列过长, 耗尽了路由器的缓存空间, 就有可能丢包.</p>
+<h2 id="因特网转发与编址">因特网转发与编址</h2>
+<p>网络层三大组件:</p>
+<ol>
+<li>IP协议</li>
+<li>互联网控制报文协议ICMP</li>
+<li>路由选择
+
+  <img src="/28_6.png" alt="">
+
+</li>
+</ol>
+<h3 id="数据报格式">数据报格式</h3>
+<p>IPv4的数据报格式如下:
+
+  <img src="/28_7.png" alt="">
+
+</p>
+<ul>
+<li>版本号: 规定IP协议版本, IPv4是4, IPv6是6</li>
+<li>首部长度: 指明首部的长度, 确定数据部分从哪里开始</li>
+<li>服务类型: 区分不同类型的IP数据报</li>
+<li>数据报长度: IP数据报的总长度(首部字段+数据部分)</li>
+<li>表示/标志/片偏移: IP分片相关, 表示分片的开始与结束. IPv6中没有, 这也意味着IPv6没有分片.</li>
+<li>寿命(Time-To-Live, TTL): 确保数据报不会长时间在网络中循环, 跳一个路由器就会减1, TTL为0时数据包就被丢弃了,, 路由器就会发送ICMP通知源主机. 这个地方准确的说是每处理1秒都应该减1, 但实际上处理datagram的时间通常小于一秒,所以协议规定了就算没有1秒也应当减1, 也就可以近似每一跳减1了.</li>
+<li>协议: 指示数据报的数据部分应该给哪个运输层协议, 运输层实验也可以看到UDP对应17, TCP对应6. 将网络层和运输层绑定了起来.</li>
+<li>首部校验和: 校验数据报的比特错误. IP校验不包括数据位.</li>
+<li>源地址/目的地址: 顾名思义.</li>
+<li>选项: 允许IP首部扩展, IPv6中去掉了.</li>
+<li>数据: 会被交付给运输层的TCP/UDP. 也可能承载ICMP报文等等.</li>
+</ul>
+<blockquote>
+<p>IP数据报分片: 链路层承载的最大数据量叫做<strong>最大传送单元MTU</strong>, IP数据报需要比MTU小, 故分片. 而重新组装的工作交给端系统.</p>
+</blockquote>
+<h3 id="ipv4">IPv4</h3>
+<p>32bits, 4byte, 一共有$2^{32}$个可能的IP地址(约40亿). 在下图中, 左边三个主机构成一个LAN, 3个主机接口和一个路由器接口构成一个<strong>子网(subnet)</strong>, 这个子网最左侧24比特相同, 地址可以由233.1.1.0/24来表示, 这个24就是<strong>子网掩码(network mask)</strong>, 其对应的高比特位就是前缀. 因特网地址分配策略叫<strong>CIDR</strong>, 可以子网掩码是可变的, 并且不局限于8, 16, 24. CIDR之前, IP根据分类编制, IP地址的网络部分长度被限制在8, 16, 24比特(主机号就是32减网络号), 成为A, B, C类网络, 所对应的首位为0, 10, 110, <strong>全为0做网络号, 全为1做广播号, 用A类举例, 那么实际的ip范围就是1.0.0.1~126.255.255.254</strong>. 除此之外还有D类地址(多播地址), 首位是1110, 范围224.0.0.1~239.255.255.254; E类地址为保留地址, 首位为11110, 范围是240.0.0.1~254.255.255.254
+
+  <img src="/28_8.png" alt="">
+
+</p>
+<blockquote>
+<p>**接口(interface)**指的是路由器或者主机与物理链路的边界, 当我们抽象思考的时候, 应该把这个接口看作是ip.</p>
+</blockquote>
+<p>子网不仅指主机和路由器接口之间的网络, 也可以是路由器和路由器之间. 为了确定子网, 可以分开主机和路由器的接口, 产生隔离的网络岛, 使用接口隔离这些网络的端点. 如下图中R1和R2之间的223.1.9.0/24, R
+2和R3之间的223.1.8.0/24, R1和R2之间的223.1.7.0/24, 以及主机端口和路由器之间的子网. 可以看出一共有6个子网.
+
+  <img src="/28_9.png" alt="">
+
+</p>
+<p>组织如何为设备分配地址块, 设备如何从组织中分配到一个地址?</p>
+<ol>
+<li>获取一块地址, 一般是从isp手中买一组地址.</li>
+<li>获取主机地址: 配置路由器各个接口的IP地址, 现在通常通过<strong>DHCP(动态主机配置协议)</strong>, 使主机动态地获得一个IP地址. 一般有一个4次握手的过程, 让DHCP服务器向主机推荐IP地址, 掩码, IP地址租用期等东西, 这里直接会用广播地址255.255.255.255, 使得主机可以在多个DHCP提供者中进行选择.</li>
+<li>网络地址转换(<strong>NAT(Network Address Translation)</strong>): 用下图过程解释, 实际上就是通过一个NAT转换表, 将WAN的ip和端口映射到LAN的ip和端口. 一方面解决了地址短缺的问题, 一方面隔离LAN和WAN. 这也是为什么有的人需要在路由器上实现内网穿透, 内网穿透本来也就叫NAT穿透. 这里我想提一点, 就是NAT既然改变了ip地址和端口, 那么TCP的时候校验字也就改变了, 所以NAT其实也应该去重新计算校验和.
+
+  <img src="/28_10.png" alt="">
+
+</li>
+<li>UPnP: 解决了P2P的主机在NAT的LAN中的问题, 时LAN中的主机也能变成服务器, 其实就是把一个WAN口的ip和端口和这个做服务器的主机的ip和端口建立一个映射关系.</li>
+</ol>
+<h3 id="因特网控制报文协议icmp">因特网控制报文协议(ICMP)</h3>
+<p>通常被认为是IP的一部分, 但体系结构上是IP之上. 但是通常认为是网络层协议. 头部有8个byte, 用type和code就可以知道这一个ICMP的功能.
+
+  <img src="/28_11.png" alt="">
+
+</p>
+<p>通常有如下的差错报告或询问.
+
+  <img src="/28_12.png" alt="">
+
+</p>
+<h3 id="ipv6">IPv6</h3>
+<p>IPv6地址长度变成了128bit, 长这样<code>2001:0D12:0000:0000:02AA:0987:FE29:9871</code>, 每16位分一段, 分为8段, 暂时不研究这个.</p>
+<h2 id="路由选择算法">路由选择算法</h2>
+<p>与主机直接连接的路由器叫<strong>default router</strong>, 或者<strong>first-hop router</strong>. 路由选择的过程中, IP只知道下一跳的地址. <strong>网关</strong>指的是**自治系统(AS)**中, 向本AS之外的路由器转发分组的路由器.</p>
+<h2 id="广播和多播路由选择">广播和多播路由选择</h2>
+<h3 id="广播">广播</h3>
+<p>从一个源节点向其他节点发送分组. <strong>N次单播</strong>就是一种实现方法.</p>
+<h3 id="多播">多播</h3>
+<p>从一个源节点向其他网络节点的子集发送分组的副本, 提供批量传输的数据, 常用语交互式游戏, 流媒体, 数据供给等. 一般由<strong>间接地址(address indirection)<strong>编址,这种表示一种接收方的单一标识就是D类地址, 关联</strong>多播组</strong>. 通过**IGMP(因特网组管理协议)**来管理</p>
+<h2 id="实验">实验</h2>
+<h3 id="ip">IP</h3>
+<p>直接用的log. 分别用<code>traceroute</code>发送了56/2000/3500byte的数据报. 从192.168.1.102发送, 可以看到IP有中的protocal对应的是<code>0x01</code>, 代表了ICMP.
+
+  <img src="/28_13.png" alt="">
+
+</p>
+<p>下图的ip分段了, 从<code>flag</code>中就可以看出, 而<code>offset = 0</code>代表了它是第一个分段的数据报, ip的总长度是1500byte, 1514这个多出来的14byte是以太网的头.
+
+  <img src="/28_14.png" alt="">
+
+</p>
+<p>而ICMP的data实际上就是我们设置发送的数据报长度, 如果我理解正确的话, <code>3500</code>指的是了除ICMP头以外的所有东西, 因为最后的总长度是<code>3508</code>. 分段也可以查看到, 1480就是1500 - 20的ip头. 中括号内的内容不是首部字段的信息, 而是wireshark自己解析出来的信息.
+
+  <img src="/28_15.png" alt="">
+
+</p>
+<h3 id="nat">NAT</h3>
+<p>分两个方向抓包, 以路由器为界, ISP方向抓一次, home端再抓一次. 对比三次握手后的第一个HTTP请求, 可以看到在LAN端的发送ip/端口是<code>192.168.1.100/4335</code>, 而在ISP端就变成了<code>71.192.34.104/4335</code>. 实际上就是通过NAT转换表将LAN到WAN进行了映射.
+
+  <img src="/28_16.png" alt="">
+
+
+
+  <img src="/28_17.png" alt="">
+
+</p>
+<h3 id="icmp">ICMP</h3>
+<p>mac系统<code>ping -c 10 gaia.cs.umass.edu</code>, ping10次, 下面是用的原实验的log. 我们会发现ICMP没有端口号, 因为ICMP是网络层协议, 用IP承载, 不需要传输层的TCP或者UDP, 不需要指明端口.
+
+  <img src="/28_18.png" alt="">
+
+</p>
+<p>下面是<code>traceroute</code>的抓包, 因为<code>traceroute</code>的TTL会逐渐增加, 所以前面可能发生TTL变为0的情况. 返回的ICMP中包含了普通的ICMP响应没有的IP头.
+
+  <img src="/28_19.png" alt="">
+
+</p>
+<h3 id="dhcp">DHCP</h3>
+<p>为了测试, 先释放了当前ip, 我们的主机ip变成<code>0.0.0.0</code>, 然后再重新取得ip, renew2次. 然后再次release ip, renew ip.</p>
+<p>首先就可以的看到, DHCP跑的是UDP. (只是从运输层的信息判断是什么协议不直观, 从网络层ip头的<code>protocol</code>来看其实一目了然). 获取IP经历了Discover/Offer/Request/ACK四个阶段. host一直使用68端口, 而server使用67端口. (offer其实可能是单播, 见参考8). 从Transaction ID可以判断出是否是一组DHCP请求. 从ACK中可以查到<code>IP Address Lease Time</code>等信息. 而成功ACK后, host也有了自己的IP, 并确认使用这个IP, 即使offer是单播回复, 也需要ACK之后才能确认使用.
+
+  <img src="/28_20.png" alt="">
+
+</p>
+<h2 id="参考">参考</h2>
+<ol>
+<li>计算机网络-自顶向下方法(第6版)</li>
+<li>Computer Networking A Top-Down Approach(7th edition)</li>
+<li><a href="https://github.com/moranzcw/Computer-Networking-A-Top-Down-Approach-NOTES">作业</a></li>
+<li><a href="https://github.com/jzplp/Computer-Network-A-Top-Down-Approach-Answer">习题答案</a></li>
+<li><a href="https://gaia.cs.umass.edu/kurose_ross/wireshark.htm">wireshark实验</a></li>
+<li><a href="https://mp.weixin.qq.com/s/DfQT3Vw2xaq60YIil-7Yxw">对于Ping的过程, 你真的了解吗?</a></li>
+<li>程序羊-计算机网络面试题总结</li>
+<li><a href="https://www.zhihu.com/question/280872108/answer/438845996">DHCP offer报文到底是单播还是广播?车小胖的回答</a></li>
+</ol>
+
+
+                
+
+                
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/post/27_%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C_%E8%BF%90%E8%BE%93%E5%B1%82/" data-toggle="tooltip" data-placement="top" title="计算机网络-运输层">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/post/29_%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C_%E9%93%BE%E8%B7%AF%E5%B1%82/" data-toggle="tooltip" data-placement="top" title="计算机网络-链路层">Next
+                            Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+                
+
+                
+
+
+<div id="disqus-comment"></div>
+<div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "xqt01" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+            </div>
+
+            
+            
+            <div class="
+                col-lg-2 col-lg-offset-0
+                visible-lg-block
+                sidebar-container
+                catalog-container">
+                <div class="side-catalog">
+                    <hr class="hidden-sm hidden-xs">
+                    <h5>
+                        <a class="catalog-toggle" href="#">CATALOG</a>
+                    </h5>
+                    <ul class="catalog-body"></ul>
+                </div>
+            </div>
+            
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/java" title="java">
+                            java
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/jvm" title="jvm">
+                            jvm
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/spring" title="spring">
+                            spring
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E5%89%8D%E7%AB%AF" title="前端">
+                            前端
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F" title="操作系统">
+                            操作系统
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93" title="数据库">
+                            数据库
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95" title="数据结构与算法">
+                            数据结构与算法
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B" title="网络编程">
+                            网络编程
+                        </a>
+                        
+                        
+                    </div>
+                </section>
+                
+
+                
+                
+                <section>
+                    <hr>
+                    <h5>FRIENDS</h5>
+                    <ul class="list-inline">
+                        
+                        <li><a target="_blank" href="https://fan-bu-fan.github.io/">FELL &amp; ENJOY</a></li>
+                        
+                    </ul>
+                </section>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">                  
+                    
+                    <li>
+                        <a href="mailto:huanruiz@foxmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		           
+                    
+                    
+                    
+                    
+
+		            
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/xqt01">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		            
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+            
+            
+            
+           
+                   <li>
+                       <a href='' rel="alternate" type="application/rss+xml" title="PunchCode" >
+                           <span class="fa-stack fa-lg">
+                               <i class="fas fa-circle fa-stack-2x"></i>
+                               <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                           </span>
+                       </a>
+                   </li>
+            
+             </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; PunchCode 2024
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function loadAsync(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        loadAsync("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    loadAsync("https://cdn.jsdelivr.net/npm/fastclick@1.0.6/lib/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+    function generateCatalog(selector) {
+
+        
+        
+        
+        
+            _containerSelector = 'div.post-container'
+        
+
+        
+        var P = $(_containerSelector), a, n, t, l, i, c;
+        a = P.find('h1,h2,h3,h4,h5,h6');
+
+        
+        $(selector).html('')
+
+        
+        a.each(function () {
+            n = $(this).prop('tagName').toLowerCase();
+            i = "#" + $(this).prop('id');
+            t = $(this).text();
+            c = $('<a href="' + i + '" rel="nofollow">' + t + '</a>');
+            l = $('<li class="' + n + '_nav"></li>').append(c);
+            $(selector).append(l);
+        });
+        return true;
+    }
+
+    generateCatalog(".catalog-body");
+
+    
+    $(".catalog-toggle").click((function (e) {
+        e.preventDefault();
+        $('.side-catalog').toggleClass("fold")
+    }))
+
+    
+
+
+    loadAsync("\/js\/jquery.nav.js", function () {
+        $('.catalog-body').onePageNav({
+            currentClass: "active",
+            changeHash: !1,
+            easing: "swing",
+            filter: "",
+            scrollSpeed: 700,
+            scrollOffset: 0,
+            scrollThreshold: .2,
+            begin: null,
+            end: null,
+            scrollChange: null,
+            padding: 80
+        });
+    });
+</script>
+
+
+
+
+
+
+</body>
+</html>
