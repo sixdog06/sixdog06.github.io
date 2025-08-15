@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>餐厅选择器</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background-color: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(90deg, #ff7e5f, #feb47b);
+            color: white;
+            padding: 25px 30px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .tagline {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: flex;
+            padding: 25px;
+            gap: 25px;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+        }
+
+        .input-section {
+            flex: 1;
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .restaurant-form {
+            display: flex;
+            margin-bottom: 25px;
+        }
+
+        .restaurant-input {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px 0 0 8px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .restaurant-input:focus {
+            border-color: #ff7e5f;
+        }
+
+        .add-btn {
+            background: #ff7e5f;
+            color: white;
+            border: none;
+            border-radius: 0 8px 8px 0;
+            padding: 0 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        .add-btn:hover {
+            background: #e56a50;
+        }
+
+        .random-btn {
+            width: 100%;
+            background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 16px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 15px rgba(79, 172, 254, 0.4);
+        }
+
+        .random-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(79, 172, 254, 0.6);
+        }
+
+        .random-btn:active {
+            transform: translateY(0);
+        }
+
+        .lists-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .list-container {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .list-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .list-title {
+            font-size: 1.4rem;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .counter {
+            background: #ff7e5f;
+            color: white;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+
+        .restaurant-list {
+            list-style: none;
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .restaurant-list::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .restaurant-list::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .restaurant-list::-webkit-scrollbar-thumb {
+            background: #ff7e5f;
+            border-radius: 4px;
+        }
+
+        .restaurant-item {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            animation: fadeIn 0.3s ease-out;
+            transition: transform 0.2s;
+        }
+
+        .restaurant-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .restaurant-name {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            width: 36px;
+            height: 36px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .remove-btn {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .blacklist-btn {
+            background: #4a4a4a;
+            color: white;
+        }
+
+        .unblacklist-btn {
+            background: #48dbfb;
+            color: white;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .selected {
+            animation: pulse 2s infinite;
+            border: 3px solid #00d2d3;
+            position: relative;
+        }
+
+        .selected::after {
+            content: "✓ 已选择";
+            position: absolute;
+            top: -12px;
+            right: -12px;
+            background: #00d2d3;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .blacklisted {
+            background: #f1f2f6;
+            color: #a4b0be;
+        }
+
+        .blacklisted .restaurant-name {
+            color: #a4b0be;
+            text-decoration: line-through;
+        }
+
+        .result-section {
+            padding: 20px 25px;
+            text-align: center;
+            background: #e8f4fc;
+            border-top: 1px solid #d1e7f5;
+        }
+
+        .result-text {
+            font-size: 1.2rem;
+            color: #333;
+        }
+
+        .selected-restaurant {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #ff7e5f;
+            margin: 10px 0;
+            min-height: 50px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 30px;
+            color: #a4b0be;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(0, 210, 211, 0.4); }
+            70% { box-shadow: 0 0 0 12px rgba(0, 210, 211, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 210, 211, 0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-utensils"></i> 餐厅选择器</h1>
+            <p class="tagline">轻松解决"今天吃什么"的难题！添加餐厅，排除不想要的，然后让系统帮你做决定</p>
+        </header>
+
+        <div class="main-content">
+            <div class="input-section">
+                <div class="restaurant-form">
+                    <input type="text" class="restaurant-input" id="restaurantInput" placeholder="输入餐厅名称...">
+                    <button class="add-btn" id="addBtn">添加</button>
+                </div>
+
+                <button class="random-btn" id="randomBtn">
+                    <i class="fas fa-random"></i> 随机选择餐厅
+                </button>
+
+                <div class="result-section">
+                    <div class="result-text">今天要去的是：</div>
+                    <div class="selected-restaurant" id="selectedRestaurant">等待选择...</div>
+                </div>
+            </div>
+
+            <div class="lists-section">
+                <div class="list-container">
+                    <div class="list-header">
+                        <div class="list-title">
+                            <i class="fas fa-list"></i> 餐厅列表
+                            <div class="counter" id="restaurantCounter">0</div>
+                        </div>
+                    </div>
+
+                    <ul class="restaurant-list" id="restaurantList">
+                        <li class="empty-state">
+                            <i class="fas fa-utensil-spoon"></i>
+                            <p>暂无餐厅，请添加一些餐厅</p>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="list-container">
+                    <div class="list-header">
+                        <div class="list-title">
+                            <i class="fas fa-ban"></i> 拉黑餐厅
+                            <div class="counter" id="blacklistCounter">0</div>
+                        </div>
+                    </div>
+
+                    <ul class="restaurant-list" id="blacklist">
+                        <li class="empty-state">
+                            <i class="fas fa-check-circle"></i>
+                            <p>没有拉黑的餐厅</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 餐厅数据
+        let restaurants = [];
+        let blacklist = [];
+        let selectedRestaurant = null;
+
+        // DOM元素
+        const restaurantInput = document.getElementById('restaurantInput');
+        const addBtn = document.getElementById('addBtn');
+        const randomBtn = document.getElementById('randomBtn');
+        const restaurantList = document.getElementById('restaurantList');
+        const blacklistEl = document.getElementById('blacklist');
+        const selectedRestaurantEl = document.getElementById('selectedRestaurant');
+        const restaurantCounter = document.getElementById('restaurantCounter');
+        const blacklistCounter = document.getElementById('blacklistCounter');
+
+        // 添加餐厅
+        addBtn.addEventListener('click', addRestaurant);
+        restaurantInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') addRestaurant();
+        });
+
+        function addRestaurant() {
+            const name = restaurantInput.value.trim();
+            if (name) {
+                // 检查是否已存在
+                if (restaurants.includes(name) || blacklist.includes(name)) {
+                    alert('该餐厅已存在！');
+                    return;
+                }
+
+                restaurants.push(name);
+                renderRestaurants();
+                restaurantInput.value = '';
+                restaurantInput.focus();
+            }
+        }
+
+        // 移除餐厅
+        function removeRestaurant(name) {
+            restaurants = restaurants.filter(r => r !== name);
+            renderRestaurants();
+        }
+
+        // 添加到黑名单
+        function addToBlacklist(name) {
+            restaurants = restaurants.filter(r => r !== name);
+            if (!blacklist.includes(name)) {
+                blacklist.push(name);
+            }
+            renderRestaurants();
+            renderBlacklist();
+        }
+
+        // 从黑名单移除
+        function removeFromBlacklist(name) {
+            blacklist = blacklist.filter(r => r !== name);
+            if (!restaurants.includes(name)) {
+                restaurants.push(name);
+            }
+            renderRestaurants();
+            renderBlacklist();
+        }
+
+        // 随机选择餐厅
+        randomBtn.addEventListener('click', () => {
+            if (restaurants.length === 0) {
+                selectedRestaurantEl.textContent = "请先添加餐厅！";
+                return;
+            }
+
+            // 清除之前的选中状态
+            document.querySelectorAll('.selected').forEach(el => {
+                el.classList.remove('selected');
+            });
+
+            // 随机选择一个餐厅
+            const randomIndex = Math.floor(Math.random() * restaurants.length);
+            selectedRestaurant = restaurants[randomIndex];
+            selectedRestaurantEl.textContent = selectedRestaurant;
+
+            // 高亮显示被选中的餐厅
+            const restaurantItems = document.querySelectorAll('.restaurant-item');
+            restaurantItems.forEach(item => {
+                if (item.querySelector('.restaurant-name').textContent === selectedRestaurant) {
+                    item.classList.add('selected');
+                }
+            });
+        });
+
+        // 渲染餐厅列表
+        function renderRestaurants() {
+            restaurantCounter.textContent = restaurants.length;
+
+            if (restaurants.length === 0) {
+                restaurantList.innerHTML = '<li class="empty-state"><i class="fas fa-utensil-spoon"></i><p>暂无餐厅，请添加一些餐厅</p></li>';
+                return;
+            }
+
+            restaurantList.innerHTML = '';
+            restaurants.forEach(restaurant => {
+                const li = document.createElement('li');
+                li.className = 'restaurant-item';
+                if (restaurant === selectedRestaurant) {
+                    li.classList.add('selected');
+                }
+
+                li.innerHTML = `
+                    <span class="restaurant-name">${restaurant}</span>
+                    <div class="action-buttons">
+                        <button class="btn blacklist-btn" onclick="addToBlacklist('${restaurant}')">
+                            <i class="fas fa-ban"></i>
+                        </button>
+                        <button class="btn remove-btn" onclick="removeRestaurant('${restaurant}')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+                restaurantList.appendChild(li);
+            });
+        }
+
+        // 渲染黑名单
+        function renderBlacklist() {
+            blacklistCounter.textContent = blacklist.length;
+
+            if (blacklist.length === 0) {
+                blacklistEl.innerHTML = '<li class="empty-state"><i class="fas fa-check-circle"></i><p>没有拉黑的餐厅</p></li>';
+                return;
+            }
+
+            blacklistEl.innerHTML = '';
+            blacklist.forEach(restaurant => {
+                const li = document.createElement('li');
+                li.className = 'restaurant-item blacklisted';
+
+                li.innerHTML = `
+                    <span class="restaurant-name">${restaurant}</span>
+                    <div class="action-buttons">
+                        <button class="btn unblacklist-btn" onclick="removeFromBlacklist('${restaurant}')">
+                            <i class="fas fa-undo"></i>
+                        </button>
+                    </div>
+                `;
+                blacklistEl.appendChild(li);
+            });
+        }
+
+        // 初始化一些示例餐厅
+        function initSampleRestaurants() {
+            const sampleRestaurants = [
+                "关东映像",
+                "减除",
+                "傣家",
+                "大米先生",
+                "九州场",
+                "西南东",
+                "七粉",
+                "麻辣烫",
+                "饼"
+            ];
+
+            restaurants = [...sampleRestaurants];
+            renderRestaurants();
+            renderBlacklist();
+        }
+
+        // 初始化应用
+        initSampleRestaurants();
+    </script>
+</body>
+</html>
