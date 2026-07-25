@@ -23,7 +23,7 @@ const PLAYER_SPEED = 2;
 const STEP_MS = 1000 / 60;
 const MAX_PLAYER_BULLETS = 2, MAX_ENEMY_BULLETS = 1;
 const MAX_ENEMIES_ONSCREEN = 4;
-const PLAYER_LIVES = 3;
+const PLAYER_LIVES = 5;
 const SCORE = { normal: 100, fast: 200, heavy: 300 };
 const ENEMY_TYPES = {
   normal: { speed: 1.5, hp: 1 },
@@ -216,7 +216,7 @@ const LEVELS = [
       '.....#E#.....',
     ],
     enemies: [
-      'normal','normal','normal','normal','fast','normal','normal','normal','normal','heavy',
+      'normal','normal','normal','fast','normal','normal','normal','heavy',
     ],
   },
   {
@@ -237,7 +237,6 @@ const LEVELS = [
     ],
     enemies: [
       'fast','normal','fast','normal','heavy','fast','normal','fast','normal','heavy',
-      'normal','heavy',
     ],
   },
   {
@@ -257,8 +256,8 @@ const LEVELS = [
       '.....#E#.....',
     ],
     enemies: [
-      'heavy','fast','heavy','fast','heavy','fast','normal','fast','heavy','fast',
-      'heavy','normal','heavy','normal',
+      'heavy','fast','heavy','fast','heavy','fast','normal','fast','heavy','normal',
+      'heavy','normal',
     ],
   },
 ];
@@ -359,7 +358,7 @@ class EnemyTank extends Tank {
         if (this.rng() < 0.3) nd = 'down'; // 30% 概率偏向基地
         this.dir = nd;
       }
-      this.wantFire = this.rng() < 0.5;
+      this.wantFire = this.rng() < 0.35;
     }
     if (!moveTank(this, map, tanks)) this.think = 0; // 撞墙立刻重新决策
   }
@@ -424,7 +423,7 @@ class Game {
       e.updateAI(this.map, this.allTanks());
       if (e.wantFire && e.cooldown === 0 &&
           this.bullets.filter(b => b.alive && b.owner === e).length < MAX_ENEMY_BULLETS) {
-        e.cooldown = 30;
+        e.cooldown = 40;
         e.wantFire = false;
         this.bullets.push(spawnBullet(e, e));
         this.sfx && this.sfx.shoot();
