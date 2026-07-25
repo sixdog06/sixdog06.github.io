@@ -22,7 +22,7 @@ const BULLET_SIZE = 8, BULLET_SPEED = 6;
 const PLAYER_SPEED = 2;
 const STEP_MS = 1000 / 60;
 const MAX_PLAYER_BULLETS = 2, MAX_ENEMY_BULLETS = 1;
-const MAX_ENEMIES_ONSCREEN = 4, ENEMIES_PER_LEVEL = 20;
+const MAX_ENEMIES_ONSCREEN = 4;
 const PLAYER_LIVES = 3;
 const SCORE = { normal: 100, fast: 200, heavy: 300 };
 const ENEMY_TYPES = {
@@ -217,7 +217,7 @@ const LEVELS = [
     ],
     enemies: [
       'normal','normal','normal','normal','fast','normal','normal','normal','fast','normal',
-      'normal','normal','fast','normal','normal','heavy','normal','normal','fast','heavy',
+      'normal','normal','normal','heavy',
     ],
   },
   {
@@ -238,7 +238,7 @@ const LEVELS = [
     ],
     enemies: [
       'fast','normal','fast','normal','heavy','fast','normal','fast','normal','heavy',
-      'fast','normal','heavy','fast','normal','normal','heavy','fast','normal','heavy',
+      'fast','normal','heavy','fast','normal','heavy',
     ],
   },
   {
@@ -259,7 +259,7 @@ const LEVELS = [
     ],
     enemies: [
       'heavy','fast','heavy','fast','heavy','fast','normal','fast','heavy','fast',
-      'heavy','fast','normal','fast','heavy','fast','heavy','normal','heavy','normal',
+      'heavy','fast','normal','fast','heavy','normal','heavy','normal',
     ],
   },
 ];
@@ -651,7 +651,7 @@ if (typeof document !== 'undefined') { init(); }
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = { TILE, GRID, GAME_W, GAME_H, SIDEBAR_W, CANVAS_W, CANVAS_H,
     TANK_SIZE, BULLET_SIZE, BULLET_SPEED, PLAYER_SPEED, STEP_MS,
-    MAX_PLAYER_BULLETS, MAX_ENEMY_BULLETS, MAX_ENEMIES_ONSCREEN, ENEMIES_PER_LEVEL,
+    MAX_PLAYER_BULLETS, MAX_ENEMY_BULLETS, MAX_ENEMIES_ONSCREEN,
     PLAYER_LIVES, SCORE, ENEMY_TYPES, DIRS, TANK_BODY, PALETTES, CELL, GameMap, LEVELS,
     aabbOverlap, Tank, PlayerTank, EnemyTank, moveTank, Bullet, spawnBullet, Game };
 }

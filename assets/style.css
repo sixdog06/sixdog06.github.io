@@ -94,7 +94,7 @@ body::after {
   color: var(--dim);
   font-size: 12px;
 }
-/* 内页（about / games） */
+/* 内页（about / fun） */
 .page { width: min(680px, 100%); }
 .crumb { margin-bottom: 24px; font-size: 14px; }
 .crumb a { color: var(--accent2); text-decoration: none; }

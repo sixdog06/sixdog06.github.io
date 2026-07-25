@@ -9,7 +9,7 @@
 
 - **博客** → 外链 Notion [SixDog Space](https://sixdog.notion.site/SixDog-Space-402a93949b3e4a69a9ae24c2d7d8a9d6)（不自建博客系统）
 - **自我介绍** → 站内 `about.html`
-- **有趣的东西** → 站内 `games/` 展示页（导航叫 "fun"，展示小工具/小玩意儿，持续添加，第一个：坦克大战）
+- **有趣的东西** → 站内 `fun/` 展示页（导航叫 "fun"，展示小工具/小玩意儿，持续添加，第一个：坦克大战）
 
 ## 2. 需求决策记录
 
@@ -17,7 +17,7 @@
 |------|------|
 | 博客自建还是外链？ | 外链 Notion，主页只放入口 |
 | 自我介绍内容 | 极简：昵称"小拳头" + 一句 bio（"一个喜欢音乐的人"）+ GitHub @sixdog06；不提游戏 |
-| 游戏板块命名 | 不叫"游戏"：导航显示 `fun`，hint 为"一些有趣的小玩意儿，have fun"；URL 仍用 `/games/` |
+| 游戏板块命名 | 不叫"游戏"：导航显示 `fun`，hint 为"一些有趣的小玩意儿，have fun"；URL 也用 `/fun/` |
 | 推进方式 | 先做门户 + 游戏页；博客系统不做 |
 | 技术形态 | 纯手写 HTML/CSS/JS，零依赖、零构建、无 CDN/外部字体 |
 | 部署方式 | `gh` CLI 建仓库 + PR 合并上线 |
@@ -28,14 +28,14 @@
 ```
 index.html               # 门户主页：终端窗口 + 打字机 + 三入口菜单
 about.html               # 自我介绍（极简）
-games/index.html         # 游戏展示页（卡片列表）
-games/tank-battle/       # 坦克大战（单文件游戏，原样复制）
+fun/index.html           # 游戏展示页（卡片列表）
+fun/tank-battle/         # 坦克大战（单文件游戏，原样复制）
 assets/style.css         # 全站设计系统（所有页面共用）
 assets/main.js           # 主页打字机动效
 test/check-links.js      # 链接/结构检查（node test/check-links.js）
 ```
 
-设计要点：每个页面独立 URL（`/about.html`、`/games/`），后续加游戏 = 加一个目录 + 复制一个卡片块。
+设计要点：每个页面独立 URL（`/about.html`、`/fun/`），后续加游戏 = 加一个目录 + 复制一个卡片块。
 
 ## 4. 设计风格（设计系统）
 
@@ -46,7 +46,7 @@ test/check-links.js      # 链接/结构检查（node test/check-links.js）
 - **背景**：CSS 绘制的细网格（32px，绿色 4% 透明度）+ 扫描线纹理（`body::before/::after` 伪元素，无图片）
 - **主页构图**：居中的"终端窗口"卡片——红黄绿三点标题栏 + 打字机输出 `$ whoami → 小拳头 // developer & music lover` + 菜单逐项浮现（blog / about / fun），光标闪烁
 - **菜单交互**：hover 时文字变绿、左边框亮起、右移 6px、发光 `text-shadow`、浅绿底色
-- **内页**（about/games）：同一设计系统的简洁页面，命令式标题（`$ cat about.txt`、`$ ls ~/fun`）+ 面包屑返回
+- **内页**（about/fun）：同一设计系统的简洁页面，命令式标题（`$ cat about.txt`、`$ ls ~/fun`）+ 面包屑返回
 - **游戏卡片**：ASCII 像素坦克（等宽字符 + 绿色发光）+ 名称 + 一句话简介，整卡可点击，hover 边框发光
 - **响应式**：≤520px 时收窄边距、游戏卡片纵向排列
 - **健壮性**：`<noscript>` 兜底（禁用 JS 时菜单直接显示，主页不会变死路）
@@ -54,11 +54,11 @@ test/check-links.js      # 链接/结构检查（node test/check-links.js）
 
 ## 5. 部署与维护
 
-- 本地仓库 `~/sixdog06.github.io`，远程 `sixdog06/sixdog06.github.io`（默认分支 `master`，本地分支 `main` 与之对应）
+- 本地仓库 `~/sixdog06.github.io`，远程 `sixdog06/sixdog06.github.io`（只用 `master` 一个分支，本地跟踪 `origin/master`）
 - 上线流程：改代码 → `node test/check-links.js` 验证 → 提交 → 推送 → GitHub Pages 自动构建（约 1 分钟）
 - **加新游戏**：
-  1. 游戏文件放 `games/<名字>/index.html`
-  2. `games/index.html` 里复制一个 `<a class="card-link">` 卡片块，改名称/简介/ASCII 图案
+  1. 游戏文件放 `fun/<名字>/index.html`
+  2. `fun/index.html` 里复制一个 `<a class="card-link">` 卡片块，改名称/简介/ASCII 图案
   3. 跑链接检查，推送
 
 ## 6. 已知可改进点（终审记录，均未做）
