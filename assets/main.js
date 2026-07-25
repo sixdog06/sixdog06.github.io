@@ -1,6 +1,6 @@
 (function () {
   'use strict';
-  var text = '$ whoami  →  小拳头 // developer & game maker';
+  var text = '$ whoami  →  小拳头 // developer & music lover';
   var el = document.getElementById('typed');
   var menu = document.getElementById('menu');
   if (!el || !menu) return;
