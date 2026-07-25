@@ -23,7 +23,7 @@ const PLAYER_SPEED = 2;
 const STEP_MS = 1000 / 60;
 const MAX_PLAYER_BULLETS = 2, MAX_ENEMY_BULLETS = 1;
 const MAX_ENEMIES_ONSCREEN = 4;
-const PLAYER_LIVES = 5;
+const PLAYER_LIVES = 3;
 const SCORE = { normal: 100, fast: 200, heavy: 300 };
 const ENEMY_TYPES = {
   normal: { speed: 1.5, hp: 1 },
@@ -493,9 +493,15 @@ class Game {
     return [this.player, ...this.enemies].filter(t => t && t.alive);
   }
   onKey(code) {
-    if (code === 'Enter' &&
-        (this.state === 'menu' || this.state === 'gameOver' || this.state === 'victory')) {
-      this.startGame();
+    if (code === 'Enter') {
+      if (this.state === 'menu' || this.state === 'gameOver' || this.state === 'victory') {
+        this.startGame();
+      } else if (this.state === 'paused') {
+        this.state = 'playing';
+      }
+    } else if (code === 'Escape') {
+      if (this.state === 'playing') this.state = 'paused';
+      else if (this.state === 'paused') this.state = 'menu';
     }
   }
 }
@@ -552,7 +558,12 @@ Game.prototype.draw = function (ctx, sprites) {
   ctx.fillText(String(this.score), GAME_W + 18, 404);
   // 覆盖层
   ctx.textAlign = 'center';
-  if (this.state === 'levelClear') {
+  if (this.state === 'paused') {
+    ctx.fillStyle = '#fff'; ctx.font = '36px monospace';
+    ctx.fillText('PAUSED', GAME_W / 2, 300);
+    ctx.font = '18px monospace';
+    ctx.fillText('回车继续 · ESC 退出', GAME_W / 2, 350);
+  } else if (this.state === 'levelClear') {
     ctx.fillStyle = '#fff'; ctx.font = '28px monospace';
     ctx.fillText('STAGE CLEAR', GAME_W / 2, 312);
   } else if (this.state === 'gameOver') {
@@ -612,7 +623,7 @@ function init() {
   const dirKeys = []; // 有序：最近按下的在末尾
   document.addEventListener('keydown', e => {
     if (KEY_DIR[e.code] || e.code === 'Space') e.preventDefault();
-    if (e.code === 'Enter') game.onKey('Enter');
+    if (e.code === 'Enter' || e.code === 'Escape') game.onKey(e.code);
     const d = KEY_DIR[e.code];
     if (d && !dirKeys.includes(d)) dirKeys.push(d);
     keys.add(e.code);
