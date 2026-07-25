@@ -259,7 +259,7 @@ body::after {
       </ul>
     </div>
   </div>
-  <div class="footer">© 2026 小拳头 · hand-crafted · zero dependencies</div>
+  <div class="footer">© 2026 小拳头</div>
   <script src="assets/main.js"></script>
 </body>
 </html>
@@ -310,7 +310,7 @@ git commit -m "feat: design system, terminal-style home page, link checker"
       <p><span class="prompt">github:</span> <a class="inline-link" href="https://github.com/sixdog06" target="_blank" rel="noopener">@sixdog06</a></p>
     </div>
   </div>
-  <div class="footer">© 2026 小拳头 · hand-crafted · zero dependencies</div>
+  <div class="footer">© 2026 小拳头</div>
 </body>
 </html>
 ```
@@ -343,7 +343,7 @@ git commit -m "feat: design system, terminal-style home page, link checker"
       </div>
     </a>
   </div>
-  <div class="footer">© 2026 小拳头 · hand-crafted · zero dependencies</div>
+  <div class="footer">© 2026 小拳头</div>
 </body>
 </html>
 ```
