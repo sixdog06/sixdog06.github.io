@@ -96,6 +96,7 @@ body::after {
 }
 /* 内页（about / fun） */
 .page { width: min(680px, 100%); }
+.page.wide { width: min(780px, 100%); }
 .crumb { margin-bottom: 24px; font-size: 14px; }
 .crumb a { color: var(--accent2); text-decoration: none; }
 .crumb a:hover { text-decoration: underline; }

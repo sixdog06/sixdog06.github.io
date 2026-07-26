@@ -2,14 +2,21 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<title>坦克大战</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>sixdog — 坦克大战</title>
+<link rel="stylesheet" href="../../assets/style.css">
 <style>
-  body { margin: 0; background: #111; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-  canvas { background: #000; image-rendering: pixelated; }
+  canvas { image-rendering: pixelated; max-width: 100%; height: auto; }
 </style>
 </head>
 <body>
-<canvas id="game" width="760" height="624"></canvas>
+  <div class="page wide">
+    <div class="crumb"><a href="../index.html">~/fun</a> tank-battle</div>
+    <h1 class="title">$ tank-battle</h1>
+    <canvas id="game" width="760" height="624"></canvas>
+    <div class="game-desc" style="margin-top: 16px">方向键/WASD 移动 · 空格开火 · ESC 暂停/退出</div>
+  </div>
+  <div class="footer">© 2026 小拳头</div>
 <script>
 'use strict';
 // ==================== 常量与精灵 ====================
