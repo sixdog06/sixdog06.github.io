@@ -5,13 +5,25 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>sixdog — 扫雷</title>
 <link rel="stylesheet" href="../../assets/style.css">
+<style>
+  #diff { margin-bottom: 16px; }
+  #diff a { color: var(--dim); text-decoration: none; margin: 0 10px; font-size: 14px; }
+  #diff a:hover { color: var(--text); }
+  #diff a.active { color: var(--accent); }
+  #game { max-width: 100%; height: auto; }
+</style>
 </head>
 <body>
-  <div class="page">
+  <div class="page wide">
     <div class="crumb"><a href="../index.html">~/fun</a> minesweeper</div>
     <h1 class="title">$ minesweeper</h1>
-    <canvas id="game"></canvas>
-    <div class="game-desc" style="margin-top: 16px">左键翻开 · 右键插旗 · 结束后点击任意处重开（首击必安全）</div>
+    <div style="text-align: center">
+      <div id="diff">
+        <a href="#" data-d="0" class="active">新手 9×9</a><a href="#" data-d="1">简单 16×16</a><a href="#" data-d="2">高手 30×16</a>
+      </div>
+      <canvas id="game"></canvas>
+      <div class="game-desc" style="margin-top: 16px">左键翻开 · 右键插旗 · 结束后点击任意处重开（首击必安全）</div>
+    </div>
   </div>
   <div class="footer">© 2026 小拳头</div>
 <script>
@@ -91,22 +103,37 @@ function toggleFlag(g, r, c) {
 }
 
 // ==================== 渲染与交互（仅浏览器，不在测试 seam 内） ====================
-const CELL_PX = 32, HEADER_PX = 48;
+const HEADER_PX = 48;
+const DIFFICULTIES = [
+  { name: '新手', rows: 9,  cols: 9,  mines: 10, cell: 32 },
+  { name: '简单', rows: 16, cols: 16, mines: 40, cell: 28 },
+  { name: '高手', rows: 16, cols: 30, mines: 99, cell: 24 },
+];
 const NUM_COLORS = ['', '#22d3ee', '#33ff66', '#f05050', '#c792ea', '#e8b830', '#22d3ee', '#f8f8f8', '#6b7280'];
 
 function init() {
   const canvas = document.getElementById('game');
   const ctx = canvas.getContext('2d');
-  let g, startTime = null, elapsed = 0, timer = null;
+  const diffLinks = document.querySelectorAll('#diff a');
+  let diffIdx = 0;
+  let g, cellPx, startTime = null, elapsed = 0, timer = null;
 
   function newGame() {
-    g = createGame({ rows: 9, cols: 9, mines: 10 });
-    canvas.width = g.cols * CELL_PX;
-    canvas.height = HEADER_PX + g.rows * CELL_PX;
+    const d = DIFFICULTIES[diffIdx];
+    g = createGame({ rows: d.rows, cols: d.cols, mines: d.mines });
+    cellPx = d.cell;
+    canvas.width = g.cols * cellPx;
+    canvas.height = HEADER_PX + g.rows * cellPx;
     startTime = null; elapsed = 0;
     clearInterval(timer); timer = null;
     draw();
   }
+  diffLinks.forEach(a => a.addEventListener('click', e => {
+    e.preventDefault();
+    diffIdx = Number(a.dataset.d);
+    diffLinks.forEach(x => x.classList.toggle('active', x === a));
+    newGame();
+  }));
   function startTimer() {
     startTime = Date.now();
     timer = setInterval(() => { elapsed = Math.floor((Date.now() - startTime) / 1000); draw(); }, 500);
@@ -118,8 +145,9 @@ function init() {
   }
   function cellAt(e) {
     const rect = canvas.getBoundingClientRect();
-    const c = Math.floor((e.clientX - rect.left) / CELL_PX);
-    const r = Math.floor((e.clientY - rect.top - HEADER_PX) / CELL_PX);
+    const scale = canvas.width / rect.width; // CSS 缩放时换算回画布坐标
+    const c = Math.floor((e.clientX - rect.left) * scale / cellPx);
+    const r = Math.floor(((e.clientY - rect.top) * scale - HEADER_PX) / cellPx);
     return { r, c };
   }
   canvas.addEventListener('click', e => {
@@ -140,7 +168,7 @@ function init() {
   });
 
   function draw() {
-    const W = canvas.width, H = canvas.height;
+    const W = canvas.width, H = canvas.height, k = cellPx / 32;
     ctx.fillStyle = '#0a0a0f';
     ctx.fillRect(0, 0, W, H);
     // 顶部栏：剩余雷数 / 状态 / 用时
@@ -159,33 +187,33 @@ function init() {
     // 棋盘
     for (let r = 0; r < g.rows; r++) {
       for (let c = 0; c < g.cols; c++) {
-        const idx = r * g.cols + c, x = c * CELL_PX, y = HEADER_PX + r * CELL_PX;
+        const idx = r * g.cols + c, x = c * cellPx, y = HEADER_PX + r * cellPx;
         const showMine = g.mines && g.mines.has(idx) && (g.status === 'lost' || g.revealed[idx]);
         if (g.revealed[idx] || (g.status !== 'playing' && showMine)) {
           ctx.fillStyle = showMine && g.revealed[idx] && g.status === 'lost' ? '#5a1a1a' : '#101018';
-          ctx.fillRect(x, y, CELL_PX, CELL_PX);
+          ctx.fillRect(x, y, cellPx, cellPx);
           if (showMine) {
             ctx.fillStyle = '#f05050';
             ctx.beginPath();
-            ctx.arc(x + CELL_PX / 2, y + CELL_PX / 2, 7, 0, Math.PI * 2);
+            ctx.arc(x + cellPx / 2, y + cellPx / 2, 7 * k, 0, Math.PI * 2);
             ctx.fill();
           } else if (g.adj[idx] > 0) {
             ctx.fillStyle = NUM_COLORS[g.adj[idx]];
             ctx.textAlign = 'center';
-            ctx.font = 'bold 16px ui-monospace, monospace';
-            ctx.fillText(String(g.adj[idx]), x + CELL_PX / 2, y + CELL_PX / 2 + 6);
+            ctx.font = 'bold ' + Math.round(16 * k) + 'px ui-monospace, monospace';
+            ctx.fillText(String(g.adj[idx]), x + cellPx / 2, y + cellPx / 2 + 6 * k);
           }
         } else {
           ctx.fillStyle = '#1e1e2e';
-          ctx.fillRect(x + 1, y + 1, CELL_PX - 2, CELL_PX - 2);
+          ctx.fillRect(x + 1, y + 1, cellPx - 2, cellPx - 2);
           if (g.flagged[idx]) {
             ctx.fillStyle = '#33ff66';
             ctx.beginPath();
-            ctx.moveTo(x + 10, y + 8);
-            ctx.lineTo(x + 22, y + 13);
-            ctx.lineTo(x + 10, y + 18);
+            ctx.moveTo(x + 10 * k, y + 8 * k);
+            ctx.lineTo(x + 22 * k, y + 13 * k);
+            ctx.lineTo(x + 10 * k, y + 18 * k);
             ctx.fill();
-            ctx.fillRect(x + 9, y + 8, 2, 16);
+            ctx.fillRect(x + 9 * k, y + 8 * k, 2 * k, 16 * k);
           }
         }
       }
