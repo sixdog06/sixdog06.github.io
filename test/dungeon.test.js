@@ -16,7 +16,7 @@ function loadGame() {
 const G = loadGame();
 const { MAP_W, MAP_H, createGame, generateFloor, move, wait, autoAttack,
   pickUp, descend, worldTick, findPath, computeFov, addMonster, damageMonster,
-  playerAttack, monsterAt } = G;
+  damagePlayer, playerAttack, monsterAt } = G;
 
 // ---------- 测试辅助 ----------
 // 全地板空竞技场，便于精确控制局面
@@ -199,12 +199,15 @@ test('减速：怪物每隔一回合才行动', () => {
 
 test('骷髅：攻击附加中毒 DoT', () => {
   const g = makeGame();
-  addMonster(g, 'skeleton', 11, 10); // 相邻，进入回合即攻击
-  wait(g);
+  addMonster(g, 'skeleton', 11, 10); // 相邻
+  wait(g); // 首拍：骷髅进入蓄势，不攻击
+  assert.equal(g.player.hp, 40);
+  wait(g); // 次拍：蓄势结算，攻击附加中毒
   assert.equal(g.player.poisonTurns, 3);
+  assert.equal(g.player.hp, 40 - 3); // 骷髅 atk 3
   const hp1 = g.player.hp;
-  wait(g); // 中毒 2 + 骷髅攻击 5
-  assert.equal(hp1 - g.player.hp, 7);
+  wait(g); // 中毒 1（本拍重新蓄势，不攻击）
+  assert.equal(hp1 - g.player.hp, 1);
 });
 
 test('技能书：站上后按 S 拾取学得、可叠加', () => {
@@ -232,6 +235,108 @@ test('坚韧：拾取后生命上限提升并回血', () => {
   pickUp(g);
   assert.equal(g.player.maxHp, 50);
   assert.equal(g.player.hp, 50);
+});
+
+test('护盾：承伤先扣护盾再扣 HP，受击 fx 照旧', () => {
+  const g = makeGame();
+  g.player.skills.shield = 2;
+  g.player.shield = 7;
+  damagePlayer(g, 4, 'test');
+  assert.equal(g.player.shield, 3);
+  assert.equal(g.player.hp, 40, '护盾未破，HP 不动');
+  damagePlayer(g, 5, 'test');
+  assert.equal(g.player.shield, 0);
+  assert.equal(g.player.hp, 38, '护盾击穿后剩余伤害扣 HP');
+  assert.ok(g.fx.some(e => e.kind === 'hit' && e.r === 10 && e.c === 10), '受击 fx 照旧');
+});
+
+test('护盾：每个 worldTick 回复 1 点且不超过上限', () => {
+  const g = makeGame();
+  g.player.skills.shield = 1; // 上限 5
+  g.player.shield = 2;
+  worldTick(g);
+  assert.equal(g.player.shield, 3);
+  g.player.shield = 5;
+  worldTick(g);
+  assert.equal(g.player.shield, 5, '已达上限不再回复');
+});
+
+test('护盾：两本护盾书上限叠加', () => {
+  const g = makeGame();
+  g.items.push({ kind: 'skill', r: 10, c: 10, skill: 'shield' });
+  pickUp(g);
+  assert.equal(g.player.skills.shield, 1);
+  assert.equal(g.player.shield, 5);
+  g.items.push({ kind: 'skill', r: 10, c: 10, skill: 'shield' });
+  pickUp(g);
+  assert.equal(g.player.skills.shield, 2);
+  assert.equal(g.player.shield, 10, '上限 10，护盾池随之获得');
+});
+
+test('炎环：每 tick 灼烧相邻 8 格怪物并 push aoe fx', () => {
+  const g = makeGame();
+  g.player.skills.aura = 1;
+  const m = addMonster(g, 'slime', 11, 10); // 相邻，满血 12
+  worldTick(g);
+  assert.equal(m.hp, 10, '相邻怪每 tick 扣 2');
+  assert.ok(g.fx.some(e => e.kind === 'aoe' && e.r === 10 && e.c === 10), '玩家格 push aoe fx');
+  assert.ok(g.fx.some(e => e.kind === 'hit' && e.r === 11 && e.c === 10 && e.dmg === 2),
+    '受伤怪物仍有 hit fx');
+});
+
+test('炎环：两本叠加扣 4，不相邻不扣', () => {
+  const g = makeGame();
+  g.player.skills.aura = 2;
+  const near = addMonster(g, 'slime', 11, 10);
+  const far = addMonster(g, 'slime', 10, 13); // 距离 3，不在炎环范围
+  worldTick(g);
+  assert.equal(near.hp, 12 - 4);
+  assert.equal(far.hp, 12, '不相邻的怪不受炎环伤害');
+});
+
+test('炎环：杀死怪物照常获得 XP', () => {
+  const g = makeGame();
+  g.player.skills.aura = 1;
+  const m = addMonster(g, 'slime', 11, 10);
+  m.hp = 2; // 一环即死
+  worldTick(g);
+  assert.equal(m.alive, false);
+  assert.equal(g.player.xp, 3, '照常获得史莱姆 XP');
+});
+
+test('护盾：承伤时 push shield fx', () => {
+  const g = makeGame();
+  g.player.skills.shield = 1;
+  g.player.shield = 5;
+  damagePlayer(g, 3, 'test');
+  assert.equal(g.player.shield, 2);
+  assert.equal(g.player.hp, 40, '护盾未破不掉 HP');
+  assert.ok(g.fx.some(e => e.kind === 'shield' && e.r === 10 && e.c === 10),
+    '护盾吸收时 push shield fx');
+});
+
+test('吸血：攻击命中回复 1 HP 并 push heal fx', () => {
+  const g = makeGame();
+  g.player.skills.drain = 1;
+  g.player.hp = 30;
+  addMonster(g, 'slime', 11, 10);
+  autoAttack(g); // 近战命中
+  assert.equal(g.player.hp, 31);
+  assert.ok(g.fx.some(e => e.kind === 'heal' && e.r === 10 && e.c === 10),
+    '触发吸血时 push heal fx');
+});
+
+test('吸血：两本叠加回 2，满血不超上限', () => {
+  const g = makeGame();
+  g.player.skills.drain = 2;
+  g.player.hp = 30;
+  addMonster(g, 'slime', 11, 10);
+  autoAttack(g);
+  assert.equal(g.player.hp, 32);
+  g.player.hp = g.player.maxHp;
+  addMonster(g, 'slime', 11, 10);
+  autoAttack(g);
+  assert.equal(g.player.hp, g.player.maxHp, '满血不超上限');
 });
 
 test('武器换装：拾取时换装，旧武器留在该格', () => {
@@ -463,8 +568,9 @@ test('史莱姆：一回合移动 2 格', () => {
 test('终局后操作无效：移动/攻击/下梯都不再生效', () => {
   const g = makeGame();
   g.player.hp = 1;
-  addMonster(g, 'orc', 11, 10); // 相邻，一击必杀
-  wait(g);
+  addMonster(g, 'orc', 11, 10); // 相邻
+  wait(g); // 首拍：兽人进入蓄势
+  wait(g); // 次拍：蓄势结算，一击必杀
   assert.equal(g.status, 'lost');
   const { r, c } = g.player;
   const monsCount = g.monsters.filter(m => m.alive).length;
@@ -575,7 +681,8 @@ test('worldTick：终局后幂等，不再推进世界', () => {
   const g = makeGame();
   g.player.hp = 1;
   addMonster(g, 'orc', 11, 10);
-  worldTick(g); // 兽人出手，玩家死亡
+  worldTick(g); // 首拍：兽人进入蓄势
+  worldTick(g); // 次拍：蓄势结算，玩家死亡
   assert.equal(g.status, 'lost');
   const turns = g.turns;
   worldTick(g);
@@ -584,17 +691,158 @@ test('worldTick：终局后幂等，不再推进世界', () => {
 });
 
 // ---------- 骷髅弓手（远程怪）与攻击事件 fx ----------
-test('骷髅弓手：视线内且距离 2~7 时原地射箭攻击玩家', () => {
+test('骷髅弓手：视线内且距离 2~7 时原地射出飞行弹丸', () => {
   const g = makeGame();
   const m = addMonster(g, 'skeleton_archer', 10, 15); // 同行距离 5，发现玩家
   worldTick(g);
-  assert.equal(g.player.hp, 40 - 4);
+  assert.equal(g.player.hp, 40, '弹丸未飞到，玩家尚未受伤');
   assert.equal(m.c, 15, '射箭时原地不动');
-  assert.ok(g.fx.some(e => e.kind === 'shot' &&
-    e.from.r === 10 && e.from.c === 15 && e.to.r === 10 && e.to.c === 10 && e.elem === 'arrow'),
-    '产生 shot fx');
-  assert.ok(g.fx.some(e => e.kind === 'hit' && e.r === 10 && e.c === 10 && e.dmg === 4),
-    '产生玩家受击 hit fx');
+  assert.ok(!g.fx.some(e => e.kind === 'shot'), '敌方射击不再产生 shot fx');
+  assert.equal(g.projectiles.length, 1, '生成一个弹丸');
+  const pr = g.projectiles[0];
+  assert.deepEqual({ r: pr.r, c: pr.c, dr: pr.dr, dc: pr.dc }, { r: 10, c: 15, dr: 0, dc: -1 },
+    '弹丸从弓手格朝玩家方向飞行');
+  assert.equal(pr.dmg, 2);
+  assert.equal(pr.elem, 'arrow');
+});
+
+test('弹丸：玩家原地不动，推进若干 tick 后命中扣血', () => {
+  const g = makeGame();
+  const m = addMonster(g, 'skeleton_archer', 10, 15);
+  worldTick(g); // 弹丸生成于 (10,15)
+  damageMonster(g, m, 999, 'test'); // 杀掉弓手，避免继续射击干扰
+  for (let i = 0; i < 4; i++) wait(g); // → (10,14)…(10,11)
+  assert.equal(g.player.hp, 40, '飞行途中不扣血');
+  wait(g); // → 命中 (10,10)
+  assert.equal(g.player.hp, 40 - 2);
+  assert.equal(g.projectiles.length, 0, '命中后弹丸消失');
+  assert.ok(g.fx.some(e => e.kind === 'hit' && e.r === 10 && e.c === 10 && e.dmg === 2),
+    '命中产生玩家受击 hit fx');
+});
+
+test('弹丸：玩家横向移出弹道后弹丸飞过、不扣血', () => {
+  const g = makeGame();
+  const m = addMonster(g, 'skeleton_archer', 10, 15);
+  worldTick(g); // 弹丸沿第 10 行朝左飞
+  damageMonster(g, m, 999, 'test');
+  move(g, 1, 0); // 玩家移到 (11,10)，弹丸同时推进到 (10,14)
+  for (let i = 0; i < 12; i++) wait(g); // 弹丸飞过原位置，超出 12 格射程消失
+  assert.equal(g.player.hp, 40, '横向走位躲开弹丸');
+  assert.equal(g.projectiles.length, 0, '飞满 12 格后弹丸消失');
+});
+
+test('弹丸：撞墙消失', () => {
+  const g = makeGame();
+  const m = addMonster(g, 'skeleton_archer', 10, 15);
+  worldTick(g); // 弹丸生成（发射瞬间弹道无墙）
+  damageMonster(g, m, 999, 'test');
+  g.map[10 * MAP_W + 12] = 0; // 弹道上立起一堵墙
+  wait(g); // → (10,14)
+  wait(g); // → (10,13)
+  assert.equal(g.projectiles.length, 1);
+  wait(g); // → (10,12) 撞墙
+  assert.equal(g.projectiles.length, 0, '弹丸撞墙消失');
+  assert.equal(g.player.hp, 40);
+});
+
+test('弹丸：斜向射击沿 45° 单位向量逐格推进', () => {
+  const g = makeGame();
+  const m = addMonster(g, 'skeleton_archer', 13, 13); // 与玩家成 45° 斜线，cheb 3
+  worldTick(g);
+  assert.equal(g.projectiles.length, 1);
+  const pr = g.projectiles[0];
+  assert.deepEqual({ dr: pr.dr, dc: pr.dc }, { dr: -1, dc: -1 });
+  damageMonster(g, m, 999, 'test');
+  wait(g); // (13,13) → (12,12)，每 tick 前进 1 格
+  assert.deepEqual({ r: pr.r, c: pr.c }, { r: 12, c: 12 });
+});
+
+test('击碎弹丸：近战 A 销毁周围 8 格内的弹丸（空击同样生效）', () => {
+  const g = makeGame();
+  g.projectiles.push({ r: 11, c: 10, dr: -1, dc: 0, dmg: 2, elem: 'arrow', flown: 0 });
+  autoAttack(g); // 周围无怪，空击也是出手
+  assert.equal(g.projectiles.length, 0, '空击挥碎相邻格弹丸');
+  assert.ok(g.fx.some(e => e.kind === 'block' && e.r === 11 && e.c === 10));
+  assert.ok(g.log.some(l => l.includes('击碎了飞来的箭矢')));
+  // 有怪命中时同样销毁
+  addMonster(g, 'slime', 11, 10);
+  g.projectiles.push({ r: 10, c: 11, dr: 0, dc: -1, dmg: 2, elem: 'arrow', flown: 0 });
+  autoAttack(g);
+  assert.equal(g.projectiles.length, 0, '命中挥击同时销毁另一相邻格弹丸');
+  for (let i = 0; i < 3; i++) wait(g);
+  assert.equal(g.player.hp, 40, '被销毁的弹丸不再造成伤害');
+});
+
+test('击碎弹丸：射手射击销毁弹道直线上的弹丸', () => {
+  const g = makeGame();
+  const archer = addMonster(g, 'skeleton_archer', 10, 16); // 距离 6，射出弹丸
+  worldTick(g);
+  assert.equal(g.projectiles.length, 1);
+  damageMonster(g, archer, 999, 'test'); // 收掉弓手，避免继续射击
+  wait(g); // 弹丸推进到 (10,15)
+  g.player.weapon = { class: 'archer', tier: 1, name: '短弓' };
+  const target = addMonster(g, 'slime', 10, 17); // 弹丸后方的目标
+  computeFov(g);
+  autoAttack(g); // 弹道 (10,11)~(10,17) 经过弹丸所在格
+  assert.equal(g.projectiles.length, 0, '弹道上的弹丸被击碎');
+  assert.ok(g.fx.some(e => e.kind === 'block' && e.r === 10 && e.c === 15));
+  assert.ok(target.hp < 12, '射击照常命中目标');
+});
+
+test('击碎弹丸：射手空击（whiff）弹道同样扫到弹丸', () => {
+  const g = makeGame();
+  g.player.weapon = { class: 'archer', tier: 1, name: '短弓' };
+  g.player.dir = { dr: 0, dc: 1 }; // 朝右
+  g.projectiles.push({ r: 10, c: 14, dr: 0, dc: -1, dmg: 2, elem: 'arrow', flown: 0 });
+  autoAttack(g); // 视野内无怪，空击
+  assert.equal(g.projectiles.length, 0, '空击弹道扫碎弹丸');
+  assert.ok(g.fx.some(e => e.kind === 'block' && e.r === 10 && e.c === 14));
+});
+
+test('蓄势：怪物相邻首拍进入蓄势不掉血，次拍仍相邻则结算', () => {
+  const g = makeGame();
+  const m = addMonster(g, 'orc', 11, 10);
+  worldTick(g);
+  assert.equal(m.windup, true, '首拍进入蓄势');
+  assert.equal(g.player.hp, 40, '蓄势不扣血');
+  assert.ok(g.log.some(l => l.includes('举起了武器')));
+  worldTick(g);
+  assert.equal(m.windup, false, '结算后清除蓄势');
+  assert.equal(g.player.hp, 40 - 5, '次拍仍相邻，结算攻击'); // 兽人 atk 5
+});
+
+test('蓄势：玩家移开后攻击落空，蓄势取消转为追击', () => {
+  const g = makeGame();
+  const m = addMonster(g, 'orc', 11, 10);
+  worldTick(g); // 蓄势
+  g.map[10 * MAP_W + 10] = 0; // 挡住直线追击路线，本拍追不到相邻格
+  move(g, -1, 0); // 玩家撤到 (9,10)，世界推进一拍
+  assert.equal(g.player.hp, 40, '离开相邻格，蓄势攻击落空');
+  assert.equal(m.windup, false, '蓄势取消');
+  assert.ok(m.r !== 11 || m.c !== 10, '转为追击移动');
+});
+
+test('蓄势：追击落格相邻的怪物当拍只进入蓄势', () => {
+  const g = makeGame();
+  const m = addMonster(g, 'slime', 10, 13); // 距离 3，一回合 2 格
+  worldTick(g); // 追到 (10,11) 相邻，当拍只进入蓄势
+  assert.equal(m.c, 11);
+  assert.equal(m.windup, true);
+  assert.equal(g.player.hp, 40, '落格相邻当拍不扣血');
+});
+
+test('蓄势：汪汪前摇规则一致', () => {
+  const g = createGame({ seed: 5 });
+  calm(g);
+  gotoFloor(g, 3);
+  const woof = g.monsters.find(m => m.type === 'woof');
+  g.player.r = woof.r; g.player.c = woof.c + 1; // 相邻
+  g.player.hp = 100000; g.player.maxHp = 100000; // 防止被围殴致死
+  worldTick(g);
+  assert.equal(woof.windup, true, '汪汪首拍只蓄势');
+  assert.equal(g.player.hp, 100000);
+  worldTick(g);
+  assert.equal(g.player.hp, 100000 - 6, '次拍结算'); // 汪汪 atk 6
 });
 
 test('骷髅弓手：被墙挡时不射箭，改为 BFS 逼近', () => {
@@ -610,11 +858,14 @@ test('骷髅弓手：被墙挡时不射箭，改为 BFS 逼近', () => {
 });
 
 test('骷髅弓手：距离过近转为近战，过远先逼近', () => {
-  // 过近（cheb 1）：近战攻击，不射箭
+  // 过近（cheb 1）：首拍蓄势、次拍近战攻击，不射箭
   const g = makeGame();
   const m = addMonster(g, 'skeleton_archer', 10, 11);
   worldTick(g);
-  assert.equal(g.player.hp, 40 - 4);
+  assert.equal(m.windup, true, '相邻首拍只进入蓄势');
+  assert.equal(g.player.hp, 40, '蓄势不扣血');
+  worldTick(g);
+  assert.equal(g.player.hp, 40 - 2); // 弓手 atk 2
   assert.ok(!g.fx.some(e => e.kind === 'shot'), '近身不产 shot fx');
   assert.ok(g.fx.some(e => e.kind === 'melee'));
   // 过远（cheb 8 > 射程 7）：先逼近
@@ -640,7 +891,7 @@ test('fx 事件：玩家近战与射手自动攻击的事件内容正确', () =>
     e.from.r === 10 && e.from.c === 10 && e.to.r === 10 && e.to.c === 13 && e.elem === 'arrow'));
 });
 
-test('镜像：复制射手武器时以远程方式攻击玩家', () => {
+test('镜像：复制射手武器时以弹丸方式远程攻击玩家', () => {
   const g = createGame({ seed: 5 });
   calm(g);
   g.player.weapon = { class: 'archer', tier: 1, name: '短弓' }; // 玩家攻击 11
@@ -653,9 +904,14 @@ test('镜像：复制射手武器时以远程方式攻击玩家', () => {
   g.map.fill(1);
   g.monsters = [mirror];
   g.player.r = mirror.r; g.player.c = mirror.c + 5;
-  worldTick(g);
+  worldTick(g); // 镜像射出弹丸而非即时命中
+  assert.equal(g.player.hp, 40, '弹丸未飞到，玩家尚未受伤');
+  assert.equal(g.projectiles.length, 1);
+  assert.equal(g.projectiles[0].elem, 'arrow');
+  assert.deepEqual({ dr: g.projectiles[0].dr, dc: g.projectiles[0].dc }, { dr: 0, dc: 1 });
+  // 原地不动，弹丸推进至命中（镜像持续射击，断言第一发命中的伤害）
+  for (let i = 0; i < 10 && g.player.hp === 40; i++) worldTick(g);
   assert.equal(g.player.hp, 40 - Math.round(11 * 1.5));
-  assert.ok(g.fx.some(e => e.kind === 'shot' && e.from.r === mirror.r && e.from.c === mirror.c));
 });
 
 // ---------- 空击动画（附近无怪时 A 键仍产生 fx） ----------

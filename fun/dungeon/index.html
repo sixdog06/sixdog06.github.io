@@ -15,7 +15,7 @@
     <h1 class="title">$ dungeon</h1>
     <div style="text-align: center">
       <canvas id="game"></canvas>
-      <div class="game-desc" style="margin-top: 16px">方向键移动 · A 普通攻击 · S 拾取 · 踩上楼梯下行 · 结束后回车重开</div>
+      <div class="game-desc" style="margin-top: 16px">方向键移动 · A 普通攻击 · S 拾取 · M 静音 · 踩上楼梯下行 · 结束后回车重开</div>
     </div>
   </div>
   <div class="footer">© 2026 小拳头</div>
@@ -36,20 +36,24 @@ const WEAPONS = {
 };
 // 怪物模板：三档普通怪 + 远程弓手 + 小狗 + 三个 Boss
 const MONSTER_TYPES = {
-  slime:    { name: '史莱姆', hp: 12, atk: 3,  xp: 3,  speed: 2, glyph: 's', drops: true },  // 弱，一回合移动 2 格
-  skeleton: { name: '骷髅',   hp: 20, atk: 5,  xp: 5,  speed: 1, glyph: 'k', drops: true, poison: { turns: 3, dmg: 2 } }, // 中，攻击附加中毒
-  orc:      { name: '兽人',   hp: 35, atk: 8,  xp: 8,  speed: 1, glyph: 'o', drops: true },  // 强，血厚攻高
-  skeleton_archer: { name: '骷髅弓手', hp: 16, atk: 4, xp: 4, speed: 1, glyph: 'a', drops: true, ranged: { min: 2, max: 7 } }, // 远程：视线内射箭
-  puppy:    { name: '小狗',   hp: 8,  atk: 2,  xp: 1,  speed: 1, glyph: 'd' },               // 汪汪召唤物，史莱姆级弱怪
-  meow:     { name: '喵喵',   hp: 40, atk: 6,  xp: 25, speed: 1, glyph: 'M', lives: 9 },     // 第 3 层 Boss，9 条命
-  woof:     { name: '汪汪',   hp: 80, atk: 10, xp: 25, speed: 1, glyph: 'W' },               // 第 3 层 Boss，召唤狗群
+  slime:    { name: '史莱姆', hp: 12, atk: 2,  xp: 3,  speed: 2, glyph: 's', drops: true },  // 弱，一回合移动 2 格
+  skeleton: { name: '骷髅',   hp: 20, atk: 3,  xp: 5,  speed: 1, glyph: 'k', drops: true, poison: { turns: 3, dmg: 1 } }, // 中，攻击附加中毒
+  orc:      { name: '兽人',   hp: 35, atk: 5,  xp: 8,  speed: 1, glyph: 'o', drops: true },  // 强，血厚攻高
+  skeleton_archer: { name: '骷髅弓手', hp: 16, atk: 2, xp: 4, speed: 1, glyph: 'a', drops: true, ranged: { min: 2, max: 7 } }, // 远程：射出箭矢弹丸
+  puppy:    { name: '小狗',   hp: 8,  atk: 1,  xp: 1,  speed: 1, glyph: 'd' },               // 汪汪召唤物，史莱姆级弱怪
+  meow:     { name: '喵喵',   hp: 40, atk: 4,  xp: 25, speed: 1, glyph: 'M', lives: 9 },     // 第 3 层 Boss，9 条命
+  woof:     { name: '汪汪',   hp: 80, atk: 6,  xp: 25, speed: 1, glyph: 'W' },               // 第 3 层 Boss，召唤狗群
   mirror:   { name: '镜像',   hp: 1,  atk: 1,  xp: 50, speed: 1, glyph: 'X' },               // 第 5 层 Boss，数值生成时复制玩家后覆盖
 };
-const SKILL_NAMES = { power: '力量', tough: '坚韧', cleave: '顺劈', pierce: '穿透', empower: '元素强化' };
+const SKILL_NAMES = { power: '力量', tough: '坚韧', cleave: '顺劈', pierce: '穿透', empower: '元素强化', shield: '护盾', aura: '炎环', drain: '吸血' };
 const CLASS_SKILL = { melee: 'cleave', archer: 'pierce', staff: 'empower' }; // 武器专属技能
 const MAX_PUPPIES = 4;    // 场上存活小狗上限
 const SUMMON_EVERY = 4;   // 汪汪每隔 4 回合召唤一次
 const HEAL_AMOUNT = 15;   // 血包回复量
+const SHIELD_PER_LVL = 5; // 护盾技能每层提供的护盾上限
+const AURA_DMG_PER_LVL = 2; // 炎环每层对相邻怪的每回合伤害
+const PROJ_SPEED = 1;     // 敌方弹丸每 tick 前进格数
+const PROJ_RANGE = 12;    // 弹丸最大飞行格数，超过即消失
 
 // 确定性伪随机数（mulberry32），相同种子生成相同地牢
 function mulberry32(seed) {
@@ -76,7 +80,8 @@ function createGame({ seed, rng } = {}) {
     player: {
       r: 0, c: 0, hp: 40, maxHp: 40, baseAtk: 5,
       weapon: { class: 'melee', tier: 1, name: WEAPONS.melee.names[0] }, // 初始 1 档近战
-      skills: { power: 0, tough: 0, cleave: 0, pierce: 0, empower: 0 },
+      skills: { power: 0, tough: 0, cleave: 0, pierce: 0, empower: 0, shield: 0, aura: 0, drain: 0 },
+      shield: 0,           // 当前护盾值（上限 = SHIELD_PER_LVL × 护盾层数）
       xp: 0, level: 1,
       form: 'fire',        // 法杖下一发形态：fire 火焰 / frost 冰霜
       poisonTurns: 0, poisonDmg: 0,
@@ -85,6 +90,7 @@ function createGame({ seed, rng } = {}) {
     monsters: [],
     items: [],
     stairs: null,
+    projectiles: [], // 敌方远程弹丸（飞行实体）：{ r, c, dr, dc, dmg, elem, flown }
     nextId: 1,
     log: [],
     fx: [], // 攻击/受击事件队列，供渲染层消费做动画（逻辑层只写不读）
@@ -140,6 +146,7 @@ function addMonster(g, type, r, c) {
     effects: { burnTurns: 0, burnDmg: 0, slow: 0 },
     slowPhase: false,       // 减速时隔回合行动的相位
     invincibleTurns: 0,     // 喵喵复活当回合无敌
+    windup: false,          // 近战蓄势中：下一拍结算攻击
   };
   if (t.lives) m.lives = t.lives;
   if (t.poison) m.poison = t.poison;
@@ -159,6 +166,7 @@ function generateFloor(g, n) {
   g.items = [];
   g.stairs = null;
   g.fx.length = 0; // 跨层清掉残留的攻击事件
+  g.projectiles = []; // 跨层清掉飞行中的弹丸
   g.memory.fill(false);
   const p = g.player;
   p.r = rooms[0].cr; p.c = rooms[0].cc;
@@ -206,6 +214,7 @@ function generateArena(g, n) {
   g.items = [];
   g.stairs = null;
   g.fx.length = 0;
+  g.projectiles = [];
   g.memory.fill(false);
   const p = g.player;
   p.r = r0 + h - 2; p.c = c0 + (w >> 1); // 入口：房间下缘中央
@@ -314,6 +323,12 @@ function findPath(g, sr, sc, tr, tc) {
 // ---------- 伤害与击杀 ----------
 function damagePlayer(g, dmg, source) {
   const p = g.player;
+  if (p.shield > 0) { // 护盾先于 HP 承伤
+    const absorbed = Math.min(p.shield, dmg);
+    p.shield -= absorbed;
+    dmg -= absorbed;
+    if (absorbed > 0) g.fx.push({ kind: 'shield', r: p.r, c: p.c }); // 护盾承伤蓝色闪光
+  }
   p.hp -= dmg;
   g.fx.push({ kind: 'hit', r: p.r, c: p.c, dmg }); // 玩家受击红闪
   if (p.hp <= 0) {
@@ -381,7 +396,7 @@ function rollDrops(g, m) {
     g.items.push({ kind: 'health', r: m.r, c: m.c, amount: HEAL_AMOUNT });
     say(g, `${m.name}掉落了血包`);
   } else if (roll < 0.53) {
-    const pool = ['power', 'tough', CLASS_SKILL[g.player.weapon.class]];
+    const pool = ['power', 'tough', 'shield', 'aura', 'drain', CLASS_SKILL[g.player.weapon.class]];
     const skill = pool[Math.floor(g.rng() * pool.length)];
     g.items.push({ kind: 'skill', r: m.r, c: m.c, skill });
     say(g, `${m.name}掉落了技能书「${SKILL_NAMES[skill]}」`);
@@ -444,6 +459,30 @@ function bumpHit(g, m) {
       }
     }
   }
+  drainHeal(g); // 吸血：命中回血
+}
+
+// 吸血：玩家攻击命中怪物时回复 1×层数 HP（不超上限），并 push heal fx
+function drainHeal(g) {
+  const p = g.player;
+  const n = p.skills.drain;
+  if (n <= 0) return;
+  p.hp = Math.min(p.maxHp, p.hp + n);
+  g.fx.push({ kind: 'heal', r: p.r, c: p.c });
+}
+
+// 击碎弹丸：销毁波及格上的敌方弹丸（星芒 fx + 日志），被销毁的弹丸不再造成伤害
+function smashProjectiles(g, cells) {
+  if (g.projectiles.length === 0) return;
+  const smashed = [];
+  g.projectiles = g.projectiles.filter(pr => {
+    if (cells.some(cell => cell.r === pr.r && cell.c === pr.c)) { smashed.push(pr); return false; }
+    return true;
+  });
+  for (const pr of smashed) {
+    say(g, `你击碎了飞来的${pr.elem === 'arrow' ? '箭矢' : '法术'}！`);
+    g.fx.push({ kind: 'block', r: pr.r, c: pr.c });
+  }
 }
 
 // ---------- 自动锁定（A 普通攻击） ----------
@@ -482,6 +521,7 @@ function fireLineAt(g, target, dmg, label, onHit, elem) {
     if (r === pr && c === pc) continue;
     pr = r; pc = c;
     if (g.map[r * MAP_W + c] === 0) break; // 被墙阻挡
+    smashProjectiles(g, [{ r, c }]); // 弹道扫过，击碎该格敌方弹丸
     const m = monsterAt(g, r, c);
     if (!m) continue;
     hit = true;
@@ -491,6 +531,7 @@ function fireLineAt(g, target, dmg, label, onHit, elem) {
     if (m.alive && onHit) onHit(m);
     if (!pierce) break;
   }
+  if (hit) drainHeal(g); // 吸血：命中回血
   return hit;
 }
 
@@ -508,6 +549,12 @@ function autoAttack(g) {
   const p = g.player;
   const cls = p.weapon.class;
   if (cls === 'melee') {
+    // 近战挥击波及周围 8 格：击碎其中的敌方弹丸（命中与空击都算出手）
+    const cells = [];
+    for (let dr = -1; dr <= 1; dr++) for (let dc = -1; dc <= 1; dc++) {
+      if (dr || dc) cells.push({ r: p.r + dr, c: p.c + dc });
+    }
+    smashProjectiles(g, cells);
     const t = meleeTarget(g);
     if (!t) {
       // 空击：朝朝向的相邻格挥空（有动画无伤害），不耗回合
@@ -540,7 +587,7 @@ function autoAttack(g) {
   return g;
 }
 
-// 空击弹丸：沿玩家朝向直线飞到墙/边界前的最后一格
+// 空击弹丸：沿玩家朝向直线飞到墙/边界前的最后一格（弹道同样击碎敌方弹丸）
 function whiffShot(g, elem) {
   const p = g.player;
   let r = p.r, c = p.c;
@@ -549,6 +596,7 @@ function whiffShot(g, elem) {
     if (nr < 0 || nr >= MAP_H || nc < 0 || nc >= MAP_W) break;
     if (g.map[nr * MAP_W + nc] === 0) break;
     r = nr; c = nc;
+    smashProjectiles(g, [{ r, c }]); // 空射击弹道扫过，击碎该格敌方弹丸
   }
   g.fx.push({ kind: 'shot', from: { r: p.r, c: p.c }, to: { r, c }, elem });
 }
@@ -590,6 +638,7 @@ function pickUp(g) {
   } else if (it.kind === 'skill') {
     p.skills[it.skill]++;
     if (it.skill === 'tough') { p.maxHp += 10; p.hp += 10; }
+    if (it.skill === 'shield') p.shield += SHIELD_PER_LVL; // 护盾池随上限一起获得
     g.items.splice(g.items.indexOf(it), 1);
     say(g, `你学得了技能「${SKILL_NAMES[it.skill]}」（×${p.skills[it.skill]}）`);
   } else {
@@ -637,15 +686,59 @@ function worldTick(g) {
     }
   }
   if (g.status !== 'playing') { computeFov(g); return; }
-  // 2. 所有存活怪物各行动一次
+  // 2. 护盾回复（每 tick 1 点，不超上限）与炎环（灼烧周围 8 格怪物，不耗玩家行动）
+  const maxShield = SHIELD_PER_LVL * p.skills.shield;
+  if (p.shield < maxShield) p.shield++;
+  if (p.skills.aura > 0) {
+    const dmg = AURA_DMG_PER_LVL * p.skills.aura;
+    const targets = g.monsters.filter(m => m.alive &&
+      Math.abs(m.r - p.r) <= 1 && Math.abs(m.c - p.c) <= 1);
+    if (targets.length > 0) {
+      g.fx.push({ kind: 'aoe', r: p.r, c: p.c }); // 炎环扩散动画（渲染层消费）
+      for (const m of targets) {
+        say(g, `炎环灼烧了${m.name}（${dmg} 点伤害）`);
+        damageMonster(g, m, dmg, 'aura');
+      }
+    }
+  }
+  if (g.status !== 'playing') { computeFov(g); return; }
+  // 3. 敌方弹丸推进（玩家移动触发的 tick 同样推进，贴脸难躲、远距离可走位）
+  advanceProjectiles(g);
+  if (g.status !== 'playing') { computeFov(g); return; }
+  // 4. 所有存活怪物各行动一次
   for (const m of [...g.monsters]) {
     if (!m.alive) continue;
     monsterAct(g, m);
     if (g.status !== 'playing') break;
   }
-  // 3. 无敌回合计数递减
+  // 5. 无敌回合计数递减
   for (const m of g.monsters) if (m.invincibleTurns > 0) m.invincibleTurns--;
   computeFov(g);
+}
+
+// 弹丸推进：每 tick 沿 (dr,dc) 前进 PROJ_SPEED 格，逐格检查——
+// 撞墙 / 出界 / 累计飞行超过 PROJ_RANGE 格消失；到达玩家格则命中（不伤害怪物）
+function advanceProjectiles(g) {
+  const p = g.player;
+  const rest = [];
+  for (const pr of g.projectiles) {
+    if (g.status !== 'playing') { rest.push(pr); continue; } // 玩家已死亡，剩余弹丸不再推进
+    let alive = true;
+    for (let s = 0; s < PROJ_SPEED; s++) {
+      pr.r += pr.dr; pr.c += pr.dc; pr.flown++;
+      if (pr.r < 0 || pr.r >= MAP_H || pr.c < 0 || pr.c >= MAP_W) { alive = false; break; }
+      if (g.map[pr.r * MAP_W + pr.c] === 0) { alive = false; break; } // 撞墙消失
+      if (pr.r === p.r && pr.c === p.c) {
+        say(g, `${pr.elem === 'arrow' ? '箭矢' : '法术'}击中了你（${pr.dmg} 点伤害）`);
+        damagePlayer(g, pr.dmg, pr.elem === 'arrow' ? '箭矢' : '法术');
+        alive = false;
+        break;
+      }
+      if (pr.flown >= PROJ_RANGE) { alive = false; break; }
+    }
+    if (alive) rest.push(pr);
+  }
+  g.projectiles = rest;
 }
 
 function monsterAct(g, m) {
@@ -675,7 +768,8 @@ function monsterAct(g, m) {
   }
   const adjacent = Math.abs(m.r - p.r) <= 1 && Math.abs(m.c - p.c) <= 1;
   if (m.aware) {
-    // 远程怪（骷髅弓手 / 复制了射手或法杖的镜像）：视线内且距离 2~7 原地射击
+    // 远程怪（骷髅弓手 / 复制了射手或法杖的镜像）：视线内且距离 2~7 原地射击，
+    // 生成朝玩家方向飞行的弹丸（每 tick 前进 2 格，玩家可走位躲避），不再即时命中
     if (m.ranged && !adjacent) {
       const cheb = Math.max(Math.abs(m.r - p.r), Math.abs(m.c - p.c));
       if (cheb >= m.ranged.min && cheb <= m.ranged.max && clearShot(g, m, p)) {
@@ -685,16 +779,32 @@ function monsterAct(g, m) {
           verb = '施放了法术';
           m.form = elem === 'fire' ? 'frost' : 'fire';
         }
-        say(g, `${m.name}${verb}（${m.atk} 点伤害）`);
-        g.fx.push({ kind: 'shot', from: { r: m.r, c: m.c }, to: { r: p.r, c: p.c }, elem });
-        damagePlayer(g, m.atk, m.name);
+        say(g, `${m.name}${verb}`);
+        // clearShot 保证 8 向直线，方向为单位向量
+        g.projectiles.push({ r: m.r, c: m.c,
+          dr: Math.sign(p.r - m.r), dc: Math.sign(p.c - m.c),
+          dmg: m.atk, elem, flown: 0 });
         return;
       }
     }
-    if (adjacent) { monsterAttack(g, m); return; }
-    // BFS 绕障碍追击（史莱姆一回合移动 2 格）
-    for (let step = 0; step < m.speed; step++) {
-      if (Math.abs(m.r - p.r) <= 1 && Math.abs(m.c - p.c) <= 1) { monsterAttack(g, m); return; }
+    // 近战蓄势结算：上一拍进入蓄势的怪，玩家仍相邻则出手；已离开则取消蓄势、转为正常行动
+    if (m.windup) {
+      m.windup = false;
+      if (adjacent) { monsterAttack(g, m); return; }
+    }
+    if (adjacent) { // 近战攻击有前摇：相邻不当拍扣血，先进入蓄势
+      m.windup = true;
+      say(g, `${m.name}举起了武器！`);
+      return;
+    }
+    // BFS 绕障碍追击（史莱姆一回合移动 2 格）；每步移动前后都检查相邻，落格相邻当拍只进入蓄势
+    for (let step = 0; step <= m.speed; step++) {
+      if (Math.abs(m.r - p.r) <= 1 && Math.abs(m.c - p.c) <= 1) {
+        m.windup = true;
+        say(g, `${m.name}举起了武器！`);
+        return;
+      }
+      if (step === m.speed) break;
       const path = findPath(g, m.r, m.c, p.r, p.c);
       if (!path || path.length === 0) return;
       const next = path[0];
@@ -760,6 +870,8 @@ function freeNeighbor(g, r, c) {
 const CELL = 22, HUD_H = 56, LOG_H = 96;
 const TICK_MS = 900; // 世界节拍间隔：每 0.9 秒推进一回合
 const ANIM_MS = 200; // 攻击动画时长（远短于一拍，不重叠）
+const ANIM_DUR = { aoe: 260 }; // 个别动画时长覆盖（炎环更持久）
+const animDur = a => ANIM_DUR[a.kind] || ANIM_MS;
 
 // ---- 手绘像素 Sprite：12×12 位图 ×2 缩放 = 24px 恰好一格 ----
 // 字符→颜色映射见各调色板，'.' 为透明
@@ -977,6 +1089,100 @@ function init() {
   let g, tickTimer = null;
   let anims = [], animRunning = false; // 进行中的攻击动画（消费自 g.fx）
 
+  // ---- 音效与背景音乐：WebAudio 程序合成（无音频文件，仅浏览器执行） ----
+  // AudioContext 受自动播放策略限制，首次按键时才创建/resume，之前静默
+  let audioCtx = null, muted = false;
+  function ensureAudio() {
+    if (!audioCtx) {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return;
+      audioCtx = new AC();
+    }
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+  }
+  // 基础音：oscillator + gain 包络（slide 为音高滑移目标，delay 秒后开始）
+  function toneAt(t, freq, dur, type, vol, slide) {
+    const o = audioCtx.createOscillator(), gn = audioCtx.createGain();
+    o.type = type;
+    o.frequency.setValueAtTime(freq, t);
+    if (slide) o.frequency.exponentialRampToValueAtTime(Math.max(1, slide), t + dur);
+    gn.gain.setValueAtTime(vol, t);
+    gn.gain.exponentialRampToValueAtTime(0.001, t + dur);
+    o.connect(gn).connect(audioCtx.destination);
+    o.start(t); o.stop(t + dur + 0.02);
+  }
+  function tone({ freq, dur, type, vol, slide = 0, delay = 0 }) {
+    if (!audioCtx || muted) return;
+    toneAt(audioCtx.currentTime + delay, freq, dur, type, vol, slide);
+  }
+  // 消费 g.fx 时按 kind 播放打击音效
+  function sfxForFx(e) {
+    const p = g.player;
+    if (e.kind === 'melee') tone({ freq: 700, slide: 250, dur: 0.07, type: 'square', vol: 0.1 }); // 咻
+    else if (e.kind === 'shot') tone({ freq: 950, slide: 420, dur: 0.06, type: 'square', vol: 0.09 }); // 咻（高）
+    else if (e.kind === 'hit') {
+      if (e.r === p.r && e.c === p.c) tone({ freq: 95, slide: 45, dur: 0.18, type: 'triangle', vol: 0.22 }); // 咚（玩家受击）
+      else tone({ freq: 170, slide: 70, dur: 0.1, type: 'square', vol: 0.16 }); // 砰（命中怪物）
+    } else if (e.kind === 'block') tone({ freq: 1750, slide: 1300, dur: 0.06, type: 'sine', vol: 0.14 }); // 叮
+  }
+  const sfxPickup = () => { // 嘟-嘟（上行两音）
+    tone({ freq: 523, dur: 0.07, type: 'square', vol: 0.12 });
+    tone({ freq: 784, dur: 0.09, type: 'square', vol: 0.12, delay: 0.07 });
+  };
+  const sfxStairs = () => tone({ freq: 400, slide: 120, dur: 0.25, type: 'triangle', vol: 0.14 }); // 下行滑音
+  const sfxLevel = () => [523, 659, 784].forEach((f, i) => // 小琶音
+    tone({ freq: f, dur: 0.08, type: 'square', vol: 0.12, delay: i * 0.07 }));
+  const sfxDeath = () => tone({ freq: 300, slide: 50, dur: 0.6, type: 'sawtooth', vol: 0.2 }); // 长下行音
+  const sfxVictory = () => [523, 659, 784, 1047].forEach((f, i) => // 上行琶音
+    tone({ freq: f, dur: 0.12, type: 'square', vol: 0.13, delay: i * 0.09 }));
+
+  // ---- BGM：两声部循环芯片乐（方波旋律 + 三角波低音），120BPM 八分音符，lookahead 排程 ----
+  const mf = m => 440 * Math.pow(2, (m - 69) / 12); // MIDI → 频率
+  const BGM_STEP = 60 / 120 / 2; // 八分音符时长
+  const BASS_ROOTS = [45, 41, 48, 43, 45, 41, 48, 43]; // Am F C G ×2，每小节一个根音
+  const LEAD = [ // 8 小节 × 8 步，0 = 休止
+    69, 0, 72, 0, 74, 0, 72, 74,
+    76, 0, 74, 72, 69, 0, 0, 0,
+    72, 0, 74, 0, 76, 0, 79, 76,
+    74, 0, 72, 74, 69, 0, 0, 0,
+    69, 0, 72, 0, 74, 0, 76, 74,
+    72, 0, 69, 0, 67, 0, 0, 0,
+    69, 0, 74, 0, 76, 0, 79, 81,
+    79, 76, 74, 72, 69, 0, 0, 0,
+  ];
+  let bgmTimer = null, bgmStep = 0, bgmNextT = 0;
+  function startBgm() {
+    if (bgmTimer || !audioCtx) return;
+    bgmNextT = audioCtx.currentTime + 0.1;
+    bgmTimer = setInterval(() => {
+      while (bgmNextT < audioCtx.currentTime + 0.3) { // lookahead 0.3s 排程
+        if (!muted) { // 静音时跳过发声但保持时钟推进，取消静音后节拍不断
+          const bar = (bgmStep / 8) | 0, s = bgmStep % 8;
+          const lead = LEAD[bgmStep];
+          if (lead) toneAt(bgmNextT, mf(lead), BGM_STEP * 0.9, 'square', 0.045);
+          if (s === 0 || s === 2 || s === 6) toneAt(bgmNextT, mf(BASS_ROOTS[bar]), BGM_STEP * 1.6, 'triangle', 0.06);
+          else if (s === 4) toneAt(bgmNextT, mf(BASS_ROOTS[bar] + 7), BGM_STEP * 1.6, 'triangle', 0.06);
+        }
+        bgmStep = (bgmStep + 1) % LEAD.length;
+        bgmNextT += BGM_STEP;
+      }
+    }, 100);
+  }
+  // 状态对比触发（下楼梯 / 升级 / 终局）：draw 时快照比较，逻辑层零侵入
+  let lastState = null;
+  function sfxForState() {
+    const p = g.player;
+    if (lastState) {
+      if (g.floor > lastState.floor) sfxStairs();
+      if (p.level > lastState.level) sfxLevel();
+      if (g.status !== lastState.status) {
+        if (g.status === 'lost') sfxDeath();
+        else if (g.status === 'won') sfxVictory();
+      }
+    }
+    lastState = { floor: g.floor, level: p.level, status: g.status };
+  }
+
   // 动画期间用 rAF 持续重绘；动画播完即停（场景本身无需逐帧刷新）
   function pumpAnims() {
     if (animRunning || anims.length === 0) return;
@@ -984,7 +1190,7 @@ function init() {
     requestAnimationFrame(function frame() {
       draw();
       const now = performance.now();
-      anims = anims.filter(a => now - a.t0 < ANIM_MS);
+      anims = anims.filter(a => now - a.t0 < animDur(a));
       if (anims.length) requestAnimationFrame(frame);
       else animRunning = false;
     });
@@ -1009,17 +1215,27 @@ function init() {
     draw();
   }
 
-  // 键位：方向键 4 向移动（撞怪 = bump 攻击）；A 普通攻击；S 拾取
+  // 键位：方向键 4 向移动（撞怪只被挡住）；A 普通攻击；S 拾取；M 静音
   const KEY_DIRS = {
     ArrowUp: [-1, 0], ArrowDown: [1, 0], ArrowLeft: [0, -1], ArrowRight: [0, 1],
   };
   document.addEventListener('keydown', e => {
+    ensureAudio(); // 首次用户交互后才允许创建/resume AudioContext
+    startBgm();
+    if (e.code === 'KeyM') { muted = !muted; draw(); return; }
     if (g.status !== 'playing') {
       if (e.code === 'Enter') newGame();
       return;
     }
     if (e.code === 'KeyA') { autoAttack(g); afterAction(); return; }
-    if (e.code === 'KeyS') { pickUp(g); afterAction(); return; }
+    if (e.code === 'KeyS') {
+      // 拾取无 fx，用状态对比判断成功与否（道具减少或武器换装）
+      const itemsBefore = g.items.length, weaponBefore = g.player.weapon;
+      pickUp(g);
+      if (g.items.length < itemsBefore || g.player.weapon !== weaponBefore) sfxPickup();
+      afterAction();
+      return;
+    }
     const dir = KEY_DIRS[e.code];
     if (dir) {
       e.preventDefault();
@@ -1031,6 +1247,7 @@ function init() {
   function draw() {
     const W = canvas.width, H = canvas.height;
     const p = g.player;
+    sfxForState(); // 下楼梯 / 升级 / 终局音效（快照对比，幂等）
     ctx.fillStyle = '#0a0a0f';
     ctx.fillRect(0, 0, W, H);
     // ---- HUD：层数 / HP / 等级 XP / 武器 / 技能 ----
@@ -1038,7 +1255,8 @@ function init() {
     ctx.font = '14px ui-monospace, monospace';
     ctx.fillStyle = '#c9d1d9';
     const nextXp = p.level <= XP_TABLE.length ? XP_TABLE[p.level - 1] : '—';
-    ctx.fillText(`第 ${g.floor}/${FLOORS} 层   HP ${p.hp}/${p.maxHp}   Lv ${p.level}   XP ${p.xp}/${nextXp}`, 12, 22);
+    const shieldText = p.skills.shield > 0 ? `   盾 ${p.shield}/${SHIELD_PER_LVL * p.skills.shield}` : '';
+    ctx.fillText(`第 ${g.floor}/${FLOORS} 层   HP ${p.hp}/${p.maxHp}${shieldText}   Lv ${p.level}   XP ${p.xp}/${nextXp}`, 12, 22);
     // 站在道具上时给出拾取提示
     const under = g.items.find(it => it.r === p.r && it.c === p.c);
     if (under) {
@@ -1055,9 +1273,10 @@ function init() {
       .map(([k, v]) => `${SKILL_NAMES[k]}×${v}`).join(' ') || '无';
     const formText = p.weapon.class === 'staff' ? (p.form === 'fire' ? '（火焰）' : '（冰霜）') : '';
     ctx.fillStyle = '#6b7280';
-    ctx.fillText(`武器 ${p.weapon.name}${formText}   技能 ${skillText}`, 12, 44);
+    ctx.fillText(`武器 ${p.weapon.name}${formText}   技能 ${skillText}   声音 ${muted ? '关' : '开'}（M）`, 12, 44);
     // ---- 地图：探索过的地形永久常亮，未见过的不画 ----
     const oy = HUD_H;
+    const cx = c => c * CELL + CELL / 2, cy = r => oy + r * CELL + CELL / 2;
     for (let r = 0; r < MAP_H; r++) {
       for (let c = 0; c < MAP_W; c++) {
         const i = r * MAP_W + c, x = c * CELL, y = oy + r * CELL;
@@ -1083,20 +1302,44 @@ function init() {
       const spr = it.kind === 'health' ? SPR.health : it.kind === 'weapon' ? SPR.weapon : SPR.book;
       drawUnit(spr, it.r, it.c, 1);
     }
-    // 怪物：仅 FOV 内可见；复活当回合无敌的喵喵闪烁（半透明）
+    // 怪物：仅 FOV 内可见；复活当回合无敌的喵喵闪烁（半透明）；蓄势中的怪头顶红色 "!"
     for (const m of g.monsters) {
       if (!m.alive || !g.visible[m.r * MAP_W + m.c]) continue;
       drawUnit(SPR[m.type], m.r, m.c, m.invincibleTurns > 0 ? 0.55 : 1);
+      if (m.windup) { // 近战前摇提示
+        ctx.fillStyle = '#f05050';
+        ctx.font = 'bold 16px ui-monospace, monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText('!', cx(m.c), oy + m.r * CELL - 3);
+        ctx.textAlign = 'left';
+      }
     }
     // 玩家
     drawUnit(SPR.player, p.r, p.c, 1);
-    // ---- 攻击动画：消费 g.fx，近战挥砍闪光 / 远程弹丸轨迹 / 受击红闪 ----
+    // 护盾：有护盾值时玩家周围常显淡蓝色护盾环（静态绘制，非 fx）
+    if (p.shield > 0) {
+      ctx.strokeStyle = 'rgba(88, 166, 255, 0.75)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(cx(p.c), cy(p.r), CELL / 2 + 2, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+    // 敌方弹丸：持续存在的飞行实体（状态不是动画），每帧按当前位置画，按 elem 着色
+    for (const pr of g.projectiles) {
+      ctx.fillStyle = pr.elem === 'fire' ? '#f08830' : pr.elem === 'frost' ? '#22d3ee' : '#f8e858';
+      ctx.beginPath();
+      ctx.arc(cx(pr.c), cy(pr.r), 7, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    // ---- 攻击动画：消费 g.fx，近战挥砍闪光 / 远程弹丸轨迹 / 受击红闪 / 炎环扩散 ----
     const now = performance.now();
-    for (const e of g.fx) anims.push({ ...e, t0: now });
+    for (const e of g.fx) {
+      anims.push({ ...e, t0: now });
+      sfxForFx(e); // 打击音效随 fx 消费触发
+    }
     g.fx.length = 0;
-    const cx = c => c * CELL + CELL / 2, cy = r => oy + r * CELL + CELL / 2;
     for (const a of anims) {
-      const t = Math.min(1, (now - a.t0) / ANIM_MS);
+      const t = Math.min(1, (now - a.t0) / animDur(a));
       if (a.kind === 'hit') {
         ctx.globalAlpha = 0.55 * (1 - t);
         ctx.fillStyle = '#f05050';
@@ -1118,9 +1361,49 @@ function init() {
         ctx.beginPath();
         ctx.arc(x, y, 5, 0, Math.PI * 2);
         ctx.fill();
+      } else if (a.kind === 'aoe') {
+        // 炎环：以玩家为中心扩散的火环（更亮更宽更持久，覆盖周围 8 格）
+        ctx.globalAlpha = 0.95 * (1 - t);
+        ctx.strokeStyle = '#ff9a20';
+        ctx.lineWidth = 5;
+        ctx.beginPath();
+        ctx.arc(cx(a.c), cy(a.r), CELL / 2 + t * CELL * 1.1, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+      } else if (a.kind === 'shield') {
+        // 护盾承伤：蓝色护盾闪光
+        ctx.globalAlpha = 0.85 * (1 - t);
+        ctx.strokeStyle = '#58a6ff';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(cx(a.c), cy(a.r), CELL / 2 + 2 + t * 4, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+      } else if (a.kind === 'heal') {
+        // 吸血：绿色上升十字
+        ctx.globalAlpha = 1 - t;
+        ctx.fillStyle = '#33ff66';
+        const hy = cy(a.r) - t * CELL * 0.6;
+        ctx.fillRect(cx(a.c) - 2, hy - 6, 4, 12);
+        ctx.fillRect(cx(a.c) - 6, hy - 2, 12, 4);
+        ctx.globalAlpha = 1;
+      } else if (a.kind === 'block') {
+        // 击碎弹丸：金色星芒
+        ctx.globalAlpha = 1 - t;
+        ctx.strokeStyle = '#ffd700';
+        ctx.lineWidth = 2;
+        const rad = 3 + t * 7;
+        for (let i = 0; i < 8; i++) {
+          const ang = i * Math.PI / 4;
+          ctx.beginPath();
+          ctx.moveTo(cx(a.c) + Math.cos(ang) * 2, cy(a.r) + Math.sin(ang) * 2);
+          ctx.lineTo(cx(a.c) + Math.cos(ang) * rad, cy(a.r) + Math.sin(ang) * rad);
+          ctx.stroke();
+        }
+        ctx.globalAlpha = 1;
       }
     }
-    anims = anims.filter(a => now - a.t0 < ANIM_MS);
+    anims = anims.filter(a => now - a.t0 < animDur(a));
     pumpAnims();
     // ---- 消息日志：最近 4 条 ----
     ctx.textAlign = 'left';
@@ -1150,10 +1433,11 @@ if (typeof document !== 'undefined') init();
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = {
     MAP_W, MAP_H, FLOORS, FOV_RADIUS, XP_TABLE, WEAPONS, MONSTER_TYPES, SKILL_NAMES,
-    MAX_PUPPIES, SUMMON_EVERY, HEAL_AMOUNT,
+    MAX_PUPPIES, SUMMON_EVERY, HEAL_AMOUNT, SHIELD_PER_LVL, AURA_DMG_PER_LVL,
+    PROJ_SPEED, PROJ_RANGE,
     createGame, generateFloor, move, wait, autoAttack, pickUp, descend,
     worldTick,
-    findPath, computeFov, addMonster, damageMonster, playerAttack, monsterAt, say,
+    findPath, computeFov, addMonster, damageMonster, damagePlayer, playerAttack, monsterAt, say,
   };
 }
 </script>
