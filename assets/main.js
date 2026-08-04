@@ -8,7 +8,7 @@
   (function tick() {
     if (i <= text.length) {
       el.textContent = text.slice(0, i++);
-      setTimeout(tick, 45);
+      setTimeout(tick, 18);
     } else {
       menu.hidden = false;
     }

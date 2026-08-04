@@ -1,12 +1,12 @@
 /* ========== sixdog06.github.io 设计系统 ========== */
 :root {
-  --bg: #0a0a0f;
-  --bg-card: #101018;
-  --border: #1e1e2e;
-  --text: #c9d1d9;
+  --bg: #f5f6f8;
+  --bg-card: #ffffff;
+  --border: #e3e5ea;
+  --text: #24292f;
   --dim: #6b7280;
-  --accent: #33ff66;
-  --accent2: #22d3ee;
+  --accent: #16a34a;
+  --accent2: #0891b2;
   --mono: ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -26,15 +26,15 @@ body::before {
   content: "";
   position: fixed; inset: 0;
   background-image:
-    linear-gradient(rgba(51, 255, 102, .04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(51, 255, 102, .04) 1px, transparent 1px);
+    linear-gradient(rgba(22, 163, 74, .05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(22, 163, 74, .05) 1px, transparent 1px);
   background-size: 32px 32px;
   pointer-events: none;
 }
 body::after {
   content: "";
   position: fixed; inset: 0;
-  background: repeating-linear-gradient(0deg, rgba(255, 255, 255, .02) 0 1px, transparent 1px 3px);
+  background: repeating-linear-gradient(0deg, rgba(0, 0, 0, .025) 0 1px, transparent 1px 3px);
   pointer-events: none;
 }
 /* 终端窗口卡片 */
@@ -43,13 +43,13 @@ body::after {
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: 10px;
-  box-shadow: 0 0 40px rgba(51, 255, 102, .08), 0 20px 60px rgba(0, 0, 0, .5);
+  box-shadow: 0 0 40px rgba(22, 163, 74, .08), 0 20px 60px rgba(0, 0, 0, .12);
   overflow: hidden;
 }
 .terminal-bar {
   display: flex; align-items: center; gap: 8px;
   padding: 10px 14px;
-  background: #15151f;
+  background: #f0f1f5;
   border-bottom: 1px solid var(--border);
 }
 .dot { width: 12px; height: 12px; border-radius: 50%; }
@@ -79,8 +79,8 @@ body::after {
   color: var(--accent);
   border-left-color: var(--accent);
   transform: translateX(6px);
-  background: rgba(51, 255, 102, .05);
-  text-shadow: 0 0 12px rgba(51, 255, 102, .6);
+  background: rgba(22, 163, 74, .06);
+  text-shadow: 0 0 12px rgba(22, 163, 74, .35);
   outline: none;
 }
 .menu .hint { color: var(--dim); font-size: 13px; margin-left: 12px; }
@@ -113,13 +113,13 @@ body::after {
 .card-link { display: block; color: inherit; text-decoration: none; }
 .card-link:hover .card {
   border-color: var(--accent);
-  box-shadow: 0 0 24px rgba(51, 255, 102, .12);
+  box-shadow: 0 0 24px rgba(22, 163, 74, .15);
 }
 .inline-link { color: var(--accent2); text-decoration: none; }
 .inline-link:hover { text-decoration: underline; }
 /* 游戏卡片 */
 .game-card { display: flex; gap: 20px; align-items: center; }
-.ascii-tank { color: var(--accent); font-size: 14px; line-height: 1.2; text-shadow: 0 0 10px rgba(51, 255, 102, .4); }
+.ascii-tank { color: var(--accent); font-size: 14px; line-height: 1.2; text-shadow: 0 0 10px rgba(22, 163, 74, .3); }
 .game-name { color: var(--text); font-size: 16px; margin-bottom: 6px; }
 .game-desc { color: var(--dim); font-size: 13px; line-height: 1.6; }
 /* 手机适配 */
