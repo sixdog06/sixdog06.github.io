@@ -8,6 +8,30 @@
   --accent: #16a34a;
   --accent2: #0891b2;
   --mono: ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+  --grid: rgba(22, 163, 74, .05);
+  --scanline: rgba(0, 0, 0, .025);
+  --bar-bg: #f0f1f5;
+  --window-shadow: 0 0 40px rgba(22, 163, 74, .08), 0 20px 60px rgba(0, 0, 0, .12);
+  --menu-hover-bg: rgba(22, 163, 74, .06);
+  --menu-hover-glow: 0 0 12px rgba(22, 163, 74, .35);
+  --card-hover-glow: 0 0 24px rgba(22, 163, 74, .15);
+  --tank-glow: 0 0 10px rgba(22, 163, 74, .3);
+}
+[data-theme="dark"] {
+  --bg: #0a0a0f;
+  --bg-card: #101018;
+  --border: #1e1e2e;
+  --text: #c9d1d9;
+  --accent: #33ff66;
+  --accent2: #22d3ee;
+  --grid: rgba(51, 255, 102, .04);
+  --scanline: rgba(255, 255, 255, .02);
+  --bar-bg: #15151f;
+  --window-shadow: 0 0 40px rgba(51, 255, 102, .08), 0 20px 60px rgba(0, 0, 0, .5);
+  --menu-hover-bg: rgba(51, 255, 102, .05);
+  --menu-hover-glow: 0 0 12px rgba(51, 255, 102, .6);
+  --card-hover-glow: 0 0 24px rgba(51, 255, 102, .12);
+  --tank-glow: 0 0 10px rgba(51, 255, 102, .4);
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body {
@@ -26,15 +50,15 @@ body::before {
   content: "";
   position: fixed; inset: 0;
   background-image:
-    linear-gradient(rgba(22, 163, 74, .05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(22, 163, 74, .05) 1px, transparent 1px);
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
   background-size: 32px 32px;
   pointer-events: none;
 }
 body::after {
   content: "";
   position: fixed; inset: 0;
-  background: repeating-linear-gradient(0deg, rgba(0, 0, 0, .025) 0 1px, transparent 1px 3px);
+  background: repeating-linear-gradient(0deg, var(--scanline) 0 1px, transparent 1px 3px);
   pointer-events: none;
 }
 /* 终端窗口卡片 */
@@ -43,13 +67,13 @@ body::after {
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: 10px;
-  box-shadow: 0 0 40px rgba(22, 163, 74, .08), 0 20px 60px rgba(0, 0, 0, .12);
+  box-shadow: var(--window-shadow);
   overflow: hidden;
 }
 .terminal-bar {
   display: flex; align-items: center; gap: 8px;
   padding: 10px 14px;
-  background: #f0f1f5;
+  background: var(--bar-bg);
   border-bottom: 1px solid var(--border);
 }
 .dot { width: 12px; height: 12px; border-radius: 50%; }
@@ -79,8 +103,8 @@ body::after {
   color: var(--accent);
   border-left-color: var(--accent);
   transform: translateX(6px);
-  background: rgba(22, 163, 74, .06);
-  text-shadow: 0 0 12px rgba(22, 163, 74, .35);
+  background: var(--menu-hover-bg);
+  text-shadow: var(--menu-hover-glow);
   outline: none;
 }
 .menu .hint { color: var(--dim); font-size: 13px; margin-left: 12px; }
@@ -113,15 +137,36 @@ body::after {
 .card-link { display: block; color: inherit; text-decoration: none; }
 .card-link:hover .card {
   border-color: var(--accent);
-  box-shadow: 0 0 24px rgba(22, 163, 74, .15);
+  box-shadow: var(--card-hover-glow);
 }
 .inline-link { color: var(--accent2); text-decoration: none; }
 .inline-link:hover { text-decoration: underline; }
 /* 游戏卡片 */
 .game-card { display: flex; gap: 20px; align-items: center; }
-.ascii-tank { color: var(--accent); font-size: 14px; line-height: 1.2; text-shadow: 0 0 10px rgba(22, 163, 74, .3); }
+.ascii-tank { color: var(--accent); font-size: 14px; line-height: 1.2; text-shadow: var(--tank-glow); }
 .game-name { color: var(--text); font-size: 16px; margin-bottom: 6px; }
 .game-desc { color: var(--dim); font-size: 13px; line-height: 1.6; }
+/* 主题切换按钮 */
+.theme-toggle {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 10;
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--dim);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: color .15s, border-color .15s;
+}
+.theme-toggle:hover, .theme-toggle:focus-visible {
+  color: var(--accent);
+  border-color: var(--accent);
+  outline: none;
+}
 /* 手机适配 */
 @media (max-width: 520px) {
   body { padding: 32px 12px; }
